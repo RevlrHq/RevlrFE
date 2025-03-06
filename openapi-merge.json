@@ -1,0 +1,11 @@
+{
+    "inputs": [
+      {
+        "inputURL": "https://chit-gateway-dev.azurewebsites.net/swagger/Identity/swagger.json"
+      },
+      {
+        "inputURL": "https://chit-gateway-dev.azurewebsites.net/swagger/Wallet/swagger.json"
+      }
+    ],
+    "output": "./openapi-merged.json"
+  }

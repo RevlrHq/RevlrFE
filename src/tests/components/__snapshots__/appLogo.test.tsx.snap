@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppLogo renders the logo 1`] = `
+<div>
+  <a
+    href="/"
+  >
+    <img
+      alt="Chit brand logo"
+      class="w-28 lg:w-36"
+      src="[object Object]"
+    />
+  </a>
+</div>
+`;

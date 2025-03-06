@@ -1,0 +1,6 @@
+# Example Commit Message Template:
+# <type>(#<ticket-number>): <subject>
+#
+# Allowed types: feat, fix, docs, style, refactor, test, chore
+# Example:
+# feat(#1234): Add user authentication
