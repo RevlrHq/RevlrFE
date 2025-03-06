@@ -75,15 +75,16 @@ stages:
                 az group create --name $(resourceGroupName) --location eastus
             displayName: 'Create Resource Group if not exists'
 
-          - task: AzureBicepDeploy@1
+          - task: AzureCLI@2
             inputs:
-              azureResourceManagerConnection: '$(azureServiceConnection)'
-              deploymentScope: 'Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              templateFile: 'infrastructure/bicep/main.bicep'
-              parameters: >
-                -environment $(environment)
-                -projectName $(projectName)
+              azureSubscription: '$(azureServiceConnection)'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az deployment group create \
+                  --resource-group $(resourceGroupName) \
+                  --template-file infrastructure/bicep/main.bicep \
+                  --parameters environment=$(environment) projectName=$(projectName)
             displayName: 'Deploy Bicep template'
 
   - stage: Deploy
