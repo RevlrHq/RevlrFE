@@ -68,7 +68,7 @@ stages:
         steps:
           - task: AzureCLI@2
             inputs:
-              azureSubscription: '$(azureServiceConnection)'
+              azureSubscription: 'revlr-dev'  # Using a literal service connection name
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
@@ -77,7 +77,7 @@ stages:
 
           - task: AzureCLI@2
             inputs:
-              azureSubscription: '$(azureServiceConnection)'
+              azureSubscription: 'revlr-dev'  # Using a literal service connection name
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
@@ -100,7 +100,7 @@ stages:
             inputs:
               action: 'deploy'
               connectionType: 'azureResourceManager'
-              azureSubscriptionConnection: '$(azureServiceConnection)'
+              azureSubscriptionConnection: 'revlr-dev'  # Using a literal service connection name
               azureResourceGroup: '$(resourceGroupName)'
               kubernetesCluster: '$(aksClusterName)'
               manifests: 'infrastructure/k8s/deployment.yaml'
