@@ -8,6 +8,11 @@ trigger:
       - .gitignore
 
 variables:
+- group: revlr-fe-dev
+- ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+  - group: PROD-Variables
+- ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+  - group: STAGING-Variables
   # Pipeline-level variables
   projectName: 'revlr'
   environment: '$(Environment)' # This will be set in the pipeline settings
