@@ -32,6 +32,16 @@ stages:
             pool:
                 vmImage: 'ubuntu-latest'
             steps:
+                - script: |
+                    echo "Debugging Variables:"
+                    echo "Environment: $(Environment)"
+                    echo "AzureServiceConnection: $(AzureServiceConnection)"
+                    echo "ResourceGroupName: $(ResourceGroupName)"
+                    echo "Project Name: $(projectName)"
+                    echo "AKS Cluster Name: $(aksClusterName)"
+                    echo "Docker Registry Connection: $(DockerRegistryServiceConnection)"
+                  displayName: 'Debug Variables'
+
                 - task: NodeTool@0
                   inputs:
                       versionSpec: '18.x'
