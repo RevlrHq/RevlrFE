@@ -15,11 +15,11 @@ variables:
           - group: revlr-fe-staging
     # Pipeline-level variables
     - name: projectName
-      value: 'revlrdev'
+      value: 'revlr'
     - name: aksClusterName
       value: '$(projectName)-$(environment)-aks'
     - name: acrLoginServer
-      value: '$(projectName).azurecr.io'
+      value: '$(projectName)$(Environment).azurecr.io'
 
 stages:
     - stage: Build
