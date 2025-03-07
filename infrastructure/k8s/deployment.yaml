@@ -14,7 +14,7 @@ spec:
         spec:
             containers:
                 - name: revlr-frontend
-                  image: #{acrLoginServer}#/revlr:#{Build.BuildId}#
+                  image: $(acrLoginServer)/revlr:$(Build.BuildId)
                   ports:
                       - containerPort: 3000
                   resources:
