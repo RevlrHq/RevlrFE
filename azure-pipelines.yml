@@ -16,12 +16,6 @@ variables:
     # Pipeline-level variables
     - name: projectName
       value: 'revlr'
-    - name: environment
-      value: '$(Environment)' # This will be set in the pipeline settings
-    - name: azureServiceConnection
-      value: '$(AzureServiceConnection)' # This will be set in the pipeline settings
-    - name: resourceGroupName
-      value: '$(ResourceGroupName)' # This will be set in the pipeline settings
     - name: aksClusterName
       value: '$(projectName)-$(environment)-aks'
 
