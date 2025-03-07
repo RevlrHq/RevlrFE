@@ -76,7 +76,7 @@ stages:
                       scriptType: 'bash'
                       scriptLocation: 'inlineScript'
                       inlineScript: |
-                          az group create --name $(resourceGroupName) --location eastus
+                          az group create --name $(resourceGroupName) --location eastus2
                   displayName: 'Create Resource Group if not exists'
 
                 - task: AzureCLI@2
