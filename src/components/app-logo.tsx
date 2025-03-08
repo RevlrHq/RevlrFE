@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import ChitLogo from '~/public/chit.svg';
-import ChitIcon from '~/public/chit-icon.svg';
+import ChitLogo from '~/public/revlr.svg';
+import ChitIcon from '~/public/revlr-icon.svg';
 
 interface IAppLogoProps {
     isIcon?: boolean;

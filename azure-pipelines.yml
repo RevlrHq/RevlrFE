@@ -1,96 +1,113 @@
 trigger:
-  branches:
-    include:
-      - main
-  paths:
-    exclude:
-      - README.md
-      - .gitignore
+    branches:
+        include:
+            - main
+    paths:
+        exclude:
+            - README.md
+            - .gitignore
 
 variables:
-  # Pipeline-level variables
-  projectName: 'revlr'
-  environment: '$(Environment)' # This will be set in the pipeline settings
-  azureServiceConnection: '$(AzureServiceConnection)' # This will be set in the pipeline settings
-  resourceGroupName: '$(ResourceGroupName)' # This will be set in the pipeline settings
-  aksClusterName: '$(projectName)-$(environment)-aks'
+    - group: revlr-fe-dev
+    - ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+          - group: revlr-fe-production
+    - ${{ if eq(variables['Build.SourceBranchName'], 'staging') }}:
+          - group: revlr-fe-staging
+    # Pipeline-level variables
+    - name: projectName
+      value: 'revlr'
+    - name: aksClusterName
+      value: '$(projectName)-$(environment)-aks'
+    - name: acrLoginServer
+      value: '$(projectName)$(Environment)acr.azurecr.io'
 
 stages:
-  - stage: Build
-    jobs:
-      - job: BuildAndTest
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '18.x'
-            displayName: 'Install Node.js'
+    - stage: Build
+      jobs:
+          - job: BuildAndTest
+            pool:
+                vmImage: 'ubuntu-latest'
+            steps:
+                - script: |
+                    echo "Debugging Variables:"
+                    echo "Environment: $(Environment)"
+                    echo "AzureServiceConnection: $(AzureServiceConnection)"
+                    echo "ResourceGroupName: $(ResourceGroupName)"
+                    echo "Project Name: $(projectName)"
+                    echo "AKS Cluster Name: $(aksClusterName)"
+                    echo "Docker Registry Connection: $(DockerRegistryServiceConnection)"
+                  displayName: 'Debug Variables'
 
-          - script: |
-              npm install -g pnpm
-              pnpm install
-            displayName: 'Install dependencies'
+                - task: NodeTool@0
+                  inputs:
+                      versionSpec: '18.x'
+                  displayName: 'Install Node.js'
 
-          - script: pnpm test
-            displayName: 'Run tests'
+                - script: |
+                      npm install -g pnpm
+                      pnpm install
+                  displayName: 'Install dependencies'
 
-          - script: pnpm build
-            displayName: 'Build application'
+                - script: pnpm test
+                  displayName: 'Run tests'
 
-          - task: Docker@2
-            inputs:
-              containerRegistry: '$(DockerRegistryServiceConnection)'
-              repository: '$(projectName)'
-              command: 'buildAndPush'
-              Dockerfile: '**/Dockerfile'
-              tags: |
-                $(Build.BuildId)
-                latest
-            displayName: 'Build and push Docker image'
+                - script: pnpm build
+                  displayName: 'Build application'
 
-  - stage: Infrastructure
-    dependsOn: []  # Run in parallel with Build
-    jobs:
-      - job: DeployInfrastructure
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - task: AzureCLI@2
-            inputs:
-              azureSubscription: '$(azureServiceConnection)'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                az group create --name $(resourceGroupName) --location eastus
-            displayName: 'Create Resource Group if not exists'
+                - task: Docker@2
+                  inputs:
+                      containerRegistry: '$(DockerRegistryServiceConnection)'
+                      repository: '$(projectName)'
+                      command: 'buildAndPush'
+                      Dockerfile: '**/Dockerfile'
+                      tags: |
+                          $(Build.BuildId)
+                          latest
+                  displayName: 'Build and push Docker image'
 
-          - task: AzureBicepDeploy@1
-            inputs:
-              azureResourceManagerConnection: '$(azureServiceConnection)'
-              deploymentScope: 'Resource Group'
-              resourceGroupName: '$(resourceGroupName)'
-              templateFile: 'infrastructure/bicep/main.bicep'
-              parameters: >
-                -environment $(environment)
-                -projectName $(projectName)
-            displayName: 'Deploy Bicep template'
+    - stage: Infrastructure
+      dependsOn: [] # Run in parallel with Build
+      jobs:
+          - job: DeployInfrastructure
+            pool:
+                vmImage: 'ubuntu-latest'
+            steps:
+                - task: AzureCLI@2
+                  inputs:
+                      azureSubscription: 'revlr-dev' # Using a literal service connection name
+                      scriptType: 'bash'
+                      scriptLocation: 'inlineScript'
+                      inlineScript: |
+                          az group create --name $(resourceGroupName) --location eastus2
+                  displayName: 'Create Resource Group if not exists'
 
-  - stage: Deploy
-    dependsOn: 
-      - Build
-      - Infrastructure
-    jobs:
-      - job: DeployToAKS
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - task: KubernetesManifest@1
-            inputs:
-              action: 'deploy'
-              connectionType: 'Azure Resource Manager'
-              azureSubscriptionConnection: '$(azureServiceConnection)'
-              azureResourceGroup: '$(resourceGroupName)'
-              kubernetesCluster: '$(aksClusterName)'
-              manifests: 'infrastructure/k8s/deployment.yaml'
-              containers: '$(acrLoginServer)/$(projectName):$(Build.BuildId)'
+                - task: AzureCLI@2
+                  inputs:
+                      azureSubscription: 'revlr-dev' # Using a literal service connection name
+                      scriptType: 'bash'
+                      scriptLocation: 'inlineScript'
+                      inlineScript: |
+                          az deployment group create \
+                            --resource-group $(resourceGroupName) \
+                            --template-file infrastructure/bicep/main.bicep \
+                            --parameters environment=$(environment) projectName=$(projectName)
+                  displayName: 'Deploy Bicep template'
+
+    - stage: Deploy
+      dependsOn:
+          - Build
+          - Infrastructure
+      jobs:
+          - job: DeployToAKS
+            pool:
+                vmImage: 'ubuntu-latest'
+            steps:
+                - task: KubernetesManifest@1
+                  inputs:
+                      action: 'deploy'
+                      connectionType: 'azureResourceManager'
+                      azureSubscriptionConnection: 'revlr-dev' # Using a literal service connection name
+                      azureResourceGroup: '$(resourceGroupName)'
+                      kubernetesCluster: '$(aksClusterName)'
+                      manifests: 'infrastructure/k8s/deployment.yaml'
+                      containers: '$(acrLoginServer)/$(projectName):$(Build.BuildId)'

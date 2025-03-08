@@ -8,8 +8,11 @@
 
 import { useState, useCallback, useEffect } from 'react';
 
-import { CancelablePromise } from '@lib/services';
+// import { CancelablePromise } from '@lib/services';
 import { ServiceMode } from '@lib/enums';
+
+// Helper type for CancelablePromise
+type CancelablePromise<T> = Promise<T> & { cancel: () => void };
 
 // Helper type to get the return type of a function, unwrapping the CancelablePromise
 type UnwrapPromise<T> = T extends CancelablePromise<infer U> ? U : T;
