@@ -7,6 +7,21 @@ import './globals.css';
 import { validateEnv } from '@lib/env';
 import Providers from '@src/providers';
 
+import { Inter, Montserrat } from 'next/font/google'
+
+const inter = Inter({
+    subsets: ['latin'],
+    display: 'swap',
+    variable: '--font-inter',
+  })
+  
+  const montserrat = Montserrat({
+    subsets: ['latin'],
+    display: 'swap',
+    weight: ['400', '500', '600', '700'],
+    variable: '--font-montserrat',
+  })
+
 const poppins = Poppins({
     weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
     subsets: ['latin'],
@@ -28,7 +43,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang='en'>
-            <body className={`${poppins.className} font-sans`}>
+            <body className={`${poppins.className} ${inter.variable} ${montserrat.variable} font-sans`}>
                 <Providers>{children}</Providers>
             </body>
         </html>
