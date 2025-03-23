@@ -1,38 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: revlr-frontend
+  name: revlr-frontend
 spec:
-    replicas: 2
-    selector:
-        matchLabels:
-            app: revlr-frontend
-    template:
-        metadata:
-            labels:
-                app: revlr-frontend
-        spec:
-            containers:
-                - name: revlr-frontend
-                  image: $(acrLoginServer)/revlr:$(Build.BuildId)
-                  ports:
-                      - containerPort: 3000
-                  resources:
-                      requests:
-                          cpu: 100m
-                          memory: 128Mi
-                      limits:
-                          cpu: 250m
-                          memory: 256Mi
----
-apiVersion: v1
-kind: Service
-metadata:
-    name: revlr-frontend
-spec:
-    type: LoadBalancer
-    ports:
-        - port: 80
-          targetPort: 3000
-    selector:
+  replicas: 2
+  progressDeadlineSeconds: 600  # Increased from default 600 seconds if needed
+  selector:
+    matchLabels:
+      app: revlr-frontend
+  template:
+    metadata:
+      labels:
         app: revlr-frontend
+    spec:
+      containers:
+        - name: revlr-frontend
+          image: $(acrLoginServer)/revlr:$(Build.BuildId)
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /  # Adjust this to an endpoint that confirms your app is ready
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /  # Adjust this to a simple health endpoint
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 5
