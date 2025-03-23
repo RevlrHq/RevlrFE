@@ -1,7 +1,7 @@
 trigger:
     branches:
         include:
-            - master
+            - main
     paths:
         exclude:
             - README.md
@@ -111,3 +111,24 @@ stages:
                       kubernetesCluster: '$(aksClusterName)'
                       manifests: 'infrastructure/k8s/deployment.yaml'
                       containers: '$(acrLoginServer)/$(projectName):$(Build.BuildId)'
+
+                # Add the debug step here
+                - task: Bash@3
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      # Wait for pods to be created
+                      sleep 30
+                      
+                      # Get pod status
+                      kubectl get pods -l app=revlr-frontend -o wide
+                      
+                      # Describe the deployment
+                      kubectl describe deployment revlr-frontend
+                      
+                      # Get logs from pods
+                      for pod in $(kubectl get pods -l app=revlr-frontend -o name); do
+                        echo "Logs for $pod"
+                        kubectl logs $pod --tail=100
+                      done
+                  displayName: 'Debug Kubernetes Deployment'
