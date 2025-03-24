@@ -65,6 +65,24 @@ stages:
                           latest
                   displayName: 'Build and push Docker image'
 
+                # Verify image exists in container registry
+                - task: AzureCLI@2
+                  inputs:
+                      azureSubscription: 'revlr-dev'
+                      scriptType: 'bash'
+                      scriptLocation: 'inlineScript'
+                      inlineScript: |
+                          echo "Verifying image in Azure Container Registry..."
+                          # List repositories
+                          az acr repository show -n $(projectName)$(Environment)acr --repository $(projectName) --query "name"
+                          # List tags for the repository
+                          echo "Available tags for $(projectName):"
+                          az acr repository show-tags -n $(projectName)$(Environment)acr --repository $(projectName) --orderby time_desc
+                          # Get details of specific tags
+                          echo "Details for latest build ($(Build.BuildId)):"
+                          az acr repository show-manifests -n $(projectName)$(Environment)acr --repository $(projectName) --query "[?contains(tags, '$(Build.BuildId)')]"
+                  displayName: 'Verify image in container registry'
+
     - stage: Infrastructure
       dependsOn: [] # Run in parallel with Build
       jobs:
