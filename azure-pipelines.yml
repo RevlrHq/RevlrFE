@@ -128,7 +128,10 @@ stages:
                       azureResourceGroup: '$(resourceGroupName)'
                       kubernetesCluster: '$(aksClusterName)'
                       manifests: 'infrastructure/k8s/deployment.yaml'
-                      containers: '$(acrLoginServer)/$(projectName):$(Build.BuildId)'
+                      containers: |
+                          $(acrLoginServer)/$(projectName):$(Build.BuildId)
+                      imagePullSecrets: 'acr-auth-secret'
+                  displayName: 'Deploy to AKS with variable substitution'
 
                 # Add the debug step here
                 - task: Bash@3
