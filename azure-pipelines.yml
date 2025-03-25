@@ -111,6 +111,19 @@ stages:
                             --parameters environment=$(environment) projectName=$(projectName)
                   displayName: 'Deploy Bicep template'
 
+                - task: AzureCLI@2
+                  inputs:
+                      azureSubscription: 'revlr-dev'
+                      scriptType: 'bash'
+                      scriptLocation: 'inlineScript'
+                      inlineScript: |
+                          echo "Linking ACR to AKS..."
+                          az aks update \
+                            --name $(aksClusterName) \
+                            --resource-group $(resourceGroupName) \
+                            --attach-acr $(projectName)$(Environment)
+                  displayName: 'Link ACR to AKS'
+
     - stage: Deploy
       dependsOn:
           - Build
