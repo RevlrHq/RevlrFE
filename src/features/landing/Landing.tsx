@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useState } from 'react'
-import { Hero } from './components/Hero'
+import React, { useState } from 'react';
+import { Hero } from './components/Hero';
 import { Navbar } from '@components/navbar/Navbar';
 import Footer from './components/Footer';
 import FAQSection from './components/FAQSection';
@@ -16,29 +16,28 @@ import TopSolution from './components/TopSolution';
 const Landing = () => {
     const [isOrganizer, setIsOrganizer] = useState(false);
 
-  return (
-    <div>
-        <Navbar isOrganizer={isOrganizer}/>
-        <Hero isOrganizer={isOrganizer} setIsOrganizer={setIsOrganizer}/>
-        {isOrganizer ? (
-            <div className='mx-auto max-w-[1440px]'>
-                <TopSolution />
-                <RevlrLandingSection/>
-                <FeatureComparison />
-                <EventSteps />
-                <Testimonial />
-                
-            </div>
-        ) : (
-            <div className='mx-auto max-w-[1440px]'>
-                <EventListing />
-                <ResaleCard />
-            </div>
-        )}
-        <FAQSection isOrganizer={isOrganizer}/>
-        <Footer />
-    </div>
-  )
-}
+    return (
+        <div>
+            <Navbar isOrganizer={isOrganizer} />
+            <Hero isOrganizer={isOrganizer} setIsOrganizer={setIsOrganizer} />
+            {isOrganizer ? (
+                <div className='mx-auto max-w-[1440px]'>
+                    <TopSolution />
+                    <RevlrLandingSection />
+                    <FeatureComparison />
+                    <EventSteps />
+                    <Testimonial />
+                </div>
+            ) : (
+                <div className='mx-auto max-w-[1440px]'>
+                    <EventListing />
+                    <ResaleCard />
+                </div>
+            )}
+            <FAQSection isOrganizer={isOrganizer} />
+            <Footer />
+        </div>
+    );
+};
 
-export default Landing
+export default Landing;

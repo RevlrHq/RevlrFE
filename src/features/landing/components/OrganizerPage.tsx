@@ -1,9 +1,7 @@
-"use client";
+'use client';
 
 const OrganizerPage = () => {
-  return (
-    <div>OrganizerPage</div>
-  )
-}
+    return <div>OrganizerPage</div>;
+};
 
-export default OrganizerPage
+export default OrganizerPage;
