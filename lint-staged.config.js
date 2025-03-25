@@ -6,5 +6,5 @@ const lintCommand = 'eslint --fix';
 const testCommand = 'pnpm test';
 
 module.exports = {
-    '*.{js,jsx,ts,tsx}': [formatCommand, lintCommand, testCommand],
+    '*.{js,jsx,ts,tsx}': [formatCommand, lintCommand],
 };

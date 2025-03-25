@@ -11,6 +11,10 @@ module.exports = {
     ],
     theme: {
         extend: {
+            fontFamily: {
+                inter: ['var(--font-inter)'],
+                montserrat: ['var(--font-montserrat)'],
+              },
             keyframes: {
                 'caret-blink': {
                     '0%,70%,100%': {
@@ -108,6 +112,9 @@ module.exports = {
                     'baltic-sea': '#292929',
                     indigo: '#382395',
                 },
+                revlr: {
+                    primary: '#0066FF'
+                }
             },
         },
     },
