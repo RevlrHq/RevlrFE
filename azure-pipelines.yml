@@ -19,7 +19,7 @@ variables:
     - name: aksClusterName
       value: '$(projectName)-$(environment)-aks'
     - name: acrLoginServer
-      value: '$(projectName)$(Environment)acr.azurecr.io'
+      value: '$(projectName)$(Environment).azurecr.io'
 
 stages:
     - stage: Build
