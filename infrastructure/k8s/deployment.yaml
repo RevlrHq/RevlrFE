@@ -15,7 +15,7 @@ spec:
         spec:
             containers:
                 - name: revlr-frontend
-                  image: revlrdev.azurecr.io/revlr:latest # Use the latest image from ACR
+                  image: $(acrLoginServer)/revlr:$(Build.BuildId)
                   ports:
                       - containerPort: 3000
                   resources:
@@ -41,3 +41,16 @@ spec:
                       timeoutSeconds: 5
             imagePullSecrets:
                 - name: acr-auth-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: revlr-frontend-service
+spec:
+    type: LoadBalancer
+    selector:
+        app: revlr-frontend
+    ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 3000
