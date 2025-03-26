@@ -1,7 +1,7 @@
 trigger:
     branches:
         include:
-            - master
+            - development
     paths:
         exclude:
             - README.md
@@ -19,7 +19,7 @@ variables:
     - name: aksClusterName
       value: '$(projectName)-$(environment)-aks'
     - name: acrLoginServer
-      value: '$(projectName)$(Environment)acr.azurecr.io'
+      value: '$(projectName)$(Environment).azurecr.io'
 
 stages:
     - stage: Build
@@ -65,6 +65,24 @@ stages:
                           latest
                   displayName: 'Build and push Docker image'
 
+                # Verify image exists in container registry
+                - task: AzureCLI@2
+                  inputs:
+                      azureSubscription: 'revlr-dev'
+                      scriptType: 'bash'
+                      scriptLocation: 'inlineScript'
+                      inlineScript: |
+                          echo "Verifying image in Azure Container Registry..."
+                          # List repositories
+                          az acr repository show -n $(projectName)$(Environment) --repository $(projectName) --query "name"
+                          # List tags for the repository
+                          echo "Available tags for $(projectName):"
+                          az acr repository show-tags -n $(projectName)$(Environment) --repository $(projectName) --orderby time_desc
+                          # Get details of specific tags
+                          echo "Details for latest build ($(Build.BuildId)):"
+                          az acr repository show-manifests -n $(projectName)$(Environment) --repository $(projectName) --query "[?contains(tags, '$(Build.BuildId)')]"
+                  displayName: 'Verify image in container registry'
+
     - stage: Infrastructure
       dependsOn: [] # Run in parallel with Build
       jobs:
@@ -93,6 +111,19 @@ stages:
                             --parameters environment=$(environment) projectName=$(projectName)
                   displayName: 'Deploy Bicep template'
 
+                - task: AzureCLI@2
+                  inputs:
+                      azureSubscription: 'revlr-dev'
+                      scriptType: 'bash'
+                      scriptLocation: 'inlineScript'
+                      inlineScript: |
+                          echo "Linking ACR to AKS..."
+                          az aks update \
+                            --name $(aksClusterName) \
+                            --resource-group $(resourceGroupName) \
+                            --attach-acr $(projectName)$(Environment)
+                  displayName: 'Link ACR to AKS'
+
     - stage: Deploy
       dependsOn:
           - Build
@@ -110,4 +141,28 @@ stages:
                       azureResourceGroup: '$(resourceGroupName)'
                       kubernetesCluster: '$(aksClusterName)'
                       manifests: 'infrastructure/k8s/deployment.yaml'
-                      containers: '$(acrLoginServer)/$(projectName):$(Build.BuildId)'
+                      containers: |
+                          $(acrLoginServer)/$(projectName):$(Build.BuildId)
+                      imagePullSecrets: 'acr-auth-secret'
+                  displayName: 'Deploy to AKS with variable substitution'
+
+                # Add the debug step here
+                - task: Bash@3
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      # Wait for pods to be created
+                      sleep 30
+                      
+                      # Get pod status
+                      kubectl get pods -l app=revlr-frontend -o wide
+                      
+                      # Describe the deployment
+                      kubectl describe deployment revlr-frontend
+                      
+                      # Get logs from pods
+                      for pod in $(kubectl get pods -l app=revlr-frontend -o name); do
+                        echo "Logs for $pod"
+                        kubectl logs $pod --tail=100
+                      done
+                  displayName: 'Debug Kubernetes Deployment'
