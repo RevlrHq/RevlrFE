@@ -62,26 +62,27 @@ const faqData = {
   };
 
 const FAQSection = ({ isOrganizer} : FAQSectionProps) => {
-    const [userType] = useState(isOrganizer ? 'organizer' : 'attendee');
-    const [openItemId, setOpenItemId] = useState<number | null>(null);  
+    const [userType] = useState<'organizer' | 'attendee'>(isOrganizer ? 'organizer' : 'attendee');
+    const [openItemId, setOpenItemId] = useState<number>(-1);  
 
     const toggleItem = (id: number) => {
-        setOpenItemId(openItemId === id ? null : id);
+        setOpenItemId(openItemId === id ? -1 : id);
       };
 
     return (
         <section className="mx-auto max-w-4xl px-4 py-16">
-          <h2 className="mb-10 text-center font-montserrat text-2xl font-semibold">FAQs</h2>
+          <h2 className="mb-10 text-center font-montserrat text-xl font-semibold md:text-[32px]">FAQs: Got Questions?
+          We’ve Got Answers</h2>
     
           {/* FAQ accordion */}
           <div className="space-y-6">
             {faqData[userType].map(item => (
               <div key={item.id} className="overflow-hidden rounded-lg border border-[#F7F8FA]">
                 <button
-                  className="flex w-full items-center justify-between bg-[#F7F8FA] p-6 text-left"
+                  className="flex w-full items-center justify-between bg-[#F7F8FA] p-4 text-left md:p-6"
                   onClick={() => toggleItem(item.id)}
                 >
-                  <span className="font-inter text-[16px] font-medium text-[#1F2938]">{item.question}</span>
+                  <span className="font-inter text-sm font-medium text-[#1F2938] md:text-xl">{item.question}</span>
                   <svg
                     className={`size-5 text-blue-500${openItemId === item.id ? 'rotate-180' : ''}`}
                     fill="none"
@@ -94,7 +95,7 @@ const FAQSection = ({ isOrganizer} : FAQSectionProps) => {
                 
                 {openItemId === item.id && (
                   <div className="border-gray-200 bg-[#F7F8FA] px-6 py-3 ">
-                    <p className="font-inter text-[16px] font-normal text-[#4C5563]">{item.answer}</p>
+                    <p className="font-inter text-sm font-normal text-[#4C5563] md:text-xl">{item.answer}</p>
                   </div>
                 )}
               </div>
@@ -102,7 +103,7 @@ const FAQSection = ({ isOrganizer} : FAQSectionProps) => {
           </div>
     
           {/* Contact section */}
-          <div className="mt-12 flex flex-col items-center justify-between rounded-lg bg-[#F1F6FF] p-6 md:flex-row">
+          <div className="mt-12 hidden flex-col items-center justify-between rounded-lg bg-[#F1F6FF] p-6 md:flex md:flex-row">
             <div>
               <h3 className="font-inter text-xl font-semibold text-[#001433]">Still have questions?</h3>
               <p className="mt-1 font-inter text-[16px] font-normal text-[#4C5563]">Have a question we haven't answered? Get in touch with us and we'll reply ASAP.</p>

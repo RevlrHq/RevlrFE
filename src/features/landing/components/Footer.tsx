@@ -2,20 +2,28 @@ import Link from "next/link"
 
 const Footer = () => {
   return (
-    <footer className="flex flex-col items-center justify-center bg-gradient-to-b from-[#FFFFFF] to-[#CFE2FF] px-24 text-center">
-        <div className="w-screen max-w-[1728px]">
-            <h2 className="w-full font-montserrat text-[400px] font-extrabold text-[#EEF5FF]">REVLR</h2>
+    <footer className="flex flex-col items-center justify-center bg-gradient-to-b from-[#FFFFFF] to-[#CFE2FF] px-4 text-center md:px-24">
+        <div className="w-screen max-w-[400px] md:max-w-[1728px]">
+            <h2 className="w-full font-montserrat text-[100px] font-extrabold text-[#EEF5FF] md:text-[400px]">REVLR</h2>
         </div>
         <div >
-            <h2 className="pb-16 font-montserrat text-4xl font-semibold text-[#001433]">Set Up Your Event In Minutes, Sell Tickets Today</h2>
-            <Link href="/create-event" className="rounded-lg border bg-[#0066FF] px-6 py-4 font-inter text-lg font-normal text-white">Create Your Event Now</Link>
+            <h2 className="pb-16 font-montserrat text-xl font-semibold text-[#001433] md:text-4xl">Set Up Your Event In Minutes, Sell Tickets Today</h2>
+            <Link href="/create-event" className="rounded-xl border bg-[#0066FF] p-4 font-inter text-sm font-normal text-white md:rounded-lg md:px-6 md:py-4 md:text-lg">Create Your Event Now</Link>
         </div>
-        <div className="my-8 border-2 bg-[#D0D5DB]"></div>
-        <div className="flex w-full max-w-[1440px] flex-row justify-between py-8">
-            <div className="flex flex-row gap-8">
+        <div className="mb-8 mt-20 w-full border-t bg-[#6B7380]">
+        </div>
+        <div className="flex w-full max-w-[1440px] flex-col-reverse items-center gap-8 py-2 md:flex-row md:justify-between md:py-8">
+            <div className="hidden flex-row gap-8 md:flex">
                 <h2 className="font-inter text-[12px] font-medium text-[#6B7380]">REVLR. All rights reserved.</h2>
                 <h2 className="font-inter text-[12px] font-medium text-[#6B7380]">Privacy Policy</h2>
                 <h2 className="font-inter text-[12px] font-medium text-[#6B7380]">Terms & Conditions</h2>
+            </div>
+            <div className="flex flex-col items-center gap-4 md:hidden">
+                <div className="flex flex-row justify-between gap-12">
+                    <h2 className="font-inter text-[12px] font-medium text-[#6B7380]">Privacy Policy</h2>
+                    <h2 className="font-inter text-[12px] font-medium text-[#6B7380]">Terms & Conditions</h2>
+                </div>
+                <h2 className="font-inter text-[12px] font-medium text-[#6B7380]">REVLR. All rights reserved.</h2>
             </div>
             <div className="flex flex-row gap-8">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

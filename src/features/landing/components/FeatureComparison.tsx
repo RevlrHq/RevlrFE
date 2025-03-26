@@ -2,22 +2,22 @@ import React from 'react'
 
 const FeatureComparison = () => {
     return (
-      <div className="mx-auto mb-16 px-24 py-8">
-        <h2 className="text-center text-3xl font-semibold text-[#001433] w-[530px] mx-auto">
+      <div className="mb-16 px-4 py-8 md:mx-auto md:px-24">
+        <h2 className="mx-auto w-full text-center font-montserrat text-xl font-semibold text-[#001433] md:w-[530px] md:text-[32px]">
           Plan In Minutes, Not Hours
         </h2>
-        <p className="mt-2 text-center text-lg font-normal text-[#4C5563] w-[530px] mx-auto">
+        <p className="mx-auto mt-2 w-full text-center font-inter text-sm font-normal text-[#4C5563] md:w-[530px] md:text-lg">
           From event creation to ticketing, attendee engagement, vendor
           management and real-time insight, REVLR does it all so you can focus on
           delivering an unforgettable experience.
         </p>
   
         <div className="mt-8 flex flex-col md:flex-row">
-          <div className="flex-1 rounded-lg relative bg-gray-100 px-14 py-12 text-left">
-            <span className="mb-4 absolute top-[-18px] border border-[#E4E6EB] inline-block rounded-full bg-[#FFFFFF] p-2 text-sm font-semibold">
-              Without <strong>REVLR</strong>
+          <div className="relative my-6 flex-1 rounded-lg bg-gray-100 px-8 py-6 text-left md:px-14 md:py-12">
+            <span className="absolute top-[-18px] mb-4 inline-block rounded-full border border-[#E4E6EB] bg-[#FFFFFF] p-2 font-inter text-sm font-medium text-[#4C5563]">
+              Without <strong className='font-[900] text-[#001433]'>REVLR</strong>
             </span>
-            <ul className="mt-4 space-y-6 text-base font-medium text-[#6B7380]">
+            <ul className="mt-2 space-y-6 font-inter text-sm font-medium text-[#6B7380] md:text-base">
               {[
                 "Manually juggling spreadsheets for guest lists",
                 "Struggling to track ticket sales in real time",
@@ -38,11 +38,11 @@ const FeatureComparison = () => {
             </ul>
           </div>
   
-          <div className="flex-1 rounded-lg relative bg-[#FFD70033] px-14 py-12 text-left">
-            <span className="mb-4 absolute top-[-18px] border border-[#6B7380] inline-block rounded-full bg-[#FFFDF0] p-2 text-sm font-semibold">
-              With <strong>REVLR</strong>
+          <div className="relative my-6 flex-1 rounded-lg bg-[#FFD70033] px-8 py-6 text-left md:my-0 md:px-14 md:py-12">
+            <span className="absolute top-[-18px] mb-4 inline-block rounded-full border border-[#6B7380] bg-[#FFFDF0] p-2 font-inter text-sm font-medium text-[#001433]">
+              With <strong className='font-[900]'>✨REVLR </strong>
             </span>
-            <ul className="mt-4 space-y-6 text-lg font-medium text-[#001433]">
+            <ul className="mt-2 space-y-6 font-inter text-base font-medium text-[#001433] md:text-lg">
               {[
                 "Everything in one dashboard, no spreadsheets needed",
                 "Live insights on ticket sales & audience engagement",
@@ -58,7 +58,7 @@ const FeatureComparison = () => {
                 </li>
               ))}
             </ul>
-            <button className="mt-6 rounded-xl border border-[#FFD700] bg-[#FFD700] px-4 py-4 text-center text-sm font-semibold text-[#001433]">
+            <button className="mt-6 rounded-xl border border-[#FFD700] bg-[#FFD700] px-2.5 py-3 text-center font-inter text-sm font-semibold text-[#001433] md:p-4">
               Plan with REVLR
             </button>
           </div>
