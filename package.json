@@ -10,7 +10,7 @@
         "test": "jest --passWithNoTests",
         "test:watch": "jest --watch",
         "format": "prettier --write .",
-        "prepare": "husky",
+        "prepare": "husky && husky install",
         "codegen": "pnpx openapi-merge-cli && openapi --input ./openapi-merged.json --output ./src/lib/services --client axios --useOptions"
     },
     "dependencies": {
@@ -70,7 +70,7 @@
         "eslint-plugin-import": "^2.31.0",
         "eslint-plugin-next": "^0.0.0",
         "eslint-plugin-tailwindcss": "^3.17.5",
-        "husky": "^9.1.7",
+        "husky": "^8.0.0",
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^29.7.0",
         "lint-staged": "^15.2.10",
