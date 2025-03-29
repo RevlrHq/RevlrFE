@@ -8,7 +8,7 @@ interface HeroProps {
 export const Hero = ({ isOrganizer, setIsOrganizer }: HeroProps) => {
     return (
         <main
-            className={`mx-auto w-full max-w-[1440px] px-4 pb-12 pt-48 ${
+            className={`mx-auto w-full px-4 pb-12 pt-36 md:max-w-[1440px] md:pt-48 ${
                 isOrganizer ? 'bg-cover bg-center bg-no-repeat' : ''
             }`}
             style={
@@ -20,7 +20,7 @@ export const Hero = ({ isOrganizer, setIsOrganizer }: HeroProps) => {
             <div className='mb-4 flex justify-center'>
                 <div className='flex items-center gap-4 p-1'>
                     <span
-                        className={`py-1 pl-4 pr-2 font-inter ${!isOrganizer ? 'text-lg font-semibold text-[#001433]' : 'text-lg font-medium text-[#6B7380]'}`}
+                        className={`py-1 pl-4 pr-2 font-inter ${!isOrganizer ? 'text-[12px] font-semibold text-[#001433] md:text-lg' : 'text-[12px] font-medium text-[#6B7380] md:text-lg'}`}
                     >
                         For Organisers
                     </span>
@@ -75,32 +75,32 @@ export const Hero = ({ isOrganizer, setIsOrganizer }: HeroProps) => {
                         </svg>
                     )}
                     <span
-                        className={`py-1 pl-2 pr-4 font-inter ${!isOrganizer ? 'text-lg font-medium text-[#6B7380]' : 'text-lg font-semibold text-[#001433]'}`}
+                        className={`py-1 pl-2 pr-4 font-inter ${!isOrganizer ? 'text-[12px] font-medium text-[#6B7380] md:text-lg' : 'text-[12px] font-semibold text-[#001433] md:text-lg'}`}
                     >
                         For Attendees
                     </span>
                 </div>
             </div>
 
-            {isOrganizer ? (
+          {isOrganizer ? (
                 <div className='mb-8 text-center'>
-                    <h1 className='mb-4 font-montserrat text-[56px] font-semibold text-[#001433]'>
+                    <h1 className='mb-4 font-montserrat text-[36px] font-semibold text-[#001433] md:text-[56px]'>
                         The All-In-One Platform For
                         <br />
                         Event Management & Ticketing
                     </h1>
-                    <p className='mb-12 text-[20px] font-normal text-[#001433]'>
+                    <p className='mb-12 text-[14px] font-normal text-[#001433] md:text-[20px]'>
                         Create, manage, and sell tickets to your events with
                         powerful, easy-to-use tools.
                     </p>
                     <div className='flex justify-center'>
-                        <div className='relative w-full max-w-[558px]'>
+                        <div className='relative h-[40px] w-[558px] gap-2 md:h-[56px]'>
                             <input
                                 type='email'
                                 placeholder='Enter your email'
-                                className='w-full rounded-md border border-[#D0D5DB] p-4 pr-24'
+                                className='size-full rounded-[12px] border border-[#D0D5DB] p-4 pr-[185px]'
                             />
-                            <button className='absolute right-1 top-1/2 w-[185px] -translate-y-1/2 rounded-md bg-[#FFD700] p-4 font-semibold text-[#001433]'>
+                            <button className='absolute right-[2px] top-1/2 flex h-[38px] w-[120px] -translate-y-1/2 items-center justify-center rounded-[12px] bg-[#FFD700] p-2 font-semibold text-[#001433] md:h-[40px] md:w-[185px] md:py-[26px]'>
                                 Create Event
                             </button>
                         </div>

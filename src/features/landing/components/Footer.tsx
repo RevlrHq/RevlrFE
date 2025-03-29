@@ -2,19 +2,19 @@ import Link from 'next/link';
 
 const Footer = () => {
     return (
-        <footer className='flex flex-col items-center justify-center bg-gradient-to-b from-[#FFFFFF] to-[#CFE2FF] px-24 text-center'>
-            <div className='w-screen max-w-[1728px]'>
-                <h2 className='w-full font-montserrat text-[400px] font-extrabold text-[#EEF5FF]'>
+        <footer className='flex flex-col items-center justify-center bg-gradient-to-b from-[#FFFFFF] to-[#CFE2FF] px-4 text-center md:px-24'>
+            <div className='w-screen max-w-[400px] md:max-w-[1728px]'>
+                <h2 className='w-full font-montserrat text-[100px] font-extrabold text-[#EEF5FF] md:text-[400px]'>
                     REVLR
                 </h2>
             </div>
             <div>
-                <h2 className='pb-16 font-montserrat text-4xl font-semibold text-[#001433]'>
+                <h2 className='pb-16 font-montserrat text-xl font-semibold text-[#001433] md:text-4xl'>
                     Set Up Your Event In Minutes, Sell Tickets Today
                 </h2>
                 <Link
                     href='/create-event'
-                    className='rounded-lg border bg-[#0066FF] px-6 py-4 font-inter text-lg font-normal text-white'
+                    className='rounded-xl border bg-[#0066FF] p-4 font-inter text-sm font-normal text-white md:rounded-lg md:px-6 md:py-4 md:text-lg'
                 >
                     Create Your Event Now
                 </Link>

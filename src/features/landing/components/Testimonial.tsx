@@ -2,13 +2,13 @@ import React from 'react';
 
 const Testimonial = () => {
     return (
-        <div className='mx-auto rounded-xl px-24 py-8'>
-            <div className='flex flex-col gap-8 rounded-xl bg-blue-50 px-48 py-32'>
-                <h3 className='mb-4 text-2xl font-bold text-[#001433]'>
+        <div className='rounded-xl px-4 py-2 md:mx-auto md:px-24 md:py-8'>
+            <div className='flex flex-col gap-4 rounded-xl bg-[#F1F6FF] px-8 py-4 md:gap-8 md:px-48 md:py-32'>
+                <h3 className='mb-2 font-montserrat text-lg font-bold text-[#001433] md:text-2xl'>
                     What Our Customers Say
                 </h3>
 
-                <p className='mb-6 text-3xl font-normal text-[#1F2938]'>
+                <p className='mb-2 font-inter text-lg font-normal text-[#1F2938] md:text-3xl'>
                     "REVLR completely transformed how we manage our conferences.
                     The automation features saved us hours of work & ticket
                     sales have been smoother!"
@@ -18,20 +18,20 @@ const Testimonial = () => {
                     <img
                         src='https://randomuser.me/api/portraits/men/32.jpg'
                         alt='Alex Morgan'
-                        className='size-16 rounded-full'
+                        className='size-10 rounded-full md:size-16'
                     />
                     <div className='text-left'>
-                        <p className='text-[20px] font-medium text-[#374252]'>
+                        <p className='font-inter text-[16px] font-medium text-[#374252] md:text-xl'>
                             Alex Morgan
                         </p>
-                        <p className='text-[18px] font-normal text-[#6B7380]'>
+                        <p className='font-inter text-sm font-normal text-[#6B7380] md:text-lg'>
                             Event Director at SummitPro
                         </p>
                     </div>
                 </div>
 
-                <div className='flex gap-4'>
-                    <button className='flex h-8 w-8 items-center justify-center rounded-full bg-blue-200 text-blue-600 hover:bg-blue-300'>
+                <div className='flex gap-8 md:gap-4'>
+                    <button className='flex size-8 items-center justify-center rounded-full bg-blue-200 text-blue-600 hover:bg-blue-300'>
                         <svg
                             width='35'
                             height='34'
@@ -45,7 +45,7 @@ const Testimonial = () => {
                             />
                         </svg>
                     </button>
-                    <button className='flex h-8 w-8 items-center justify-center rounded-full bg-blue-200 text-blue-600 hover:bg-blue-300'>
+                    <button className='flex size-8 items-center justify-center rounded-full bg-blue-200 text-blue-600 hover:bg-blue-300'>
                         <svg
                             width='35'
                             height='34'

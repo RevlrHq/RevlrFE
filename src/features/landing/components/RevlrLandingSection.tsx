@@ -1,20 +1,19 @@
 const RevlrLandingSection = () => {
     return (
-        <section className='px-24 py-16 text-center'>
-            <h1 className='mb-4 text-3xl font-semibold text-[#001433]'>
+        <section className='p-4 text-center md:px-24 md:py-16'>
+            <h1 className='mb-4 font-montserrat text-xl font-semibold text-[#001433] md:text-[32px]'>
                 Who Is REVLR For?
             </h1>
 
-            <p className='mx-auto mb-16 max-w-[470px] text-lg font-normal text-[#4C5563]'>
+            <p className='mx-auto mb-16 max-w-[470px] font-inter text-sm font-normal text-[#4C5563] md:text-lg'>
                 While most event platforms focus on ticketing or logistics,
                 REVLR offers an all-in-one event ecosystem for organizations,
                 businesses and independent planners.
             </p>
 
             <div className='grid gap-6 md:grid-cols-3'>
-                {/* For Organizations & Enterprises */}
-                <div className='rounded-lg bg-[#F1F6FF] px-8 pb-2 pt-8'>
-                    <div className='flex justify-center pb-6 pt-24'>
+                <div className='group relative h-[400px] cursor-pointer rounded-lg bg-[#F1F6FF] px-8 pb-2 pt-8'>
+                    <div className='hidden justify-center pb-6 pt-24 md:flex'>
                         <svg
                             width='130'
                             height='118'
@@ -28,18 +27,22 @@ const RevlrLandingSection = () => {
                             />
                         </svg>
                     </div>
-                    <h2 className='pb-3 text-xl font-semibold text-[#374252]'>
+                    <h2 className='hidden pb-3 text-xl font-semibold text-[#374252] md:block'>
                         For Organizations & Enterprises
                     </h2>
-                    <p className='text-base font-normal text-[#6B7380]'>
+                    <p className='hidden text-base font-normal text-[#6B7380] md:block'>
                         Manage multiple events, track performance and easily
                         connect to your business tools.
                     </p>
+                    <img
+                        src='/assets/images/organization.png'
+                        alt='Organizations Hover Image'
+                        className='absolute inset-0 mx-auto block size-full rounded-lg object-cover group-hover:block md:hidden'
+                    />
                 </div>
 
-                {/* For Individual Event Creators */}
-                <div className='rounded-lg bg-[#F1F6FF] px-8 pb-2 pt-8'>
-                    <div className='flex justify-center pb-6 pt-24'>
+                <div className='group relative h-[400px] cursor-pointer rounded-lg bg-[#F1F6FF] px-8 pb-2 pt-8'>
+                    <div className='hidden justify-center pb-6 pt-24 md:flex'>
                         <svg
                             width='104'
                             height='130'
@@ -57,18 +60,22 @@ const RevlrLandingSection = () => {
                             />
                         </svg>
                     </div>
-                    <h2 className='pb-3 text-xl font-semibold text-[#374252]'>
+                    <h2 className='hidden pb-3 text-xl font-semibold text-[#374252] md:block'>
                         For Individual Event Creators
                     </h2>
-                    <p className='text-base font-normal text-[#6B7380]'>
+                    <p className='hidden text-base font-normal text-[#6B7380] md:block'>
                         Customize event pages, automate guest engagement & boost
                         ticket sales.
                     </p>
+                    <img
+                        src='/assets/images/individual.png'
+                        alt='Organizations Hover Image'
+                        className='absolute inset-0 mx-auto block size-full rounded-lg object-cover group-hover:block md:hidden'
+                    />
                 </div>
 
-                {/* For Attendees */}
-                <div className='rounded-lg bg-[#F1F6FF] px-8 pb-2 pt-8'>
-                    <div className='flex justify-center pb-6 pt-24'>
+                <div className='group relative h-[400px] rounded-lg bg-[#F1F6FF] px-8 pb-2 pt-8'>
+                    <div className='hidden justify-center pb-6 pt-24 md:flex'>
                         <svg
                             width='157'
                             height='156'
@@ -82,13 +89,18 @@ const RevlrLandingSection = () => {
                             />
                         </svg>
                     </div>
-                    <h2 className='pb-3 text-xl font-semibold text-[#374252]'>
+                    <h2 className='hidden pb-3 text-xl font-semibold text-[#374252] md:block'>
                         For Attendees
                     </h2>
-                    <p className='text-base font-normal text-[#6B7380]'>
+                    <p className='hidden text-base font-normal text-[#6B7380] md:block'>
                         Discover events, buy & resell tickets and get real-time
                         updates fast.
                     </p>
+                    <img
+                        src='/assets/images/attendee.png'
+                        alt='Organizations Hover Image'
+                        className='absolute inset-0 mx-auto block size-full rounded-lg object-cover group-hover:block md:hidden'
+                    />
                 </div>
             </div>
         </section>
