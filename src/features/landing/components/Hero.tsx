@@ -82,7 +82,7 @@ export const Hero = ({ isOrganizer, setIsOrganizer }: HeroProps) => {
                 </div>
             </div>
 
-          {isOrganizer ? (
+            {isOrganizer ? (
                 <div className='mb-8 text-center'>
                     <h1 className='mb-4 font-montserrat text-[36px] font-semibold text-[#001433] md:text-[56px]'>
                         The All-In-One Platform For
