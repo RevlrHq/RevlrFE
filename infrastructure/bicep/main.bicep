@@ -11,7 +11,7 @@ param projectName string = 'revlr'
 param aksAdminUsername string = 'aksadmin'
 
 // Variables for resource naming
-var containerRegistryName = '${projectName}${environment}acr'
+var containerRegistryName = '${projectName}${environment}'
 var aksClusterName = '${projectName}-${environment}-aks'
 
 // Container Registry
