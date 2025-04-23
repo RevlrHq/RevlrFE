@@ -16,7 +16,7 @@ export const Navbar = ({ isOrganizer }: NavbarProps) => {
             <div className='flex w-full max-w-[1440px] items-center justify-between gap-8 px-6 py-5 md:mx-auto md:px-24'>
                 <Link
                     href='/'
-                    className='font-montserrat text-2xl font-extrabold text-revlr-primary'
+                    className='font-montserrat text-2xl font-extrabold text-revlr-primary-blue'
                 >
                     <span className='text-yellow-400'>✨</span>REVLR
                 </Link>
@@ -45,13 +45,13 @@ export const Navbar = ({ isOrganizer }: NavbarProps) => {
                         </div>
                     ) : (
                         <div className='relative flex items-center'>
-                            <span className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400'>
+                            <span className='absolute left-3 top-1/2 -translate-y-1/2 text-[#0066FF]'>
                                 <svg
                                     width='16'
                                     height='16'
                                     viewBox='0 0 16 16'
                                     fill='none'
-                                    xmlns='http:www.w3.org/2000/svg'
+                                    xmlns='http://www.w3.org/2000/svg'
                                 >
                                     <path
                                         d='M5.91667 11.3333C4.40278 11.3333 3.12153 10.809 2.07292 9.76042C1.02431 8.71181 0.5 7.43056 0.5 5.91667C0.5 4.40278 1.02431 3.12153 2.07292 2.07292C3.12153 1.02431 4.40278 0.5 5.91667 0.5C7.43056 0.5 8.71181 1.02431 9.76042 2.07292C10.809 3.12153 11.3333 4.40278 11.3333 5.91667C11.3333 6.52778 11.2361 7.10417 11.0417 7.64583C10.8472 8.1875 10.5833 8.66667 10.25 9.08333L14.9167 13.75C15.0694 13.9028 15.1458 14.0972 15.1458 14.3333C15.1458 14.5694 15.0694 14.7639 14.9167 14.9167C14.7639 15.0694 14.5694 15.1458 14.3333 15.1458C14.0972 15.1458 13.9028 15.0694 13.75 14.9167L9.08333 10.25C8.66667 10.5833 8.1875 10.8472 7.64583 11.0417C7.10417 11.2361 6.52778 11.3333 5.91667 11.3333ZM5.91667 9.66667C6.95833 9.66667 7.84375 9.30208 8.57292 8.57292C9.30208 7.84375 9.66667 6.95833 9.66667 5.91667C9.66667 4.875 9.30208 3.98958 8.57292 3.26042C7.84375 2.53125 6.95833 2.16667 5.91667 2.16667C4.875 2.16667 3.98958 2.53125 3.26042 3.26042C2.53125 3.98958 2.16667 4.875 2.16667 5.91667C2.16667 6.95833 2.53125 7.84375 3.26042 8.57292C3.98958 9.30208 4.875 9.66667 5.91667 9.66667Z'
@@ -62,7 +62,7 @@ export const Navbar = ({ isOrganizer }: NavbarProps) => {
                             <input
                                 type='text'
                                 placeholder='Browse Events'
-                                className='w-[300px] rounded-md border py-2 pl-10 pr-4 font-inter text-sm font-medium md:w-[701px]'
+                                className='w-[300px] rounded-xl border border-[#E5F0FF] bg-[#F1F6FF] py-3 pl-10 pr-4 font-inter text-sm font-medium text-[#0066FF] md:w-[701px]'
                             />
                         </div>
                     )}
@@ -71,7 +71,7 @@ export const Navbar = ({ isOrganizer }: NavbarProps) => {
                         <div className=''>
                             <Link
                                 href='/create-event'
-                                className='hidden rounded-md bg-revlr-primary px-4 py-2 text-sm font-semibold text-white md:block'
+                                className='hidden rounded-md bg-revlr-primary-blue px-4 py-2 text-sm font-semibold text-white md:block'
                             >
                                 Create Event
                             </Link>
@@ -128,7 +128,7 @@ export const Navbar = ({ isOrganizer }: NavbarProps) => {
                     <div>
                         <Link
                             href='/create-event'
-                            className='rounded-md bg-revlr-primary px-4 py-2 text-sm font-semibold text-white'
+                            className='rounded-md bg-revlr-primary-blue px-4 py-2 text-sm font-semibold text-white'
                         >
                             Create Event
                         </Link>
@@ -193,7 +193,7 @@ export const Navbar = ({ isOrganizer }: NavbarProps) => {
                         </Link>
                         <Link
                             href='/create-event'
-                            className='rounded-md bg-revlr-primary px-4 py-2 text-center text-sm font-semibold text-white'
+                            className='rounded-md bg-revlr-primary-blue px-4 py-2 text-center text-sm font-semibold text-white'
                         >
                             Create Event
                         </Link>

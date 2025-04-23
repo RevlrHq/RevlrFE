@@ -113,7 +113,10 @@ module.exports = {
                     indigo: '#382395',
                 },
                 revlr: {
-                    primary: '#0066FF',
+                    'primary-blue': '#0066FF',
+                    'primary-grey': '#F5F5F5',
+                    'primary-yellow': ''
+                    
                 },
             },
         },
