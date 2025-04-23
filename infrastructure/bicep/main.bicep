@@ -40,7 +40,7 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2023-07-01' = {
       {
         name: 'nodepool1'
         count: 1
-        vmSize: 'Standard_B2s'
+        vmSize: 'Standard_A2_v2'
         mode: 'System'
         minCount: 1
         maxCount: 3
