@@ -63,15 +63,15 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2023-01-01' = {
 }
 
 // Grant AKS access to ACR
-resource aksAcrPullRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(aksCluster.id, acr.id, 'acrpull')
-  scope: acr
-  properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d') // AcrPull role
-    principalId: aksCluster.properties.identityProfile.kubeletidentity.objectId
-    principalType: 'ServicePrincipal'
-  }
-}
+// resource aksAcrPullRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+//   name: guid(aksCluster.id, acr.id, 'acrpull')
+//   scope: acr
+//   properties: {
+//     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d') // AcrPull role
+//     principalId: aksCluster.properties.identityProfile.kubeletidentity.objectId
+//     principalType: 'ServicePrincipal'
+//   }
+// }
 
 // Outputs
 output aksClusterName string = aksCluster.name
