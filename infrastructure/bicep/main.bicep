@@ -13,6 +13,15 @@ param aksAdminUsername string = 'aksadmin'
 // Variables for resource naming
 var containerRegistryName = '${projectName}${environment}'
 var aksClusterName = '${projectName}-${environment}-aks'
+param shortenedEnvironment string = environment == 'Developement' ? 'dev' : environment == 'Production' ? 'prod' : environment == 'Staging' ? 'stg' : environment
+param aksIdentityName string = 'aks-identity-${shortenedEnvironment}'
+param aksNodeCount int = 2
+param aksNodeSize string = 'Standard_A2_v2'
+
+resource aksIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  name: aksIdentityName
+  location: location
+}
 
 // Container Registry
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
@@ -27,35 +36,28 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
 }
 
 // AKS Cluster
-resource aksCluster 'Microsoft.ContainerService/managedClusters@2023-07-01' = {
+resource aksCluster 'Microsoft.ContainerService/managedClusters@2023-01-01' = {
   name: aksClusterName
   location: location
   identity: {
-    type: 'SystemAssigned'
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${aksIdentity.id}': {}
+    }
   }
   properties: {
-    dnsPrefix: '${projectName}-${environment}'
-    enableRBAC: true
     agentPoolProfiles: [
       {
         name: 'nodepool1'
-        count: 1
-        vmSize: 'Standard_A2_v2'
+        count: aksNodeCount
+        vmSize: aksNodeSize
+        osType: 'Linux'
         mode: 'System'
-        minCount: 1
-        maxCount: 3
-        enableAutoScaling: true
       }
     ]
-    linuxProfile: {
-      adminUsername: aksAdminUsername
-      ssh: {
-        publicKeys: [
-          {
-            keyData: loadTextContent('ssh-key.pub')
-          }
-        ]
-      }
+    dnsPrefix: 'revlr-${environment}'
+    networkProfile: {
+      networkPlugin: 'azure'
     }
   }
 }
