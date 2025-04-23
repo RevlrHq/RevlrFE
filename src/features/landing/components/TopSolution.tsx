@@ -9,10 +9,10 @@ const TopSolution = () => {
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-4'>
                     {/* Sell More Tickets Section */}
                     <div className='rounded-lg bg-gray-100 p-6 shadow-sm md:col-span-2'>
-                        <h2 className='mb-2 text-xl font-semibold text-[#374252]'>
+                        <h2 className='mb-2 font-inter text-xl font-semibold text-[#374252]'>
                             Sell More Tickets, Faster
                         </h2>
-                        <p className='mb-6 text-base font-normal text-[#6B7380]'>
+                        <p className='mb-6 font-inter text-base font-normal text-[#6B7380]'>
                             Reach wider audiences through automated promotions,
                             social media integration, and advanced ticketing
                             that drives conversions.
@@ -820,10 +820,10 @@ const TopSolution = () => {
 
                     {/* Automate Everything Section */}
                     <div className='rounded-lg bg-gray-100 p-6 shadow-sm md:col-span-2'>
-                        <h2 className='mb-2 text-xl font-semibold text-[#374252]'>
+                        <h2 className='mb-2 font-inter text-xl font-semibold text-[#374252]'>
                             Automate Everything
                         </h2>
-                        <p className='mb-6 text-base font-normal text-[#6B7380]'>
+                        <p className='mb-6 font-inter text-base font-normal text-[#6B7380]'>
                             Reduce manual work with smart workflows that manage
                             RSVPs, send event reminders, and keep attendees
                             engaged effortlessly.
@@ -1440,10 +1440,10 @@ const TopSolution = () => {
 
                     {/* Manage Multiple Events Section */}
                     <div className='rounded-lg bg-gray-100 p-6 shadow-sm md:col-span-1'>
-                        <h2 className='mb-2 text-xl font-bold text-gray-900'>
+                        <h2 className='mb-2 font-inter text-xl font-semibold text-[#374252]'>
                             Manage Multiple Events at Once
                         </h2>
-                        <p className='mb-6 text-gray-600'>
+                        <p className='mb-6 font-inter text-base font-normal text-[#6B7380]'>
                             Manage unlimited events simultaneously with custom
                             branding and streamlined department-level billing.
                         </p>
@@ -1499,10 +1499,10 @@ const TopSolution = () => {
 
                     {/* Track Success Section */}
                     <div className='rounded-lg bg-gray-100 p-6 shadow-sm md:col-span-3'>
-                        <h2 className='mb-2 text-xl font-bold text-gray-900'>
+                        <h2 className='mb-2 font-inter text-xl font-semibold text-[#374252]'>
                             Track Success in Real Time
                         </h2>
-                        <p className='mb-6 text-gray-600'>
+                        <p className='mb-6 font-inter text-base font-normal text-[#6B7380]'>
                             Gain real-time insights with AI-powered analytics
                             that track ticket sales, audience engagement, and
                             overall event performance.
@@ -1556,10 +1556,10 @@ const TopSolution = () => {
 
                     {/* One Dashboard Section */}
                     <div className='rounded-lg bg-gray-100 p-6 shadow-sm md:col-span-3'>
-                        <h2 className='mb-2 text-xl font-bold text-gray-900'>
+                        <h2 className='mb-2 font-inter text-xl font-semibold text-[#374252]'>
                             One Dashboard, Complete Control
                         </h2>
-                        <p className='mb-6 text-gray-600'>
+                        <p className='mb-6 font-inter text-base font-normal text-[#6B7380]'>
                             Centralised dashboards and intuitive planning tools
                             make it easy to manage budgets, vendors & attendee
                             experiences in one place.
@@ -1643,10 +1643,10 @@ const TopSolution = () => {
 
                     {/* Ensure Compliance Section */}
                     <div className='rounded-lg bg-gray-100 p-6 shadow-sm md:col-span-1'>
-                        <h2 className='mb-2 text-xl font-bold text-gray-900'>
+                        <h2 className='mb-2 font-inter text-xl font-semibold text-[#374252]'>
                             Ensure Compliance & Security
                         </h2>
-                        <p className='mb-6 text-gray-600'>
+                        <p className='mb-6 font-inter text-base font-normal text-[#6B7380]'>
                             Enterprise-grade security, policy enforcement and
                             seamless HR integrations keep your events secure and
                             compliant.

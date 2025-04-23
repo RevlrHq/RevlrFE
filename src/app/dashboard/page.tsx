@@ -1,8 +1,7 @@
-import React from 'react';
-import Dashboard from '@features/dashboard/Dashboard';
+import { redirect } from 'next/navigation';
 
 const page = () => {
-    return <Dashboard />;
+    redirect('/dashboard/event');
 };
 
 export default page;

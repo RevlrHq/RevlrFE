@@ -14,7 +14,7 @@ import RevlrLandingSection from './components/RevlrLandingSection';
 import TopSolution from './components/TopSolution';
 
 const Landing = () => {
-    const [isOrganizer, setIsOrganizer] = useState(false);
+    const [isOrganizer, setIsOrganizer] = useState(true);
 
     return (
         <div>

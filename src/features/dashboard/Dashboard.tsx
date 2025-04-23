@@ -2,7 +2,8 @@
 
 import Sidebar from './components/Sidebar';
 import DashboardHeader from './components/DashboardHeader';
-import EventBoard from './components/EventBoard';
+import EventBoard from './EventBoard';
+import Settings from './Settings';
 import { usePathname } from 'next/navigation';
 
 export default function Dashboard() {
@@ -14,8 +15,8 @@ export default function Dashboard() {
                 return <EventBoard />;
             // case '/dashboard/payouts':
             //   return <PayoutsBoard />;
-            // case '/dashboard/settings':
-            //   return <SettingsBoard />;
+            case '/dashboard/settings':
+                return <Settings />;
             default:
                 return <EventBoard />;
         }
@@ -23,11 +24,9 @@ export default function Dashboard() {
 
     return (
         <div className='flex h-screen bg-gray-50'>
-            {/* Sidebar */}
             <Sidebar />
 
-            {/* Main Content */}
-            <div className='flex flex-1 flex-col overflow-hidden'>
+            <div className='flex flex-1 flex-col'>
                 {/* Header */}
                 <DashboardHeader />
 

@@ -1,10 +1,7 @@
 {
     "inputs": [
         {
-            "inputURL": "https://chit-gateway-dev.azurewebsites.net/swagger/Identity/swagger.json"
-        },
-        {
-            "inputURL": "https://chit-gateway-dev.azurewebsites.net/swagger/Wallet/swagger.json"
+            "inputURL": "http://api-dev.revlr.io/openapi/v1.json"
         }
     ],
     "output": "./openapi-merged.json"

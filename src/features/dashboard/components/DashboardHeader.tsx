@@ -1,11 +1,24 @@
-import React from 'react';
+'use client';
+
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 const DashboardHeader = () => {
+    const pathname = usePathname();
+
+    const getTitleFromPath = () => {
+        const segments = pathname.split('/').filter(Boolean);
+        const lastSegment = segments[segments.length - 1] || 'Dashboard';
+        return lastSegment
+            .split('-')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    };
+
     return (
         <header className='flex items-center justify-between border-b border-gray-200 bg-white p-4'>
             <h1 className='font-inter text-xl font-semibold text-[#001433]'>
-                Events
+                {getTitleFromPath()}
             </h1>
 
             <div className='flex items-center'>

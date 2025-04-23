@@ -27,6 +27,7 @@ export const Hero = ({ isOrganizer, setIsOrganizer }: HeroProps) => {
                     {isOrganizer ? (
                         <svg
                             onClick={() => setIsOrganizer(!isOrganizer)}
+                            className='cursor-pointer'
                             width='40'
                             height='24'
                             viewBox='0 0 40 24'
@@ -51,6 +52,7 @@ export const Hero = ({ isOrganizer, setIsOrganizer }: HeroProps) => {
                     ) : (
                         <svg
                             onClick={() => setIsOrganizer(!isOrganizer)}
+                            className='cursor-pointer'
                             width='41'
                             height='24'
                             viewBox='0 0 41 24'

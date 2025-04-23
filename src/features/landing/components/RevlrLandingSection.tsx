@@ -1,3 +1,5 @@
+import { OrganizationAndEnterpriseIcon } from '@src/icons';
+
 const RevlrLandingSection = () => {
     return (
         <section className='p-4 text-center md:px-24 md:py-16'>
@@ -14,18 +16,7 @@ const RevlrLandingSection = () => {
             <div className='grid gap-6 md:grid-cols-3'>
                 <div className='group relative h-[400px] cursor-pointer rounded-lg bg-[#F1F6FF] px-8 pb-2 pt-8'>
                     <div className='hidden justify-center pb-6 pt-24 md:flex'>
-                        <svg
-                            width='130'
-                            height='118'
-                            viewBox='0 0 130 118'
-                            fill='none'
-                            xmlns='http://www.w3.org/2000/svg'
-                        >
-                            <path
-                                d='M65 26.5V13.5C65 6.35 59.15 0.5 52 0.5H13C5.85 0.5 0 6.35 0 13.5V104.5C0 111.65 5.85 117.5 13 117.5H117C124.15 117.5 130 111.65 130 104.5V39.5C130 32.35 124.15 26.5 117 26.5H65ZM26 104.5H13V91.5H26V104.5ZM26 78.5H13V65.5H26V78.5ZM26 52.5H13V39.5H26V52.5ZM26 26.5H13V13.5H26V26.5ZM52 104.5H39V91.5H52V104.5ZM52 78.5H39V65.5H52V78.5ZM52 52.5H39V39.5H52V52.5ZM52 26.5H39V13.5H52V26.5ZM110.5 104.5H65V91.5H78V78.5H65V65.5H78V52.5H65V39.5H110.5C114.075 39.5 117 42.425 117 46V98C117 101.575 114.075 104.5 110.5 104.5ZM104 52.5H91V65.5H104V52.5ZM104 78.5H91V91.5H104V78.5Z'
-                                fill='#3D8BFF'
-                            />
-                        </svg>
+                        <OrganizationAndEnterpriseIcon />
                     </div>
                     <h2 className='hidden pb-3 text-xl font-semibold text-[#374252] md:block'>
                         For Organizations & Enterprises
@@ -42,24 +33,7 @@ const RevlrLandingSection = () => {
                 </div>
 
                 <div className='group relative h-[400px] cursor-pointer rounded-lg bg-[#F1F6FF] px-8 pb-2 pt-8'>
-                    <div className='hidden justify-center pb-6 pt-24 md:flex'>
-                        <svg
-                            width='104'
-                            height='130'
-                            viewBox='0 0 104 130'
-                            fill='none'
-                            xmlns='http://www.w3.org/2000/svg'
-                        >
-                            <path
-                                d='M51.93 26C59.1097 26 64.93 20.1797 64.93 13C64.93 5.8203 59.1097 0 51.93 0C44.7503 0 38.93 5.8203 38.93 13C38.93 20.1797 44.7503 26 51.93 26Z'
-                                fill='#3D8BFF'
-                            />
-                            <path
-                                d='M77.215 39.715C74.68 37.18 70.325 32.5 61.875 32.5C60.51 32.5 52.645 32.5 45.365 32.5C29.375 32.435 16.05 20.8 13.385 5.525C12.865 2.34 10.2 0 7.01497 0C3.04997 0 -0.070034 3.51 0.514966 7.41C3.37497 24.7 15.985 38.675 32.43 43.615V123.5C32.43 127.075 35.355 130 38.93 130C42.505 130 45.43 127.075 45.43 123.5V91H58.43V123.5C58.43 127.075 61.355 130 64.93 130C68.505 130 71.43 127.075 71.43 123.5V52.325L92.49 73.385C95.025 75.92 99.12 75.92 101.655 73.385C104.19 70.85 104.19 66.755 101.655 64.22L77.215 39.715Z'
-                                fill='#3D8BFF'
-                            />
-                        </svg>
-                    </div>
+                    <div className='hidden justify-center pb-6 pt-24 md:flex'></div>
                     <h2 className='hidden pb-3 text-xl font-semibold text-[#374252] md:block'>
                         For Individual Event Creators
                     </h2>
@@ -74,7 +48,7 @@ const RevlrLandingSection = () => {
                     />
                 </div>
 
-                <div className='group relative h-[400px] rounded-lg bg-[#F1F6FF] px-8 pb-2 pt-8'>
+                <div className='group relative h-[400px] cursor-pointer rounded-lg bg-[#F1F6FF] px-8 pb-2 pt-8'>
                     <div className='hidden justify-center pb-6 pt-24 md:flex'>
                         <svg
                             width='157'
