@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface IEventCardProps {
     event: {
@@ -37,7 +38,10 @@ const EventCard = ({ event }: IEventCardProps) => {
     };
 
     return (
-        <div className='flex flex-row gap-4 rounded-lg bg-white p-6 shadow-sm'>
+        <Link
+            href='/dashboard/event/1'
+            className='flex flex-row gap-4 rounded-lg bg-white p-6 shadow-sm'
+        >
             <div className='relative size-48 overflow-hidden rounded-xl'>
                 {event.image ? (
                     <div className='relative size-full'>
@@ -69,14 +73,12 @@ const EventCard = ({ event }: IEventCardProps) => {
                 )}
             </div>
 
-            {/* Event Details */}
             <div className='flex grow flex-col justify-between'>
                 <div className='space-y-4'>
                     <h2 className='font-inter text-base font-semibold text-[#001433]'>
                         {event.title}
                     </h2>
 
-                    {/* Date */}
                     <div className='flex items-center gap-2 text-gray-600'>
                         <svg
                             width='14'
@@ -95,7 +97,6 @@ const EventCard = ({ event }: IEventCardProps) => {
                         </span>
                     </div>
 
-                    {/* Time */}
                     <div className='flex items-center gap-2 text-gray-600'>
                         <svg
                             className='size-4'
@@ -118,7 +119,6 @@ const EventCard = ({ event }: IEventCardProps) => {
                 </div>
 
                 <div className='flex items-center justify-between'>
-                    {/* Ticket Sales */}
                     <div className='flex items-center gap-2 text-gray-500'>
                         <svg
                             width='20'
@@ -140,7 +140,6 @@ const EventCard = ({ event }: IEventCardProps) => {
                         </span>
                     </div>
 
-                    {/* Status Badge */}
                     <span
                         className={`rounded-full border px-2 py-1 font-inter text-xs font-medium ${getStatusBadgeStyles(event.status)}`}
                     >
@@ -148,7 +147,7 @@ const EventCard = ({ event }: IEventCardProps) => {
                     </span>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 };
 

@@ -76,6 +76,7 @@ export const Hero = ({ isOrganizer, setIsOrganizer }: HeroProps) => {
                             />
                         </svg>
                     )}
+
                     <span
                         className={`py-1 pl-2 pr-4 font-inter ${!isOrganizer ? 'text-[12px] font-medium text-[#6B7380] md:text-lg' : 'text-[12px] font-semibold text-[#001433] md:text-lg'}`}
                     >
@@ -111,12 +112,12 @@ export const Hero = ({ isOrganizer, setIsOrganizer }: HeroProps) => {
             ) : (
                 <>
                     <div className='mb-4 text-center'>
-                        <h1 className='mb-4 font-montserrat text-[56px] font-semibold text-[#001433]'>
-                            Find Events You Love
+                        <h1 className='mb-4 font-montserrat text-[33px] font-semibold text-[#001433] md:text-[56px]'>
+                            Find Events You Love,
                             <br />
                             Sell Tickets You Can't Use
                         </h1>
-                        <p className='mb-8 font-inter text-[20px] font-normal text-[#4C5563]'>
+                        <p className='mb-8 font-inter text-sm font-normal text-[#4C5563] md:text-[20px]'>
                             Book events with no regrets. If plans change, you
                             can resell your ticket hassle-free.
                         </p>

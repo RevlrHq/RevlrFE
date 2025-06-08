@@ -1,7 +1,7 @@
-import Payments from '@features/dashboard/OrderHistory';
+import Payment from '@features/dashboard/Payment';
 
 const page = () => {
-    return <Payments />;
+    return <Payment />;
 };
 
 export default page;

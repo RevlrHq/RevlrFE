@@ -28,7 +28,7 @@ const navigationItems = [
                 />
             </svg>
         ),
-        subcategories: ['/event/create-event', '/event/event-details'],
+        subcategories: ['/event/create-event', '/event/'],
     },
     {
         name: 'Payments',
@@ -47,11 +47,6 @@ const navigationItems = [
                 />
             </svg>
         ),
-        subcategories: [
-            '/payment/insights',
-            '/payment/payout-management',
-            '/payment/order-history',
-        ],
     },
     {
         name: 'Settings',
@@ -70,18 +65,11 @@ const navigationItems = [
                 />
             </svg>
         ),
-        subcategories: [
-            '/settings/profile',
-            '/settings/account',
-            '/settings/notifications',
-        ],
     },
 ];
 
 const Sidebar = () => {
     const pathname = usePathname();
-
-    console.log(pathname);
 
     const isActive = (item: SidebarItem) => {
         if (pathname === item.path) return true;

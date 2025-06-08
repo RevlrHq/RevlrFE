@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import WalletBalance from './components/WalletBalance';
-import PayoutHistoryTable from './components/PayoutHistoryTable';
-import BankAccountList from './components/BankAccountList';
-import RequestPayoutModal from './components/RequestPayoutModal';
-import NewBankAccountModal from './components/NewBankAccountModal';
+import WalletBalance from './WalletBalance';
+import PayoutHistoryTable from './PayoutHistoryTable';
+import BankAccountList from './BankAccountList';
+import RequestPayoutModal from './RequestPayoutModal';
+import NewBankAccountModal from './NewBankAccountModal';
 
 const PayoutManagement = () => {
     const [isRequestPayoutModalOpen, setIsRequestPayoutModalOpen] =

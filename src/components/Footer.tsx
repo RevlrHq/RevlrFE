@@ -8,7 +8,7 @@ const Footer = () => {
                     REVLR
                 </h2>
             </div>
-            <div>
+            <div className='border-b border-[#D0D5DB] pb-12 md:w-[1440px]'>
                 <h2 className='pb-16 font-montserrat text-xl font-semibold text-[#001433] md:text-4xl'>
                     Set Up Your Event In Minutes, Sell Tickets Today
                 </h2>
@@ -19,9 +19,9 @@ const Footer = () => {
                     Create Your Event Now
                 </Link>
             </div>
-            <div className='my-8 border-2 bg-[#D0D5DB]'></div>
-            <div className='flex w-full max-w-[1440px] flex-row justify-between py-8'>
-                <div className='flex flex-row gap-8'>
+
+            <div className='flex w-full flex-col-reverse items-center justify-center gap-4 py-6 md:max-w-[1440px] md:flex-row md:justify-between md:gap-0'>
+                <div className='flex flex-row gap-12'>
                     <h2 className='font-inter text-[12px] font-medium text-[#6B7380]'>
                         REVLR. All rights reserved.
                     </h2>

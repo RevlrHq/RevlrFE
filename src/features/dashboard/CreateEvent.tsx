@@ -1,9 +1,63 @@
 'use client';
 
-import { useState } from 'react';
-import { GreaterIcon, CameraIcon, AddIcon, SelectIcon } from '@src/icons';
+import { SetStateAction, useState } from 'react';
+import { GreaterIcon, CameraIcon, AddIcon } from '@src/icons';
 import { Calendar, Clock } from 'lucide-react';
+import { Input } from '@components/ui/input';
+import { Textarea } from '@components/ui/textarea';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
+import { Label } from '@components/ui/label';
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+} from '@components/ui/card';
+import { Button } from '@components/ui/button';
+import { RadioGroup, RadioGroupItem } from '@components/ui/radio-group';
+import { Form, FormControl, FormField, FormItem } from '@components/ui/form';
+import { Switch } from '@components/ui/switch';
+import { useForm } from 'react-hook-form';
 import EventModal from './components/EventModal';
+
+interface EventFormValues {
+    eventName: string;
+    eventDescription: string;
+    eventCategory: string;
+    startDate: string;
+    endDate: string;
+    startTime: string;
+    endTime: string;
+    organizerName: string;
+    organizerWebsite: string;
+    facebook: string;
+    instagram: string;
+    twitter: string;
+    venueName: string;
+    venueAddress: string;
+    googleMapsLink: string;
+    eventLink: string;
+    ticketType: string;
+    ticketName: string;
+    ticketPrice: string;
+    ticketQuantity: string;
+    purchaseLimit: string;
+    ticketDescription: string;
+    refundPolicy: string;
+    feeOption: string;
+    salesStartDate: string;
+    salesStartTime: string;
+    salesEndDate: string;
+    salesEndTime: string;
+}
 
 const CreateEvent = () => {
     const [currentStep, setCurrentStep] = useState(1);
@@ -48,41 +102,51 @@ const CreateEvent = () => {
         image: '/samba-festival.jpg',
     };
     const [modalOpen, setModalOpen] = useState(false);
-
-    const [ticketName, setTicketName] = useState('');
-    const [ticketPrice, setTicketPrice] = useState('');
-    const [ticketQuantity, setTicketQuantity] = useState('');
-    const [purchaseLimit, setPurchaseLimit] = useState('');
-    const [ticketDescription, setTicketDescription] = useState('');
-    const [refundPolicy, setRefundPolicy] = useState('');
     const [feeOption, setFeeOption] = useState('attendees');
+
+    const form = useForm<EventFormValues>({
+        defaultValues: {
+            eventName: '',
+            eventDescription: '',
+            eventCategory: '',
+            startDate: '',
+            endDate: '',
+            startTime: '',
+            endTime: '',
+            // timezone: "",
+
+            organizerName: '',
+            organizerWebsite: '',
+
+            facebook: '',
+            instagram: '',
+            twitter: '',
+
+            venueName: '',
+            venueAddress: '',
+            googleMapsLink: '',
+            eventLink: '',
+
+            ticketName: '',
+            ticketPrice: '',
+            ticketQuantity: '',
+            purchaseLimit: '',
+            salesStartDate: '',
+            salesStartTime: '',
+            salesEndDate: '',
+            salesEndTime: '',
+            ticketDescription: '',
+            refundPolicy: '',
+            feeOption: '',
+        },
+    });
 
     const handleTicketTypeChange = (type: string) => {
         setTicketType(type);
     };
 
-    const handleTicketSelect = (id: number) => {
-        setTickets(
-            tickets.map((ticket) => ({
-                ...ticket,
-                selected: ticket.id === id,
-            }))
-        );
-    };
-
     const addTicket = () => {
         alert('Ticket added successfully!');
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log('Form submitted!', {
-            images,
-            location,
-            ticketType,
-            tickets,
-        });
-        alert('Event created successfully!');
     };
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,6 +159,24 @@ const CreateEvent = () => {
                 )
             );
         }
+    };
+
+    const onSubmit = (values: EventFormValues) => {
+        console.log(values);
+        //setModalOpen(true);
+    };
+
+    const handleLocationSelect = (value: SetStateAction<string>) => {
+        setLocation(value);
+    };
+
+    const goToNextStep = () => {
+        console.log('Form Values', form.getValues());
+        setCurrentStep(currentStep + 1);
+    };
+
+    const goToPreviousStep = () => {
+        setCurrentStep(currentStep - 1);
     };
 
     return (
@@ -119,703 +201,898 @@ const CreateEvent = () => {
                         </span>
                     </div>
 
-                    <button
-                        onClick={() => setModalOpen(true)}
-                        className='rounded-lg bg-blue-500 px-6 py-2 text-white transition-colors duration-300 hover:bg-blue-600 focus:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                    >
-                        Continue
-                    </button>
+                    {currentStep === 1 ? (
+                        <Button
+                            onClick={() => setModalOpen(true)}
+                            className='bg-blue-500 font-inter text-sm font-normal text-white hover:bg-blue-600 focus:opacity-50 focus:ring-2 focus:ring-blue-500'
+                        >
+                            Continue
+                        </Button>
+                    ) : (
+                        <Button
+                            onClick={() => setModalOpen(true)}
+                            className='bg-blue-500 font-inter text-sm font-normal text-white hover:bg-blue-600 focus:opacity-50 focus:ring-2 focus:ring-blue-500'
+                        >
+                            Publish
+                        </Button>
+                    )}
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit}>
-                {currentStep === 1 ? (
-                    <div className='m-12 flex flex-row gap-12'>
-                        <div className='flex flex-1 flex-col gap-12'>
-                            <div className='rounded-xl bg-white p-8 shadow-md'>
-                                <label className='mb-4 block font-inter text-sm font-medium text-[#001433]'>
-                                    <span className='mr-1 text-[#D97708]'>
-                                        *
-                                    </span>
-                                    Images
-                                    <p className='font-inter text-sm font-light text-[#374252]'>
-                                        Add at least 1 image for your event
-                                    </p>
-                                </label>
-                                <div className='flex flex-col space-y-8'>
-                                    <div className='flex size-[414px] flex-col items-center justify-center border border-[#F2F3F5] bg-[#F7F8FA] transition hover:border-blue-500'>
-                                        <input
-                                            type='file'
-                                            accept='image/*'
-                                            multiple
-                                            className='hidden'
-                                            id='image-upload'
-                                            onChange={handleImageUpload}
-                                        />
-                                        <label
-                                            htmlFor='image-upload'
-                                            className='flex cursor-pointer flex-col items-center'
-                                        >
-                                            <CameraIcon />
-                                            <span className='font-inter text-sm font-normal text-[#374252]'>
-                                                Add Event Image
-                                            </span>
-                                        </label>
-                                    </div>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
+                    <Tabs value={`step-${currentStep}`} className='w-full'>
+                        <TabsContent value='step-1' className='w-full'>
+                            <div className='m-8 flex flex-row gap-8'>
+                                <div className='flex flex-1 flex-col gap-8'>
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className='text-sm font-medium text-[#001433]'>
+                                                <span className='mr-1 text-[#D97708]'>
+                                                    *
+                                                </span>
+                                                Images
+                                            </CardTitle>
+                                            <CardDescription className='font-inter text-sm font-normal text-[#374252]'>
+                                                Add at least 1 image for your
+                                                event
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <div className='flex flex-col space-y-8'>
+                                                <div className='flex size-[414px] flex-col items-center justify-center border border-[#F2F3F5] bg-[#F7F8FA] transition hover:border-blue-500'>
+                                                    <input
+                                                        type='file'
+                                                        accept='image/*'
+                                                        multiple
+                                                        className='hidden'
+                                                        id='image-upload'
+                                                        onChange={
+                                                            handleImageUpload
+                                                        }
+                                                    />
+                                                    <label
+                                                        htmlFor='image-upload'
+                                                        className='flex cursor-pointer flex-col items-center'
+                                                    >
+                                                        <CameraIcon />
+                                                        <span className='text-sm text-[#374252]'>
+                                                            Add Event Image
+                                                        </span>
+                                                    </label>
+                                                </div>
 
-                                    <div className='flex flex-row gap-8'>
-                                        {images.map((image, index) => (
-                                            <div
-                                                key={index}
-                                                className='relative flex size-32 flex-col items-center justify-center border border-[#F2F3F5] bg-[#F7F8FA]'
-                                            >
-                                                <input
-                                                    type='file'
-                                                    accept='image/*'
-                                                    multiple
-                                                    className='hidden'
-                                                    id='image-upload'
-                                                    onChange={handleImageUpload}
-                                                />
-                                                <label
-                                                    htmlFor='image-upload'
-                                                    className='flex cursor-pointer flex-col items-center'
+                                                <div className='flex flex-row gap-8'>
+                                                    {images.map(
+                                                        (image, index) => (
+                                                            <div
+                                                                key={index}
+                                                                className='relative size-32 border border-[#F2F3F5] bg-[#F7F8FA]'
+                                                            >
+                                                                <div className='absolute inset-0 flex items-center justify-center'>
+                                                                    <span className='p-2 text-center text-xs text-gray-500'>
+                                                                        {image}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    )}
+                                                    <div className='flex size-32 items-center justify-center border border-[#F2F3F5] bg-[#F7F8FA]'>
+                                                        <input
+                                                            type='file'
+                                                            accept='image/*'
+                                                            multiple
+                                                            className='hidden'
+                                                            id='additional-image'
+                                                            onChange={
+                                                                handleImageUpload
+                                                            }
+                                                        />
+                                                        <label
+                                                            htmlFor='additional-image'
+                                                            className='flex size-full cursor-pointer flex-col items-center justify-center'
+                                                        >
+                                                            <AddIcon />
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+
+                                    <Card className='bg-white p-8 shadow-md'>
+                                        <CardHeader>
+                                            <CardTitle className='font-inter text-sm font-medium'>
+                                                Organizer Details
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent className='space-y-4'>
+                                            <div className='flex flex-row items-center gap-4'>
+                                                <Button
+                                                    variant='outline'
+                                                    className='size-12 rounded-full p-0'
                                                 >
                                                     <AddIcon />
-                                                </label>
+                                                </Button>
+                                                <span className='font-inter text-sm font-normal'>
+                                                    Add Logo
+                                                </span>
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div className='rounded-xl bg-white p-8 shadow-md'>
-                                <label className='mb-4 block font-inter text-sm font-medium text-[#001433]'>
-                                    Organizer Details
-                                </label>
-                                <div className='space-y-4'>
-                                    <div className='flex flex-row items-center gap-4'>
-                                        <button className='flex size-12 items-center justify-center rounded-full border border-gray-300 bg-white hover:bg-gray-200'>
-                                            <span className='text-xl text-gray-500'>
+                                            <FormField
+                                                control={form.control}
+                                                name='organizerName'
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormControl>
+                                                            <Input
+                                                                placeholder='Organizer Name'
+                                                                className='font-inter text-sm font-normal text-[#4C5563]'
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <FormField
+                                                control={form.control}
+                                                name='organizerWebsite'
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormControl>
+                                                            <Input
+                                                                placeholder='Organizer Website'
+                                                                className='font-inter text-sm font-normal text-[#4C5563]'
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </CardContent>
+                                    </Card>
+
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className='font-inter text-sm font-medium text-[#001433]'>
+                                                Socials
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent className='space-y-4'>
+                                            <FormField
+                                                control={form.control}
+                                                name='facebook'
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormControl>
+                                                            <Input
+                                                                placeholder='Facebook'
+                                                                className='font-inter text-sm font-normal text-[#4C5563]'
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <FormField
+                                                control={form.control}
+                                                name='instagram'
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormControl>
+                                                            <Input
+                                                                placeholder='Instagram'
+                                                                className='font-inter text-sm font-normal text-[#4C5563]'
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <FormField
+                                                control={form.control}
+                                                name='twitter'
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormControl>
+                                                            <Input
+                                                                placeholder='X (Twitter)'
+                                                                className='font-inter text-sm font-normal text-[#4C5563]'
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </CardContent>
+                                    </Card>
+                                </div>
+
+                                <div className='flex flex-1 flex-col gap-8'>
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className='font-inter text-sm font-medium text-[#001433]'>
+                                                <span className='mr-1 text-[#D97708]'>
+                                                    *
+                                                </span>
+                                                Basic Details
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent className='space-y-4'>
+                                            <FormField
+                                                control={form.control}
+                                                name='eventName'
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormControl>
+                                                            <Input
+                                                                placeholder='Event Name'
+                                                                className='font-inter text-sm font-normal text-[#4C5563]'
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <FormField
+                                                control={form.control}
+                                                name='eventDescription'
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormControl>
+                                                            <Textarea
+                                                                placeholder='Event Description'
+                                                                rows={5}
+                                                                className='font-inter text-sm font-normal'
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <FormField
+                                                control={form.control}
+                                                name='eventCategory'
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <Select
+                                                            onValueChange={
+                                                                field.onChange
+                                                            }
+                                                            defaultValue={
+                                                                field.value
+                                                            }
+                                                        >
+                                                            <FormControl>
+                                                                <SelectTrigger className='w-full border border-[#E4E6EB] px-4 py-6 font-inter text-sm text-[#4C5563] focus:outline-none'>
+                                                                    <SelectValue placeholder='Event Category' />
+                                                                </SelectTrigger>
+                                                            </FormControl>
+                                                            <SelectContent>
+                                                                <SelectItem value='conference'>
+                                                                    Conference
+                                                                </SelectItem>
+                                                                <SelectItem value='workshop'>
+                                                                    Workshop
+                                                                </SelectItem>
+                                                                <SelectItem value='meetup'>
+                                                                    Meetup
+                                                                </SelectItem>
+                                                                <SelectItem value='webinar'>
+                                                                    Webinar
+                                                                </SelectItem>
+                                                                <SelectItem value='other'>
+                                                                    Other
+                                                                </SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </CardContent>
+                                    </Card>
+
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className='font-inter text-sm font-medium text-[#001433]'>
+                                                <span className='mr-1 text-[#D97708]'>
+                                                    *
+                                                </span>
+                                                Date & Time
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent className='space-y-4'>
+                                            <div className='flex items-center rounded-lg border border-[#E4E6EB] p-4 text-sm text-[#4C5563]'>
+                                                <Calendar
+                                                    size={18}
+                                                    className='mr-2 text-gray-500'
+                                                />
+                                                {/* <FormField
+                        control={form.control}
+                        name="eventDates"
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormControl>
+                              <Input 
+                                placeholder="Start Date → End Date" 
+                                className="border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                                {...field} 
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      /> */}
+                                            </div>
+
+                                            <div className='flex items-center justify-between rounded-lg border border-[#E4E6EB] p-4 text-sm text-[#4C5563]'>
+                                                <div className='flex items-center'>
+                                                    <Clock
+                                                        size={18}
+                                                        className='mr-2 text-gray-500'
+                                                    />
+                                                    <span className='text-gray-500'>
+                                                        Start Time → End Time
+                                                    </span>
+                                                </div>
                                                 <svg
-                                                    width='24'
-                                                    height='24'
-                                                    viewBox='0 0 24 24'
+                                                    width='16'
+                                                    height='16'
+                                                    viewBox='0 0 16 16'
                                                     fill='none'
                                                     xmlns='http://www.w3.org/2000/svg'
                                                 >
                                                     <path
-                                                        d='M18 13H13V18C13 18.55 12.55 19 12 19C11.45 19 11 18.55 11 18V13H6C5.45 13 5 12.55 5 12C5 11.45 5.45 11 6 11H11V6C11 5.45 11.45 5 12 5C12.55 5 13 5.45 13 6V11H18C18.55 11 19 11.45 19 12C19 12.55 18.55 13 18 13Z'
+                                                        d='M8 10L12 6H4L8 10Z'
                                                         fill='#374252'
                                                     />
                                                 </svg>
-                                            </span>
-                                        </button>
-                                        <span className='font-inter text-sm font-normal text-[#4C5563]'>
-                                            Add Logo
-                                        </span>
-                                    </div>
-
-                                    <div>
-                                        <input
-                                            type='text'
-                                            placeholder='Organizer Name'
-                                            className='w-full rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563] focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <input
-                                            type='text'
-                                            placeholder='Organizer Website'
-                                            className='w-full rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563] focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className='rounded-xl bg-white p-8 shadow-md'>
-                                <label className='mb-4 block font-inter text-sm font-medium text-[#001433]'>
-                                    Socials
-                                </label>
-                                <div className='space-y-4'>
-                                    <div>
-                                        <input
-                                            type='text'
-                                            placeholder='Facebook'
-                                            className='w-full rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563] focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <input
-                                            type='text'
-                                            placeholder='Instagram'
-                                            className='w-full rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563] focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <input
-                                            type='text'
-                                            placeholder='X (Twitter)'
-                                            className='w-full rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563] focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className='flex flex-1 flex-col gap-6'>
-                            <div className='rounded-xl bg-white p-8 shadow-md'>
-                                <label className='mb-4 block font-inter text-sm font-medium text-[#001433]'>
-                                    <span className='mr-1 text-[#D97708]'>
-                                        *
-                                    </span>
-                                    Basic Details
-                                </label>
-
-                                <div className='space-y-4'>
-                                    <div>
-                                        <input
-                                            type='text'
-                                            placeholder='Event Name'
-                                            className='w-full rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563] focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <textarea
-                                            placeholder='Event Description'
-                                            rows={5}
-                                            className='w-full rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563] focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <div className='relative'>
-                                            <select className='w-full appearance-none rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563] focus:outline-none focus:ring-2 focus:ring-blue-500'>
-                                                <option
-                                                    value=''
-                                                    disabled
-                                                    selected
-                                                >
-                                                    Event Category
-                                                </option>
-                                                <option value='conference'>
-                                                    Conference
-                                                </option>
-                                                <option value='workshop'>
-                                                    Workshop
-                                                </option>
-                                                <option value='meetup'>
-                                                    Meetup
-                                                </option>
-                                                <option value='webinar'>
-                                                    Webinar
-                                                </option>
-                                                <option value='other'>
-                                                    Other
-                                                </option>
-                                            </select>
-                                            <div className='pointer-events-none absolute right-3 top-3'>
-                                                <SelectIcon />
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div className='rounded-xl bg-white p-8 shadow-md'>
-                                <label className='mb-4 block font-inter text-sm font-medium text-[#001433]'>
-                                    <span className='mr-1 text-[#D97708]'>
-                                        *
-                                    </span>
-                                    Date & Time
-                                </label>
-
-                                <div className='space-y-4'>
-                                    <div className='relative'>
-                                        <div className='flex items-center rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563]'>
-                                            <Calendar
-                                                size={18}
-                                                className='mr-2 text-gray-500'
-                                            />
-                                            <input
-                                                type='text'
-                                                placeholder='Start Date → End Date'
-                                                className='flex-1 focus:outline-none'
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className='relative'>
-                                        <div className='flex items-center justify-between rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563]'>
-                                            <div className='flex items-center'>
-                                                <Clock
-                                                    size={18}
-                                                    className='mr-2 text-gray-500'
-                                                />
+                                            <div className='flex items-center justify-between rounded-lg border border-[#E4E6EB] p-4 text-sm text-[#4C5563]'>
                                                 <span className='text-gray-500'>
-                                                    Start Time → End Time
+                                                    Time Zone
                                                 </span>
+                                                <svg
+                                                    width='16'
+                                                    height='16'
+                                                    viewBox='0 0 16 16'
+                                                    fill='none'
+                                                    xmlns='http://www.w3.org/2000/svg'
+                                                >
+                                                    <path
+                                                        d='M8 10L12 6H4L8 10Z'
+                                                        fill='#374252'
+                                                    />
+                                                </svg>
                                             </div>
-                                            <SelectIcon />
-                                        </div>
-                                    </div>
+                                        </CardContent>
+                                    </Card>
 
-                                    <div className='relative'>
-                                        <div className='flex items-center justify-between rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563]'>
-                                            <span className='text-gray-500'>
-                                                Time Zone
-                                            </span>
-                                            <SelectIcon />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className='rounded-xl bg-white p-8 shadow-md'>
-                                <label className='mb-4 block font-inter text-sm font-medium text-[#001433]'>
-                                    <span className='mr-1 text-[#D97708]'>
-                                        *
-                                    </span>
-                                    Location
-                                </label>
-
-                                <div className='flex flex-row gap-4'>
-                                    <button
-                                        type='button'
-                                        onClick={() => setLocation('in-person')}
-                                        className={`pb-3 font-inter text-sm font-normal ${
-                                            location === 'in-person'
-                                                ? 'border-b border-[#0066FF] text-[#0066FF]'
-                                                : 'text-[#4C5563]'
-                                        }`}
-                                    >
-                                        In-Person
-                                    </button>
-                                    <button
-                                        type='button'
-                                        onClick={() => setLocation('virtual')}
-                                        className={`pb-3 font-inter text-sm font-normal ${
-                                            location === 'virtual'
-                                                ? 'border-b border-[#0066FF] text-[#0066FF]'
-                                                : 'text-[#4C5563]'
-                                        }`}
-                                    >
-                                        Virtual
-                                    </button>
-                                    <button
-                                        type='button'
-                                        onClick={() => setLocation('hybrid')}
-                                        className={`pb-3 font-inter text-sm font-normal ${
-                                            location === 'hybrid'
-                                                ? 'border-b border-[#0066FF] text-[#0066FF]'
-                                                : 'text-[#4C5563]'
-                                        }`}
-                                    >
-                                        Hybrid
-                                    </button>
-                                </div>
-
-                                {location === 'in-person' && (
-                                    <div className='mt-4 space-y-3'>
-                                        <input
-                                            type='text'
-                                            placeholder='Venue Name'
-                                            className='mb-3 w-full rounded-md border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-                                        <input
-                                            type='text'
-                                            placeholder='Address'
-                                            className='mb-3 w-full rounded-md border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-
-                                        <input
-                                            type='text'
-                                            placeholder='Google Maps Links'
-                                            className='w-full rounded-md border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-                                    </div>
-                                )}
-
-                                {location === 'virtual' && (
-                                    <div className='mt-4'>
-                                        <input
-                                            type='text'
-                                            placeholder='Event Link'
-                                            className='w-full rounded-md border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-                                    </div>
-                                )}
-
-                                {location === 'hybrid' && (
-                                    <div className='mt-4 space-y-3'>
-                                        <input
-                                            type='text'
-                                            placeholder='Venue Name'
-                                            className='mb-3 w-full rounded-md border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-                                        <input
-                                            type='text'
-                                            placeholder='Address'
-                                            className='mb-3 w-full rounded-md border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-
-                                        <input
-                                            type='text'
-                                            placeholder='Google Maps Links'
-                                            className='w-full rounded-md border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-                                        <input
-                                            type='text'
-                                            placeholder='Event Link'
-                                            className='w-full rounded-md border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    <div className='space-y-6 p-4'>
-                        <div className='flex flex-row gap-12 rounded-lg bg-white p-6 shadow'>
-                            <div className='mb-6'>
-                                <h2 className='mb-4 font-inter text-sm font-medium text-[#001433]'>
-                                    Ticket Types
-                                </h2>
-                                <div className='flex flex-col space-y-4'>
-                                    <label className='flex cursor-pointer items-center space-x-2'>
-                                        <div
-                                            className={`flex size-5 items-center justify-center rounded-full border ${ticketType === 'free' ? 'border-blue-500 bg-blue-500' : 'border-gray-300'}`}
-                                        >
-                                            {ticketType === 'free' && (
-                                                <div className='size-2 rounded-full bg-white'></div>
-                                            )}
-                                        </div>
-                                        <input
-                                            type='radio'
-                                            name='ticketType'
-                                            value='free'
-                                            checked={ticketType === 'free'}
-                                            onChange={() =>
-                                                handleTicketTypeChange('free')
-                                            }
-                                            className='hidden'
-                                        />
-                                        <span
-                                            className={`font-inter text-sm ${ticketType === 'free' ? 'font-medium text-[#0066FF]' : 'font-normal text-[#374252]'}`}
-                                        >
-                                            Free
-                                        </span>
-                                    </label>
-
-                                    <label className='flex cursor-pointer items-center space-x-2'>
-                                        <div
-                                            className={`flex size-5 items-center justify-center rounded-full border ${ticketType === 'paid' ? 'border-blue-500 bg-blue-500' : 'border-gray-300'}`}
-                                        >
-                                            {ticketType === 'paid' && (
-                                                <div className='size-2 rounded-full bg-white'></div>
-                                            )}
-                                        </div>
-                                        <input
-                                            type='radio'
-                                            name='ticketType'
-                                            value='paid'
-                                            checked={ticketType === 'paid'}
-                                            onChange={() =>
-                                                handleTicketTypeChange('paid')
-                                            }
-                                            className='hidden'
-                                        />
-                                        <span
-                                            className={`font-inter text-sm ${ticketType === 'paid' ? 'font-medium text-[#0066FF]' : 'font-normal text-[#374252]'}`}
-                                        >
-                                            Paid
-                                        </span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div className='flex-1'>
-                                <h2 className='mb-4 font-inter text-sm font-medium text-[#001433]'>
-                                    <span className='text-orange-500'>*</span>{' '}
-                                    Ticket Details
-                                </h2>
-
-                                <div className='mb-4 grid grid-cols-1 gap-4 md:grid-cols-3'>
-                                    <div>
-                                        <input
-                                            type='text'
-                                            placeholder='Ticket Name'
-                                            value={ticketName}
-                                            onChange={(e) =>
-                                                setTicketName(e.target.value)
-                                            }
-                                            className='w-full rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563]'
-                                        />
-                                    </div>
-
-                                    {ticketType === 'paid' && (
-                                        <div>
-                                            <input
-                                                type='text'
-                                                placeholder='Ticket Price'
-                                                value={ticketPrice}
-                                                onChange={(e) =>
-                                                    setTicketPrice(
-                                                        e.target.value
-                                                    )
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className='font-inter text-sm font-medium text-[#001433]'>
+                                                <span className='mr-1 text-[#D97708]'>
+                                                    *
+                                                </span>
+                                                Location
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <Tabs
+                                                defaultValue='in-person'
+                                                onValueChange={
+                                                    handleLocationSelect
                                                 }
-                                                className='w-full rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563]'
-                                            />
-                                        </div>
-                                    )}
+                                                value={location}
+                                            >
+                                                <TabsList className='mb-4 grid w-full grid-cols-3 border-b bg-transparent p-0'>
+                                                    <TabsTrigger
+                                                        value='in-person'
+                                                        className='rounded-none pb-3 data-[state=active]:border-b-2 data-[state=active]:border-[#0066FF] data-[state=active]:text-[#0066FF]'
+                                                    >
+                                                        In-Person
+                                                    </TabsTrigger>
+                                                    <TabsTrigger
+                                                        value='virtual'
+                                                        className='rounded-none pb-3 data-[state=active]:border-b-2 data-[state=active]:border-[#0066FF] data-[state=active]:text-[#0066FF]'
+                                                    >
+                                                        Virtual
+                                                    </TabsTrigger>
+                                                    <TabsTrigger
+                                                        value='hybrid'
+                                                        className='rounded-none pb-3 data-[state=active]:border-b-2 data-[state=active]:border-[#0066FF] data-[state=active]:text-[#0066FF]'
+                                                    >
+                                                        Hybrid
+                                                    </TabsTrigger>
+                                                </TabsList>
 
-                                    <div>
-                                        <input
-                                            type='text'
-                                            placeholder='Ticket Quantity'
-                                            value={ticketQuantity}
-                                            onChange={(e) =>
-                                                setTicketQuantity(
-                                                    e.target.value
-                                                )
-                                            }
-                                            className='w-full rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563]'
-                                        />
-                                    </div>
+                                                <TabsContent
+                                                    value='in-person'
+                                                    className='space-y-3'
+                                                >
+                                                    <FormField
+                                                        control={form.control}
+                                                        name='venueName'
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormControl>
+                                                                    <Input
+                                                                        placeholder='Venue Name'
+                                                                        className='font-inter text-sm font-normal text-[#4C5563]'
+                                                                        {...field}
+                                                                    />
+                                                                </FormControl>
+                                                            </FormItem>
+                                                        )}
+                                                    />
 
-                                    <div>
-                                        <input
-                                            type='text'
-                                            placeholder='Purchase Limit'
-                                            value={purchaseLimit}
-                                            onChange={(e) =>
-                                                setPurchaseLimit(e.target.value)
-                                            }
-                                            className='w-full rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563]'
-                                        />
-                                    </div>
+                                                    <FormField
+                                                        control={form.control}
+                                                        name='venueAddress'
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormControl>
+                                                                    <Input
+                                                                        placeholder='Address'
+                                                                        className='font-inter text-sm font-normal text-[#4C5563]'
+                                                                        {...field}
+                                                                    />
+                                                                </FormControl>
+                                                            </FormItem>
+                                                        )}
+                                                    />
+
+                                                    <FormField
+                                                        control={form.control}
+                                                        name='googleMapsLink'
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormControl>
+                                                                    <Input
+                                                                        placeholder='Google Maps Link'
+                                                                        className='font-inter text-sm font-normal text-[#4C5563]'
+                                                                        {...field}
+                                                                    />
+                                                                </FormControl>
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                </TabsContent>
+
+                                                <TabsContent value='virtual'>
+                                                    <FormField
+                                                        control={form.control}
+                                                        name='eventLink'
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormControl>
+                                                                    <Input
+                                                                        placeholder='Event Link'
+                                                                        className='font-inter text-sm font-normal text-[#4C5563]'
+                                                                        {...field}
+                                                                    />
+                                                                </FormControl>
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                </TabsContent>
+
+                                                <TabsContent
+                                                    value='hybrid'
+                                                    className='space-y-3'
+                                                >
+                                                    <FormField
+                                                        control={form.control}
+                                                        name='venueName'
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormControl>
+                                                                    <Input
+                                                                        placeholder='Venue Name'
+                                                                        className='font-inter text-sm font-normal text-[#4C5563]'
+                                                                        {...field}
+                                                                    />
+                                                                </FormControl>
+                                                            </FormItem>
+                                                        )}
+                                                    />
+
+                                                    <FormField
+                                                        control={form.control}
+                                                        name='venueAddress'
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormControl>
+                                                                    <Input
+                                                                        placeholder='Address'
+                                                                        className='font-inter text-sm font-normal text-[#4C5563]'
+                                                                        {...field}
+                                                                    />
+                                                                </FormControl>
+                                                            </FormItem>
+                                                        )}
+                                                    />
+
+                                                    <FormField
+                                                        control={form.control}
+                                                        name='googleMapsLink'
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormControl>
+                                                                    <Input
+                                                                        placeholder='Google Maps Link'
+                                                                        className='font-inter text-sm font-normal text-[#4C5563]'
+                                                                        {...field}
+                                                                    />
+                                                                </FormControl>
+                                                            </FormItem>
+                                                        )}
+                                                    />
+
+                                                    <FormField
+                                                        control={form.control}
+                                                        name='eventLink'
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormControl>
+                                                                    <Input
+                                                                        placeholder='Event Link'
+                                                                        className='font-inter text-sm font-normal text-[#4C5563]'
+                                                                        {...field}
+                                                                    />
+                                                                </FormControl>
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                </TabsContent>
+                                            </Tabs>
+                                        </CardContent>
+                                    </Card>
                                 </div>
+                            </div>
+                            <div className='flex justify-end p-8'>
+                                <Button
+                                    type='button'
+                                    onClick={goToNextStep}
+                                    className='bg-[#0066FF] text-white hover:bg-blue-600'
+                                >
+                                    Next: Tickets
+                                </Button>
+                            </div>
+                        </TabsContent>
 
-                                <div className='mb-4 grid grid-cols-1 gap-4 md:grid-cols-2'>
-                                    <div className='relative'>
-                                        <div className='flex items-center justify-between rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563]'>
-                                            <span>Sales Start → End Date</span>
-                                            <Calendar className='size-5 text-gray-500' />
+                        <TabsContent value='step-2' className='w-full'>
+                            <div className='space-y-6 p-8'>
+                                <Card>
+                                    <CardContent className='flex flex-row gap-12 p-6'>
+                                        <div className='mb-6'>
+                                            <h2 className='mb-4 font-inter text-sm font-medium text-[#001433]'>
+                                                Ticket Types
+                                            </h2>
+                                            <RadioGroup
+                                                value={ticketType}
+                                                onValueChange={
+                                                    handleTicketTypeChange
+                                                }
+                                                className='flex flex-col space-y-4'
+                                            >
+                                                <div className='flex items-center space-x-2'>
+                                                    <RadioGroupItem
+                                                        value='free'
+                                                        id='free'
+                                                        className='size-5'
+                                                    />
+                                                    <Label
+                                                        htmlFor='free'
+                                                        className={`text-sm ${ticketType === 'free' ? 'font-medium text-[#0066FF]' : 'font-normal text-[#374252]'}`}
+                                                    >
+                                                        Free
+                                                    </Label>
+                                                </div>
+
+                                                <div className='flex items-center space-x-2'>
+                                                    <RadioGroupItem
+                                                        value='paid'
+                                                        id='paid'
+                                                        className='size-5'
+                                                    />
+                                                    <Label
+                                                        htmlFor='paid'
+                                                        className={`text-sm ${ticketType === 'paid' ? 'font-medium text-[#0066FF]' : 'font-normal text-[#374252]'}`}
+                                                    >
+                                                        Paid
+                                                    </Label>
+                                                </div>
+                                            </RadioGroup>
                                         </div>
-                                    </div>
 
-                                    <div className='relative'>
-                                        <div className='flex items-center justify-between rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563]'>
-                                            <span>Sales Start → End Time</span>
-                                            <Clock className='size-5 text-gray-500' />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {ticketType === 'paid' && (
-                                    <>
-                                        <div className='mb-4 grid grid-cols-1 gap-4 md:grid-cols-2'>
-                                            <div>
-                                                <textarea
-                                                    placeholder='Ticket Description'
-                                                    value={ticketDescription}
-                                                    onChange={(e) =>
-                                                        setTicketDescription(
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                    className='h-24 w-full rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563]'
-                                                ></textarea>
-                                            </div>
-
-                                            <div>
-                                                <textarea
-                                                    placeholder='Refund Policy'
-                                                    value={refundPolicy}
-                                                    onChange={(e) =>
-                                                        setRefundPolicy(
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                    className='h-24 w-full rounded-xl border border-[#E4E6EB] p-4 font-inter text-sm font-normal text-[#4C5563]'
-                                                ></textarea>
-                                            </div>
-                                        </div>
-
-                                        <div className='mb-4'>
-                                            <h2 className='mb-2 font-inter text-sm font-medium text-[#001433]'>
+                                        <div className='flex-1'>
+                                            <h2 className='mb-4 text-sm font-medium text-[#001433]'>
                                                 <span className='text-orange-500'>
                                                     *
                                                 </span>{' '}
-                                                Fee Absorption Choice
+                                                Ticket Details
                                             </h2>
-                                            <p className='mb-2 font-inter text-sm font-medium text-[#374252]'>
-                                                REVLR charges a 1% fee per
-                                                ticket sold. You can add this
-                                                fee to the ticket price
-                                                (attendees pay) or deduct it
-                                                from your earnings (you pay).
-                                            </p>
 
-                                            <div className='flex items-center space-x-4'>
-                                                <span
-                                                    className={`font-inter text-sm ${feeOption === 'attendees' ? 'font-medium text-[#0066FF]' : 'font-normal text-[#374252]'}`}
-                                                >
-                                                    Attendees Pay
-                                                </span>
-                                                <div
-                                                    className={`relative h-5 w-9 cursor-pointer rounded-full ${feeOption !== 'attendees' ? 'bg-[#D0D5DB]' : 'bg-revlr-primary-blue'}`}
-                                                    onClick={() =>
-                                                        setFeeOption(
-                                                            feeOption ===
-                                                                'attendees'
-                                                                ? 'you'
-                                                                : 'attendees'
-                                                        )
-                                                    }
-                                                >
-                                                    <div
-                                                        className={`absolute top-0.5 size-4 rounded-full transition-all ${feeOption !== 'attendees' ? 'left-5 bg-[#0066FF]' : 'left-0.5 bg-white'}`}
-                                                    ></div>
+                                            <div className='mb-4 grid grid-cols-1 gap-4 md:grid-cols-3'>
+                                                <FormField
+                                                    control={form.control}
+                                                    name='ticketName'
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <Input
+                                                                    placeholder='Ticket Name'
+                                                                    className='font-inter text-sm font-normal'
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
+
+                                                {ticketType === 'paid' && (
+                                                    <FormField
+                                                        control={form.control}
+                                                        name='ticketPrice'
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormControl>
+                                                                    <Input
+                                                                        placeholder='Ticket Price'
+                                                                        className='font-inter text-sm font-normal'
+                                                                        {...field}
+                                                                    />
+                                                                </FormControl>
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                )}
+
+                                                <FormField
+                                                    control={form.control}
+                                                    name='ticketQuantity'
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <Input
+                                                                    placeholder='Ticket Quantity'
+                                                                    className='font-inter text-sm font-normal'
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
+
+                                                <FormField
+                                                    control={form.control}
+                                                    name='purchaseLimit'
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <Input
+                                                                    placeholder='Purchase Limit'
+                                                                    className='font-inter text-sm font-normal'
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+
+                                            <div className='mb-4 grid grid-cols-1 gap-4 md:grid-cols-2'>
+                                                <div className='flex items-center justify-between rounded-lg border border-[#E4E6EB] p-4 text-sm text-[#4C5563]'>
+                                                    <span>
+                                                        Sales Start → End Date
+                                                    </span>
+                                                    <Calendar className='size-5 text-gray-500' />
                                                 </div>
-                                                <span
-                                                    className={`font-inter text-sm font-medium ${feeOption !== 'attendees' ? 'font-medium text-[#0066FF]' : 'font-normal text-[#374252]'}`}
+
+                                                <div className='flex items-center justify-between rounded-lg border border-[#E4E6EB] p-4 text-sm text-[#4C5563]'>
+                                                    <span>
+                                                        Sales Start → End Time
+                                                    </span>
+                                                    <Clock className='size-5 text-gray-500' />
+                                                </div>
+                                            </div>
+
+                                            {ticketType === 'paid' && (
+                                                <>
+                                                    <div className='mb-4 grid grid-cols-1 gap-4 md:grid-cols-2'>
+                                                        <FormField
+                                                            control={
+                                                                form.control
+                                                            }
+                                                            name='ticketDescription'
+                                                            render={({
+                                                                field,
+                                                            }) => (
+                                                                <FormItem>
+                                                                    <FormControl>
+                                                                        <Textarea
+                                                                            placeholder='Ticket Description'
+                                                                            className='h-24 font-inter text-sm font-normal'
+                                                                            {...field}
+                                                                        />
+                                                                    </FormControl>
+                                                                </FormItem>
+                                                            )}
+                                                        />
+
+                                                        <FormField
+                                                            control={
+                                                                form.control
+                                                            }
+                                                            name='refundPolicy'
+                                                            render={({
+                                                                field,
+                                                            }) => (
+                                                                <FormItem>
+                                                                    <FormControl>
+                                                                        <Textarea
+                                                                            placeholder='Refund Policy'
+                                                                            className='h-24 font-inter text-sm font-normal'
+                                                                            {...field}
+                                                                        />
+                                                                    </FormControl>
+                                                                </FormItem>
+                                                            )}
+                                                        />
+                                                    </div>
+
+                                                    <div className='mb-4'>
+                                                        <h2 className='mb-2 font-inter text-sm font-medium text-[#001433]'>
+                                                            <span className='text-orange-500'>
+                                                                *
+                                                            </span>{' '}
+                                                            Fee Absorption
+                                                            Choice
+                                                        </h2>
+                                                        <p className='mb-2 font-inter text-sm font-medium text-[#374252]'>
+                                                            REVLR charges a 1%
+                                                            fee per ticket sold.
+                                                            You can add this fee
+                                                            to the ticket price
+                                                            (attendees pay) or
+                                                            deduct it from your
+                                                            earnings (you pay).
+                                                        </p>
+
+                                                        <div className='flex items-center space-x-4'>
+                                                            <span
+                                                                className={`font-inter text-sm ${feeOption === 'attendees' ? 'font-medium text-[#0066FF]' : 'font-normal text-[#374252]'}`}
+                                                            >
+                                                                Attendees Pay
+                                                            </span>
+                                                            <Switch
+                                                                checked={
+                                                                    feeOption !==
+                                                                    'attendees'
+                                                                }
+                                                                onCheckedChange={() =>
+                                                                    setFeeOption(
+                                                                        feeOption ===
+                                                                            'attendees'
+                                                                            ? 'you'
+                                                                            : 'attendees'
+                                                                    )
+                                                                }
+                                                                className='data-[state=checked]:bg-[#0066FF]'
+                                                            />
+                                                            <span
+                                                                className={`font-inter text-sm ${feeOption !== 'attendees' ? 'font-medium text-[#0066FF]' : 'font-normal text-[#374252]'}`}
+                                                            >
+                                                                I'll Pay
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )}
+
+                                            <div className='flex justify-end'>
+                                                <Button
+                                                    type='button'
+                                                    onClick={addTicket}
+                                                    className='rounded-lg bg-[#0066FF] text-white hover:bg-blue-600'
                                                 >
-                                                    I'll Pay
-                                                </span>
+                                                    Add Ticket
+                                                </Button>
                                             </div>
                                         </div>
-                                    </>
+                                    </CardContent>
+                                </Card>
+
+                                {tickets.length > 0 && (
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className='text-sm font-medium text-[#001433]'>
+                                                Added Tickets
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <div className='space-y-4'>
+                                                {tickets.map(
+                                                    (ticket, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className='rounded-lg border border-[#E4E6EB] p-4'
+                                                        >
+                                                            <div className='flex justify-between'>
+                                                                <div>
+                                                                    <h3 className='font-medium'>
+                                                                        {
+                                                                            ticket.name
+                                                                        }
+                                                                    </h3>
+                                                                    <p className='text-sm text-gray-500'>
+                                                                        {ticket.price ===
+                                                                        '0'
+                                                                            ? 'Free'
+                                                                            : `$${ticket.price}`}{' '}
+                                                                        • Qty:{' '}
+                                                                        {
+                                                                            ticket.quantity
+                                                                        }
+                                                                    </p>
+                                                                </div>
+                                                                <div className='flex space-x-2'>
+                                                                    <Button
+                                                                        variant='outline'
+                                                                        size='sm'
+                                                                        className='h-8 px-2 text-xs'
+                                                                        onClick={() => {
+                                                                            const updatedTickets =
+                                                                                [
+                                                                                    ...tickets,
+                                                                                ];
+                                                                            updatedTickets.splice(
+                                                                                index,
+                                                                                1
+                                                                            );
+                                                                            setTickets(
+                                                                                updatedTickets
+                                                                            );
+                                                                        }}
+                                                                    >
+                                                                        Remove
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                )}
+                                            </div>
+                                        </CardContent>
+                                    </Card>
                                 )}
 
-                                <div className='flex justify-end'>
-                                    <button
-                                        onClick={addTicket}
-                                        className='rounded-xl border border-[#93BEFF] bg-[#CFE2FF] p-4 font-inter text-sm font-semibold text-white'
+                                <div className='flex justify-between p-4'>
+                                    <Button
+                                        type='button'
+                                        variant='outline'
+                                        onClick={goToPreviousStep}
                                     >
-                                        Add Ticket
-                                    </button>
+                                        Back to Details
+                                    </Button>
+                                    <Button
+                                        type='submit'
+                                        className='bg-[#0066FF] text-white hover:bg-blue-600'
+                                    >
+                                        Create Event
+                                    </Button>
                                 </div>
                             </div>
-                        </div>
-
-                        {/* Tickets Table */}
-                        <div className='rounded-lg bg-white p-6 shadow'>
-                            <h2 className='mb-4 font-inter text-sm font-medium text-[#001433]'>
-                                Tickets
-                            </h2>
-
-                            <table className='w-full text-sm'>
-                                <thead>
-                                    <tr className='font-inter text-xs font-medium uppercase text-[#6B7380]'>
-                                        <th className='p-2 text-left'></th>
-                                        <th className='p-2 text-left'>
-                                            Ticket Name
-                                        </th>
-                                        <th className='p-2 text-left'>Price</th>
-                                        <th className='p-2 text-left'>
-                                            Quantity
-                                        </th>
-                                        <th className='p-2 text-left'>
-                                            Sales Start Date & Time
-                                        </th>
-                                        <th className='p-2 text-left'>
-                                            Sales End Date & Time
-                                        </th>
-                                        <th className='p-2 text-left'>
-                                            Purchase Limit
-                                        </th>
-                                        <th className='p-2 text-left'>
-                                            Actions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {tickets.map((ticket) => (
-                                        <tr
-                                            key={ticket.id}
-                                            className={`font-inter text-sm font-medium text-black ${ticket.selected ? 'bg-blue-50' : ''} `}
-                                        >
-                                            <td className='p-2'>
-                                                <div
-                                                    className='flex size-5 cursor-pointer items-center justify-center rounded-full border border-gray-300'
-                                                    onClick={() =>
-                                                        handleTicketSelect(
-                                                            ticket.id
-                                                        )
-                                                    }
-                                                >
-                                                    {ticket.selected && (
-                                                        <div className='size-3 rounded-full bg-blue-500'></div>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td className='p-2 font-medium'>
-                                                {ticket.name}
-                                            </td>
-                                            <td className='p-2'>
-                                                {ticket.price}
-                                            </td>
-                                            <td className='p-2'>
-                                                {ticket.quantity}
-                                            </td>
-                                            <td className='p-2'>
-                                                {ticket.salesStartDate} |{' '}
-                                                {ticket.salesStartTime}
-                                            </td>
-                                            <td className='p-2'>
-                                                {ticket.salesEndDate} |{' '}
-                                                {ticket.salesEndTime}
-                                            </td>
-                                            <td className='p-2'>
-                                                {ticket.purchaseLimit}
-                                            </td>
-                                            <td className='space-x-2 p-2'>
-                                                <button className='text-blue-500'>
-                                                    <svg
-                                                        xmlns='http://www.w3.org/2000/svg'
-                                                        className='inline size-5'
-                                                        fill='none'
-                                                        viewBox='0 0 24 24'
-                                                        stroke='currentColor'
-                                                    >
-                                                        <path
-                                                            strokeLinecap='round'
-                                                            strokeLinejoin='round'
-                                                            strokeWidth={2}
-                                                            d='M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'
-                                                        />
-                                                    </svg>
-                                                </button>
-                                                <button className='text-gray-400'>
-                                                    <svg
-                                                        xmlns='http://www.w3.org/2000/svg'
-                                                        className='inline size-5'
-                                                        fill='none'
-                                                        viewBox='0 0 24 24'
-                                                        stroke='currentColor'
-                                                    >
-                                                        <path
-                                                            strokeLinecap='round'
-                                                            strokeLinejoin='round'
-                                                            strokeWidth={2}
-                                                            d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'
-                                                        />
-                                                    </svg>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                )}
-            </form>
+                        </TabsContent>
+                    </Tabs>
+                </form>
+            </Form>
 
             <EventModal
                 isOpen={modalOpen}

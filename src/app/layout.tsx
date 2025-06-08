@@ -1,13 +1,11 @@
 import type { Metadata } from 'next';
-import { Poppins } from 'next/font/google';
+import { Poppins, Inter, Montserrat } from 'next/font/google';
 
 // These styles apply to every route in the application
 import './globals.css';
 
 import { validateEnv } from '@lib/env';
 import Providers from '@src/providers';
-
-import { Inter, Montserrat } from 'next/font/google';
 
 const inter = Inter({
     subsets: ['latin'],

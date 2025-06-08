@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 interface FAQSectionProps {
@@ -118,8 +120,8 @@ const FAQSection = ({ isOrganizer }: FAQSectionProps) => {
             </div>
 
             {/* Contact section */}
-            <div className='mt-12 hidden flex-col items-center justify-between rounded-lg bg-[#F1F6FF] p-6 md:flex md:flex-row'>
-                <div>
+            <div className='mt-12 flex-col items-center justify-between rounded-lg bg-[#F1F6FF] p-6 md:flex md:flex-row'>
+                <div className='hidden md:flex md:flex-col'>
                     <h3 className='font-inter text-xl font-semibold text-[#001433]'>
                         Still have questions?
                     </h3>
@@ -128,9 +130,23 @@ const FAQSection = ({ isOrganizer }: FAQSectionProps) => {
                         us and we'll reply ASAP.
                     </p>
                 </div>
+                <div className='mb-8 flex flex-col items-center justify-center gap-4 md:hidden'>
+                    <h3 className='font-inter text-base font-semibold text-[#001433]'>
+                        Have a question we haven't answered?
+                    </h3>
+                    <p className='mt-1 font-inter text-sm font-normal text-[#4C5563]'>
+                        Get in touch with us and we'll reply ASAP.
+                    </p>
+                    <a
+                        href='#email-us'
+                        className='mt-6 block rounded-lg bg-blue-600 p-2 font-inter text-xs font-semibold text-white transition-colors hover:bg-blue-700 md:hidden'
+                    >
+                        Email Us
+                    </a>
+                </div>
                 <a
                     href='#email-us'
-                    className='mt-4 rounded-lg bg-blue-600 px-6 py-2 font-inter font-medium text-white transition-colors hover:bg-blue-700 md:mt-0'
+                    className='mt-4 hidden rounded-lg bg-blue-600 px-6 py-2 font-inter font-medium text-white transition-colors hover:bg-blue-700 md:mt-0 md:block'
                 >
                     Email Us
                 </a>

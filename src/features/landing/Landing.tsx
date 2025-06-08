@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { Hero } from './components/Hero';
 import { Navbar } from '@components/navbar/Navbar';
-import Footer from './components/Footer';
-import FAQSection from './components/FAQSection';
+import Footer from '@components/Footer';
+import FAQSection from '@components/FAQSection';
 import EventListing from './components/EventListing';
 import ResaleCard from './components/ResaleCard';
 import Testimonial from './components/Testimonial';
