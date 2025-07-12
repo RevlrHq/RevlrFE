@@ -6,14 +6,14 @@ This directory contains auto-generated TypeScript services based on the OpenAPI 
 
 To prevent important files from being overwritten during code generation, we use custom files:
 
-- **Generated files**: 
-  - `core/request.ts` - Gets overwritten on every codegen run
-  - `core/OpenAPI.ts` - Gets overwritten on every codegen run
-  - `index.ts` - Gets overwritten on every codegen run
+- **Generated files**:
+    - `core/request.ts` - Gets overwritten on every codegen run
+    - `core/OpenAPI.ts` - Gets overwritten on every codegen run
+    - `index.ts` - Gets overwritten on every codegen run
 - **Custom files** (safe to modify):
-  - `core/custom-request.ts` - Custom request handler
-  - `core/custom-openapi-config.ts` - Custom OpenAPI configuration with environment variables
-  - `custom-index.ts` - Custom exports that use your custom configurations
+    - `core/custom-request.ts` - Custom request handler
+    - `core/custom-openapi-config.ts` - Custom OpenAPI configuration with environment variables
+    - `custom-index.ts` - Custom exports that use your custom configurations
 
 ## How it works
 
@@ -49,6 +49,7 @@ npm run codegen
 ```
 
 This command:
+
 1. Merges OpenAPI specifications using `openapi-merge-cli`
 2. Generates TypeScript services using `openapi-typescript-codegen` with the custom request file
 
@@ -65,13 +66,13 @@ export const getHeaders = async (
 ): Promise<Record<string, string>> => {
     // Your custom logic here
     const token = getAuthToken(); // Your custom token logic
-    
+
     const headers = {
         Accept: 'application/json',
         Authorization: `Bearer ${token}`,
         ...options.headers,
     };
-    
+
     return headers;
 };
 ```
@@ -79,12 +80,12 @@ export const getHeaders = async (
 ## Files Structure
 
 - `core/` - Core API utilities
-  - `custom-request.ts` - Custom request handler (safe to modify)
-  - `request.ts` - Generated request handler (gets overwritten)
-  - `OpenAPI.ts` - OpenAPI configuration
-  - `ApiError.ts` - Error handling
-  - `ApiRequestOptions.ts` - Request options types
-  - `ApiResult.ts` - Result types
-  - `CancelablePromise.ts` - Promise utilities
+    - `custom-request.ts` - Custom request handler (safe to modify)
+    - `request.ts` - Generated request handler (gets overwritten)
+    - `OpenAPI.ts` - OpenAPI configuration
+    - `ApiError.ts` - Error handling
+    - `ApiRequestOptions.ts` - Request options types
+    - `ApiResult.ts` - Result types
+    - `CancelablePromise.ts` - Promise utilities
 - `models/` - Generated TypeScript models
 - `services/` - Generated API service classes
