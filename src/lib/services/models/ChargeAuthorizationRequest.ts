@@ -2,10 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type VerifyAndRegisterUserInput = {
+export type ChargeAuthorizationRequest = {
+    authorization_code?: string;
     email?: string;
-    token?: string;
-    firstName?: string | null;
-    lastName?: string | null;
-    isOrganizer?: boolean;
+    amount?: number;
+    currency?: string;
 };

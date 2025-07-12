@@ -1,7 +1,7 @@
 {
     "inputs": [
         {
-            "inputURL": "http://api-dev.revlr.io/openapi/v1.json"
+            "inputURL": "https://revlr-api-dev-g6dtb4cebbfpfgcv.canadacentral-01.azurewebsites.net/openapi/v1.json"
         }
     ],
     "output": "./openapi-merged.json"

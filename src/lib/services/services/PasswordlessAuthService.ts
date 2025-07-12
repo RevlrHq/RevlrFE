@@ -31,14 +31,14 @@ export class PasswordlessAuthService {
         });
     }
     /**
-     * @returns StandardResponseOfstring OK
+     * @returns StandardResponseOfUserView OK
      * @throws ApiError
      */
     public static postApiPasswordlessAuthVerify({
         requestBody,
     }: {
         requestBody: VerifyAndRegisterUserInput;
-    }): CancelablePromise<StandardResponseOfstring> {
+    }): CancelablePromise<StandardResponseOfUserView> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/PasswordlessAuth/verify',
