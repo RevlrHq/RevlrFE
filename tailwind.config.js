@@ -115,8 +115,7 @@ module.exports = {
                 revlr: {
                     'primary-blue': '#0066FF',
                     'primary-grey': '#F5F5F5',
-                    'primary-yellow': ''
-                    
+                    'primary-yellow': '',
                 },
             },
         },
