@@ -11,7 +11,7 @@
         "test:watch": "jest --watch",
         "format": "prettier --write .",
         "prepare": "husky && husky install",
-        "codegen": "pnpx openapi-merge-cli && openapi --input ./openapi-merged.json --output ./src/lib/services --client axios --useOptions"
+        "codegen": "pnpx openapi-merge-cli && openapi --input ./openapi-merged.json --output ./src/lib/services --client axios --useOptions --request ./src/lib/services/core/custom-request.ts"
     },
     "dependencies": {
         "@hookform/resolvers": "^3.10.0",

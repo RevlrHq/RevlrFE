@@ -1,6 +1,6 @@
 import { useRevlrService } from './useChitService';
 import { useState } from 'react';
-import { PasswordlessAuthService } from '@lib/services';
+import { PasswordlessAuthService } from '@lib/services/custom-index';
 
 interface UseSignUpHookReturn {
     isLoading: boolean;
