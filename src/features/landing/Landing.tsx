@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Hero } from './components/Hero';
 import { Navbar } from '../../components/Navbar';
-import Footer from './components/Footer';
+import Footer from '../../components/Footer';
 import FeaturesSection from './components/FeaturesSection';
 import FAQSection from './components/FAQSection';
 import EventListing from './components/EventListing';

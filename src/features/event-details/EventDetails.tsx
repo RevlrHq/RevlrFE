@@ -2,10 +2,12 @@
 
 import { useEventDetails } from '../../hooks/useEventDetails';
 import { Navbar } from '../../components/Navbar';
+import Footer from '../../components/Footer';
 import EventDetailsHeader from './components/EventDetailsHeader';
 import EventDetailsContent from './components/EventDetailsContent';
 import EventTicketSection from './components/EventTicketSection';
 import EventOrganizerInfo from './components/EventOrganizerInfo';
+import EventMap from './components/EventMap';
 import EventDetailsLoading from './components/EventDetailsLoading';
 import EventDetailsError from './components/EventDetailsError';
 
@@ -23,7 +25,7 @@ const EventDetails = ({ eventId }: EventDetailsProps) => {
                 <div className='pt-20'>
                     <EventDetailsLoading />
                 </div>
-                {/* Footer would go here - moved to shared components */}
+                <Footer />
             </div>
         );
     }
@@ -35,7 +37,7 @@ const EventDetails = ({ eventId }: EventDetailsProps) => {
                 <div className='pt-20'>
                     <EventDetailsError error={error} onRetry={refetch} />
                 </div>
-                {/* Footer would go here - moved to shared components */}
+                <Footer />
             </div>
         );
     }
@@ -55,6 +57,7 @@ const EventDetails = ({ eventId }: EventDetailsProps) => {
                         <div className='lg:col-span-2'>
                             <EventDetailsHeader event={event} />
                             <EventDetailsContent event={event} />
+                            <EventMap event={event} />
                         </div>
 
                         {/* Sidebar */}
@@ -70,7 +73,8 @@ const EventDetails = ({ eventId }: EventDetailsProps) => {
                 </div>
             </div>
 
-            {/* Footer for logged out users - moved to shared components */}
+            {/* Footer for logged out users */}
+            <Footer />
         </div>
     );
 };
