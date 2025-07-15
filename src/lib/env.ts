@@ -6,6 +6,7 @@ const envSchema = yup
         NEXT_PUBLIC_POSTHOG_KEY: yup.string().required(),
         NEXT_PUBLIC_POSTHOG_HOST: yup.string().url().required(),
         NEXT_PUBLIC_SIGNALR_HUB_URL: yup.string().url().required(),
+        NEXT_PUBLIC_API_URL: yup.string().url().required(),
     })
     .required();
 

@@ -1,121 +1,282 @@
+'use client';
+
 import Link from 'next/link';
 
 const Footer = () => {
-    return (
-        <footer className='flex flex-col items-center justify-center bg-gradient-to-b from-[#FFFFFF] to-[#CFE2FF] px-4 text-center md:px-24'>
-            <div className='w-screen max-w-[400px] md:max-w-[1728px]'>
-                <h2 className='w-full font-montserrat text-[100px] font-extrabold text-[#EEF5FF] md:text-[400px]'>
-                    REVLR
-                </h2>
-            </div>
-            <div>
-                <h2 className='pb-16 font-montserrat text-xl font-semibold text-[#001433] md:text-4xl'>
-                    Set Up Your Event In Minutes, Sell Tickets Today
-                </h2>
-                <Link
-                    href='/create-event'
-                    className='rounded-xl border bg-[#0066FF] p-4 font-inter text-sm font-normal text-white md:rounded-lg md:px-6 md:py-4 md:text-lg'
+    const currentYear = new Date().getFullYear();
+
+    const footerSections = [
+        {
+            title: 'Platform',
+            links: [
+                { name: 'Create Events', href: '/create-event' },
+                { name: 'Browse Events', href: '/events' },
+                { name: 'Ticket Resale', href: '/resale' },
+                { name: 'Analytics', href: '/analytics' },
+                { name: 'Mobile App', href: '/mobile' },
+            ],
+        },
+        {
+            title: 'Resources',
+            links: [
+                { name: 'Help Center', href: '/help' },
+                { name: 'API Documentation', href: '/docs' },
+                { name: 'Event Planning Guide', href: '/guide' },
+                { name: 'Best Practices', href: '/best-practices' },
+                { name: 'Case Studies', href: '/case-studies' },
+            ],
+        },
+        {
+            title: 'Company',
+            links: [
+                { name: 'About Us', href: '/about' },
+                { name: 'Careers', href: '/careers' },
+                { name: 'Press Kit', href: '/press' },
+                { name: 'Partner Program', href: '/partners' },
+                { name: 'Contact', href: '/contact' },
+            ],
+        },
+        {
+            title: 'Legal',
+            links: [
+                { name: 'Privacy Policy', href: '/privacy' },
+                { name: 'Terms of Service', href: '/terms' },
+                { name: 'Cookie Policy', href: '/cookies' },
+                { name: 'GDPR', href: '/gdpr' },
+                { name: 'Security', href: '/security' },
+            ],
+        },
+    ];
+
+    const socialLinks = [
+        {
+            name: 'Twitter',
+            href: 'https://twitter.com/revlr',
+            icon: (
+                <svg
+                    className='size-5'
+                    fill='currentColor'
+                    viewBox='0 0 24 24'
                 >
-                    Create Your Event Now
-                </Link>
-            </div>
-            <div className='my-8 border-2 bg-[#D0D5DB]'></div>
-            <div className='flex w-full max-w-[1440px] flex-row justify-between py-8'>
-                <div className='flex flex-row gap-8'>
-                    <h2 className='font-inter text-[12px] font-medium text-[#6B7380]'>
-                        REVLR. All rights reserved.
-                    </h2>
-                    <h2 className='font-inter text-[12px] font-medium text-[#6B7380]'>
-                        Privacy Policy
-                    </h2>
-                    <h2 className='font-inter text-[12px] font-medium text-[#6B7380]'>
-                        Terms & Conditions
-                    </h2>
+                    <path d='M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z' />
+                </svg>
+            ),
+        },
+        {
+            name: 'LinkedIn',
+            href: 'https://linkedin.com/company/revlr',
+            icon: (
+                <svg
+                    className='size-5'
+                    fill='currentColor'
+                    viewBox='0 0 24 24'
+                >
+                    <path d='M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z' />
+                </svg>
+            ),
+        },
+        {
+            name: 'Instagram',
+            href: 'https://instagram.com/revlr',
+            icon: (
+                <svg
+                    className='size-5'
+                    fill='currentColor'
+                    viewBox='0 0 24 24'
+                >
+                    <path d='M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987s11.987-5.367 11.987-11.987C24.014 5.367 18.647.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.297C4.198 14.895 3.708 13.744 3.708 12.447s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323c-.875.807-2.026 1.297-3.323 1.297zm7.718-1.297c-.875.807-2.026 1.297-3.323 1.297s-2.448-.49-3.323-1.297c-.807-.875-1.297-2.026-1.297-3.323s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323z' />
+                </svg>
+            ),
+        },
+        {
+            name: 'GitHub',
+            href: 'https://github.com/revlr',
+            icon: (
+                <svg
+                    className='size-5'
+                    fill='currentColor'
+                    viewBox='0 0 24 24'
+                >
+                    <path d='M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z' />
+                </svg>
+            ),
+        },
+    ];
+
+    return (
+        <footer className='border-t border-gray-200 bg-white transition-all duration-300 dark:border-revlr-dark-border dark:bg-revlr-dark-bg'>
+            <div className='mx-auto max-w-[1440px] px-6 md:px-24'>
+                {/* Main Footer Content */}
+                <div className='py-16'>
+                    <div className='grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-6'>
+                        {/* Brand Section */}
+                        <div className='lg:col-span-2'>
+                            <Link
+                                href='/'
+                                className='mb-4 inline-flex items-center font-montserrat text-2xl font-extrabold text-revlr-primary-blue transition-colors duration-300 dark:text-white'
+                            >
+                                <span className='mr-2 text-revlr-primary-yellow'>
+                                    🎉
+                                </span>
+                                REVLR
+                            </Link>
+                            <p className='mb-6 max-w-sm text-gray-600 dark:text-gray-300'>
+                                The all-in-one event management platform that
+                                makes creating, managing, and selling tickets
+                                effortless. Join thousands of event organizers
+                                worldwide.
+                            </p>
+
+                            {/* Newsletter Signup */}
+                            <div className='space-y-3'>
+                                <h4 className='font-semibold text-gray-900 dark:text-white'>
+                                    Stay Updated
+                                </h4>
+                                <div className='flex flex-col gap-2 sm:flex-row'>
+                                    <input
+                                        type='email'
+                                        placeholder='Enter your email'
+                                        className='flex-1 rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-800 transition-all duration-200 placeholder:text-gray-500 focus:border-revlr-primary-blue focus:outline-none focus:ring-2 focus:ring-revlr-primary-blue/20 dark:border-revlr-dark-border dark:bg-revlr-dark-card dark:text-gray-200 dark:placeholder:text-gray-400'
+                                    />
+                                    <button className='whitespace-nowrap rounded-lg bg-gradient-to-r from-revlr-primary-blue to-revlr-accent-purple px-4 py-2 font-medium text-white transition-all duration-200 hover:from-revlr-primary-blue/90 hover:to-revlr-accent-purple/90'>
+                                        Subscribe
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer Links */}
+                        {footerSections.map((section) => (
+                            <div key={section.title} className=''>
+                                <h4 className='mb-4 font-semibold text-gray-900 dark:text-white'>
+                                    {section.title}
+                                </h4>
+                                <ul className='space-y-3'>
+                                    {section.links.map((link) => (
+                                        <li key={link.name}>
+                                            <Link
+                                                href={link.href}
+                                                className='text-gray-600 transition-colors duration-200 hover:text-revlr-primary-blue dark:text-gray-300 dark:hover:text-revlr-primary-yellow'
+                                            >
+                                                {link.name}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
                 </div>
-                <div className='flex flex-row gap-8'>
-                    <svg
-                        width='24'
-                        height='24'
-                        viewBox='0 0 24 24'
-                        fill='none'
-                        xmlns='http://www.w3.org/2000/svg'
-                    >
-                        <g clip-path='url(#clip0_858_261)'>
-                            <path
-                                d='M11.9982 23.9817C18.6205 23.9817 23.989 18.6132 23.989 11.9908C23.989 5.36848 18.6205 0 11.9982 0C5.37581 0 0.00732422 5.36848 0.00732422 11.9908C0.00732422 18.6132 5.37581 23.9817 11.9982 23.9817Z'
-                                fill='#4C5563'
-                            />
-                            <path
-                                d='M20.4805 3.5293C25.1632 8.21201 25.1634 15.8045 20.4803 20.4876C15.7973 25.1703 8.20469 25.1703 3.52197 20.4876L20.4805 3.5293Z'
-                                fill='#4C5563'
-                            />
-                            <path
-                                d='M23.9115 13.3415L15.2377 4.66748L10.7342 9.17091L11.0025 9.4392L8.43848 12.003L10.5371 14.1017L10.2611 14.3776L12.5332 16.6496L9.91382 19.269L14.3885 23.7436C19.4343 22.7225 23.3292 18.5332 23.9115 13.3415Z'
-                                fill='#4C5563'
-                            />
-                            <path
-                                d='M9.90173 7.53596C9.90173 7.90383 9.90173 9.54692 9.90173 9.54692H8.42847V12.006H9.90173V19.313H12.9281V12.006H14.9589C14.9589 12.006 15.1492 10.8267 15.2413 9.53765C14.9769 9.53765 12.9396 9.53765 12.9396 9.53765C12.9396 9.53765 12.9396 8.10685 12.9396 7.85612C12.9396 7.60503 13.2695 7.26706 13.5957 7.26706C13.9214 7.26706 14.6085 7.26706 15.2446 7.26706C15.2446 6.93193 15.2446 5.77528 15.2446 4.70703C14.3952 4.70703 13.4289 4.70703 13.0027 4.70703C9.82679 4.70688 9.90173 7.16829 9.90173 7.53596Z'
-                                fill='white'
-                            />
-                        </g>
-                        <defs>
-                            <clipPath id='clip0_858_261'>
-                                <rect width='24' height='24' fill='white' />
-                            </clipPath>
-                        </defs>
-                    </svg>
 
-                    <svg
-                        width='25'
-                        height='26'
-                        viewBox='0 0 25 26'
-                        fill='none'
-                        xmlns='http://www.w3.org/2000/svg'
-                    >
-                        <path
-                            d='M12.5 25C19.1274 25 24.5 19.6274 24.5 13C24.5 6.37258 19.1274 1 12.5 1C5.87258 1 0.5 6.37258 0.5 13C0.5 19.6274 5.87258 25 12.5 25Z'
-                            fill='#4C5563'
-                            stroke='white'
-                            stroke-width='0.0249309'
-                            stroke-miterlimit='10'
-                        />
-                        <path
-                            d='M5.10793 6.04785L10.8438 13.7171L5.07178 19.9526H6.37093L11.4244 14.4932L15.5074 19.9526H19.9281L13.8694 11.852L19.242 6.04785H17.9429L13.289 11.0757L9.52868 6.04785H5.10793ZM7.01838 7.0047H9.04926L18.0174 18.9957H15.9865L7.01838 7.0047Z'
-                            fill='white'
-                        />
-                    </svg>
+                {/* Bottom Section */}
+                <div className='border-t border-gray-200 py-8 dark:border-revlr-dark-border'>
+                    <div className='flex flex-col items-center justify-between gap-6 md:flex-row'>
+                        {/* Copyright */}
+                        <div className='text-sm text-gray-600 dark:text-gray-300'>
+                            © {currentYear} REVLR. All rights reserved. Made
+                            with ❤️ in Lagos, Nigeria.
+                        </div>
 
-                    <svg
-                        width='24'
-                        height='24'
-                        viewBox='0 0 24 24'
-                        fill='none'
-                        xmlns='http://www.w3.org/2000/svg'
-                    >
-                        <g clip-path='url(#clip0_858_271)'>
-                            <path
-                                d='M12 23.9995C18.6274 23.9995 24 18.6269 24 11.9995C24 5.37209 18.6274 -0.000488281 12 -0.000488281C5.37258 -0.000488281 0 5.37209 0 11.9995C0 18.6269 5.37258 23.9995 12 23.9995Z'
-                                fill='#4C5563'
-                            />
-                            <path
-                                d='M12 6.09712C13.9225 6.09712 14.1503 6.10444 14.9094 6.13906C15.6115 6.1711 15.9927 6.2884 16.2464 6.38698C16.5825 6.5176 16.8223 6.6736 17.0743 6.92554C17.3263 7.17754 17.4822 7.41737 17.6129 7.75343C17.7114 8.00717 17.8287 8.3884 17.8608 9.09034C17.8954 9.84959 17.9027 10.0773 17.9027 11.9997C17.9027 13.9223 17.8954 14.15 17.8608 14.9092C17.8287 15.6112 17.7114 15.9924 17.6129 16.2461C17.4822 16.5822 17.3262 16.8221 17.0743 17.074C16.8223 17.3259 16.5825 17.4819 16.2464 17.6126C15.9927 17.7112 15.6115 17.8284 14.9094 17.8605C14.1504 17.8951 13.9227 17.9025 12 17.9025C10.0774 17.9025 9.84977 17.8951 9.09065 17.8605C8.38865 17.8284 8.00741 17.7112 7.75367 17.6126C7.41761 17.4819 7.17779 17.3259 6.92585 17.074C6.67391 16.8221 6.51785 16.5822 6.38723 16.2461C6.28865 15.9924 6.17135 15.6112 6.13931 14.9092C6.10469 14.15 6.09737 13.9223 6.09737 11.9997C6.09737 10.0773 6.10469 9.84959 6.13931 9.09034C6.17135 8.3884 6.28865 8.00717 6.38723 7.75343C6.51785 7.41737 6.67385 7.17754 6.92585 6.9256C7.17779 6.6736 7.41761 6.5176 7.75367 6.38698C8.00741 6.2884 8.38865 6.1711 9.09065 6.13906C9.84983 6.10444 10.0776 6.09712 12 6.09712ZM12 4.7998C10.0446 4.7998 9.79943 4.80808 9.03149 4.84312C8.26517 4.8781 7.74173 4.99978 7.28375 5.1778C6.81029 5.36176 6.40877 5.60794 6.00851 6.00826C5.60819 6.40852 5.36201 6.81004 5.17805 7.2835C5.00003 7.74148 4.87835 8.26487 4.84337 9.03125C4.80833 9.79919 4.80005 10.0444 4.80005 11.9997C4.80005 13.9552 4.80833 14.2004 4.84337 14.9683C4.87835 15.7347 5.00003 16.2581 5.17805 16.716C5.36201 17.1895 5.60819 17.591 6.00851 17.9913C6.40877 18.3916 6.81029 18.6378 7.28375 18.8217C7.74173 18.9998 8.26517 19.1214 9.03149 19.1564C9.79943 19.1915 10.0446 19.1997 12 19.1997C13.9554 19.1997 14.2007 19.1915 14.9686 19.1564C15.7349 19.1214 16.2584 18.9998 16.7163 18.8217C17.1898 18.6378 17.5913 18.3916 17.9916 17.9913C18.3918 17.591 18.6381 17.1895 18.822 16.716C19.0001 16.2581 19.1217 15.7347 19.1567 14.9683C19.1918 14.2004 19.2 13.9552 19.2 11.9997C19.2 10.0444 19.1918 9.79919 19.1567 9.03125C19.1217 8.26487 19.0001 7.74148 18.822 7.2835C18.6381 6.81004 18.3918 6.40852 17.9916 6.00826C17.5913 5.60794 17.1898 5.36176 16.7163 5.1778C16.2584 4.99978 15.7349 4.8781 14.9686 4.84312C14.2007 4.80808 13.9554 4.7998 12 4.7998Z'
-                                fill='white'
-                            />
-                            <path
-                                d='M12.0034 8.30566C9.96143 8.30566 8.30615 9.96094 8.30615 12.0029C8.30615 14.0449 9.96143 15.7002 12.0034 15.7002C14.0454 15.7002 15.7007 14.0449 15.7007 12.0029C15.7007 9.96094 14.0454 8.30566 12.0034 8.30566ZM12.0034 14.4029C10.678 14.4029 9.60341 13.3284 9.60341 12.0029C9.60341 10.6775 10.678 9.60292 12.0034 9.60292C13.3289 9.60292 14.4034 10.6775 14.4034 12.0029C14.4034 13.3284 13.3289 14.4029 12.0034 14.4029Z'
-                                fill='white'
-                            />
-                            <path
-                                d='M16.7104 8.15801C16.7104 8.63513 16.3236 9.02201 15.8464 9.02201C15.3692 9.02201 14.9824 8.63513 14.9824 8.15801C14.9824 7.68083 15.3692 7.29395 15.8464 7.29395C16.3236 7.29395 16.7104 7.68083 16.7104 8.15801Z'
-                                fill='white'
-                            />
-                        </g>
-                        <defs>
-                            <clipPath id='clip0_858_271'>
-                                <rect width='24' height='24' fill='white' />
-                            </clipPath>
-                        </defs>
-                    </svg>
+                        {/* Social Links */}
+                        <div className='flex items-center gap-4'>
+                            <span className='mr-2 text-sm text-gray-600 dark:text-gray-300'>
+                                Follow us:
+                            </span>
+                            {socialLinks.map((social) => (
+                                <Link
+                                    key={social.name}
+                                    href={social.href}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='rounded-lg bg-gray-100 p-2 text-gray-600 transition-all duration-200 hover:bg-gray-200 hover:text-revlr-primary-blue dark:bg-revlr-dark-card dark:text-gray-300 dark:hover:bg-revlr-dark-border dark:hover:text-revlr-primary-yellow'
+                                    aria-label={social.name}
+                                >
+                                    {social.icon}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Trust Indicators */}
+                <div className='border-t border-gray-200 py-8 dark:border-revlr-dark-border'>
+                    <div className='flex flex-col items-center justify-center gap-8 text-center md:flex-row'>
+                        <div className='flex items-center gap-2 text-gray-600 dark:text-gray-300'>
+                            <div className='flex size-5 items-center justify-center rounded-full bg-green-500'>
+                                <svg
+                                    className='size-3 text-white'
+                                    fill='none'
+                                    stroke='currentColor'
+                                    viewBox='0 0 24 24'
+                                >
+                                    <path
+                                        strokeLinecap='round'
+                                        strokeLinejoin='round'
+                                        strokeWidth={2}
+                                        d='M5 13l4 4L19 7'
+                                    />
+                                </svg>
+                            </div>
+                            <span className='text-sm'>SSL Secured</span>
+                        </div>
+
+                        <div className='flex items-center gap-2 text-gray-600 dark:text-gray-300'>
+                            <div className='flex size-5 items-center justify-center rounded-full bg-blue-500'>
+                                <svg
+                                    className='size-3 text-white'
+                                    fill='none'
+                                    stroke='currentColor'
+                                    viewBox='0 0 24 24'
+                                >
+                                    <path
+                                        strokeLinecap='round'
+                                        strokeLinejoin='round'
+                                        strokeWidth={2}
+                                        d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+                                    />
+                                </svg>
+                            </div>
+                            <span className='text-sm'>GDPR Compliant</span>
+                        </div>
+
+                        <div className='flex items-center gap-2 text-gray-600 dark:text-gray-300'>
+                            <div className='flex size-5 items-center justify-center rounded-full bg-purple-500'>
+                                <svg
+                                    className='size-3 text-white'
+                                    fill='none'
+                                    stroke='currentColor'
+                                    viewBox='0 0 24 24'
+                                >
+                                    <path
+                                        strokeLinecap='round'
+                                        strokeLinejoin='round'
+                                        strokeWidth={2}
+                                        d='M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z'
+                                    />
+                                </svg>
+                            </div>
+                            <span className='text-sm'>PCI DSS Level 1</span>
+                        </div>
+
+                        <div className='flex items-center gap-2 text-gray-600 dark:text-gray-300'>
+                            <div className='flex size-5 items-center justify-center rounded-full bg-orange-500'>
+                                <svg
+                                    className='size-3 text-white'
+                                    fill='none'
+                                    stroke='currentColor'
+                                    viewBox='0 0 24 24'
+                                >
+                                    <path
+                                        strokeLinecap='round'
+                                        strokeLinejoin='round'
+                                        strokeWidth={2}
+                                        d='M13 10V3L4 14h7v7l9-11h-7z'
+                                    />
+                                </svg>
+                            </div>
+                            <span className='text-sm'>99.9% Uptime</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </footer>

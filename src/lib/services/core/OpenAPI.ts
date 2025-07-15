@@ -20,7 +20,9 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-    BASE: 'http://revlr-api-dev-g6dtb4cebbfpfgcv.canadacentral-01.azurewebsites.net:80',
+    BASE:
+        process.env.NEXT_PUBLIC_API_URL ||
+        'https://revlr-api-dev-g6dtb4cebbfpfgcv.canadacentral-01.azurewebsites.net',
     VERSION: '1.0.0',
     WITH_CREDENTIALS: false,
     CREDENTIALS: 'include',

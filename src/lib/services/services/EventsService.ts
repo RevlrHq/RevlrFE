@@ -51,12 +51,17 @@ export class EventsService {
         sortOrder,
         searchTerm,
         category,
+        categories,
         startDate,
         endDate,
         locationType,
         minPrice,
         maxPrice,
         includeTickets,
+        status,
+        organizer,
+        city,
+        includePastEvents,
     }: {
         pageNumber?: number;
         pageSize?: number;
@@ -64,30 +69,56 @@ export class EventsService {
         sortOrder?: string;
         searchTerm?: string;
         category?: string;
+        categories?: string[];
         startDate?: string;
         endDate?: string;
-        locationType?: string;
+        locationType?: string | number;
         minPrice?: number;
         maxPrice?: number;
         includeTickets?: boolean;
+        status?: string;
+        organizer?: string;
+        city?: string;
+        includePastEvents?: boolean;
     }): CancelablePromise<StandardResponseOfPagedCollectionOfEventView> {
+        // Build query parameters
+        const queryParams: any = {
+            PageNumber: pageNumber,
+            PageSize: pageSize,
+            SortBy: sortBy,
+            SortOrder: sortOrder,
+            SearchTerm: searchTerm,
+            Category: category,
+            StartDate: startDate,
+            EndDate: endDate,
+            LocationType: locationType,
+            MinPrice: minPrice,
+            MaxPrice: maxPrice,
+            IncludeTickets: includeTickets,
+            Status: status,
+            Organizer: organizer,
+            City: city,
+            IncludePastEvents: includePastEvents,
+        };
+
+        // Handle multiple categories by adding them as separate query parameters
+        if (categories && categories.length > 0) {
+            categories.forEach((cat) => {
+                if (!queryParams.Categories) {
+                    queryParams.Categories = [];
+                }
+                if (Array.isArray(queryParams.Categories)) {
+                    queryParams.Categories.push(cat);
+                } else {
+                    queryParams.Categories = [queryParams.Categories, cat];
+                }
+            });
+        }
+
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Events',
-            query: {
-                PageNumber: pageNumber,
-                PageSize: pageSize,
-                SortBy: sortBy,
-                SortOrder: sortOrder,
-                SearchTerm: searchTerm,
-                Category: category,
-                StartDate: startDate,
-                EndDate: endDate,
-                LocationType: locationType,
-                MinPrice: minPrice,
-                MaxPrice: maxPrice,
-                IncludeTickets: includeTickets,
-            },
+            query: queryParams,
             errors: {
                 500: `Internal Server Error`,
             },

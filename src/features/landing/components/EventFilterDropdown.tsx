@@ -1,54 +1,158 @@
 import { useState } from 'react';
 
+export interface FilterValues {
+    sort?: string;
+    dateRange?: string;
+    customDateRange?: {
+        startDate?: string;
+        endDate?: string;
+    };
+    location?: string;
+    priceRange?: number[];
+    eventType?: string;
+}
+
+export interface AppliedFilters {
+    sort?: boolean;
+    dateRange?: boolean;
+    customDateRange?: boolean;
+    location?: boolean;
+    priceRange?: boolean;
+    eventType?: boolean;
+}
+
 interface EventFilterDropdownProps {
-    onApply: (filters: {
-        sort: string;
-        dateRange: string;
-        location: string;
-        priceRange: number[];
-        eventType: string;
-    }) => void;
+    onApply: (filters: FilterValues, appliedFilters: AppliedFilters) => void;
     onCancel: () => void;
+    initialFilters?: Partial<FilterValues>;
+    initialAppliedFilters?: AppliedFilters;
 }
 
 const EventFilterDropdown = ({
     onApply,
     onCancel,
+    initialFilters,
+    initialAppliedFilters,
 }: EventFilterDropdownProps) => {
-    const [sort, setSort] = useState('Trending');
-    const [dateRange, setDateRange] = useState('Today');
-    const [location, setLocation] = useState('Lagos');
-    const [priceRange, setPriceRange] = useState([50, 2000]);
-    const [eventType, setEventType] = useState('In-person');
+    const [sort, setSort] = useState(initialFilters?.sort || '');
+    const [dateRange, setDateRange] = useState(initialFilters?.dateRange || '');
+    const [customStartDate, setCustomStartDate] = useState(
+        initialFilters?.customDateRange?.startDate || ''
+    );
+    const [customEndDate, setCustomEndDate] = useState(
+        initialFilters?.customDateRange?.endDate || ''
+    );
+    const [location, setLocation] = useState(initialFilters?.location || '');
+    const [priceRange, setPriceRange] = useState(
+        initialFilters?.priceRange || [0, 5000]
+    );
+    const [eventType, setEventType] = useState(initialFilters?.eventType || '');
+    const [useCustomDateRange, setUseCustomDateRange] = useState(false);
 
-    // Handle price range slider changes
-    const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newMin = parseInt(e.target.value);
-        setPriceRange([newMin, priceRange[1]]);
+    // Track which filters have been modified by the user
+    const [appliedFilters, setAppliedFilters] = useState<AppliedFilters>(
+        initialAppliedFilters || {}
+    );
+
+    // Handle filter changes and track what's been applied
+    const handleSortChange = (value: string) => {
+        setSort(value);
+        setAppliedFilters((prev) => ({ ...prev, sort: value !== '' }));
     };
 
-    const handleMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newMax = parseInt(e.target.value);
-        setPriceRange([priceRange[0], newMax]);
+    const handleDateRangeChange = (value: string) => {
+        setDateRange(value);
+        setUseCustomDateRange(false);
+        setAppliedFilters((prev) => ({
+            ...prev,
+            dateRange: value !== '',
+            customDateRange: false,
+        }));
+    };
+
+    const handleCustomDateChange = () => {
+        setUseCustomDateRange(true);
+        setDateRange('');
+        setAppliedFilters((prev) => ({
+            ...prev,
+            customDateRange: customStartDate !== '' || customEndDate !== '',
+            dateRange: false,
+        }));
+    };
+
+    const handleLocationChange = (value: string) => {
+        setLocation(value);
+        setAppliedFilters((prev) => ({ ...prev, location: value !== '' }));
+    };
+
+    const handleEventTypeChange = (value: string) => {
+        setEventType(value);
+        setAppliedFilters((prev) => ({ ...prev, eventType: value !== '' }));
+    };
+
+    const handlePriceRangeChange = (newRange: number[]) => {
+        setPriceRange(newRange);
+        setAppliedFilters((prev) => ({
+            ...prev,
+            priceRange: newRange[0] > 0 || newRange[1] < 5000,
+        }));
     };
 
     // Handle apply filters
     const handleApply = () => {
         if (onApply) {
-            onApply({
-                sort,
-                dateRange,
-                location,
-                priceRange,
-                eventType,
-            });
+            const filters: FilterValues = {};
+
+            // Only include filters that have been applied
+            if (appliedFilters.sort && sort) {
+                filters.sort = sort;
+            }
+            if (appliedFilters.dateRange && dateRange) {
+                filters.dateRange = dateRange;
+            }
+            if (
+                appliedFilters.customDateRange &&
+                (customStartDate || customEndDate)
+            ) {
+                filters.customDateRange = {
+                    startDate: customStartDate,
+                    endDate: customEndDate,
+                };
+            }
+            if (appliedFilters.location && location) {
+                filters.location = location;
+            }
+            if (
+                appliedFilters.priceRange &&
+                (priceRange[0] > 0 || priceRange[1] < 5000)
+            ) {
+                filters.priceRange = priceRange;
+            }
+            if (appliedFilters.eventType && eventType) {
+                filters.eventType = eventType;
+            }
+
+            onApply(filters, appliedFilters);
         }
     };
 
+    // Reset all filters
+    const handleReset = () => {
+        setSort('');
+        setDateRange('');
+        setCustomStartDate('');
+        setCustomEndDate('');
+        setLocation('');
+        setPriceRange([0, 5000]);
+        setEventType('');
+        setUseCustomDateRange(false);
+        setAppliedFilters({});
+    };
+
     return (
-        <div className='absolute left-[95px] top-[8px] z-50 w-64 rounded-lg border border-[#E4E6EB] bg-white'>
-            <div className='flex cursor-pointer items-center justify-between bg-[#F1F6FF] px-4 py-2'>
-                <div className='flex items-center gap-2 font-inter text-sm font-semibold text-[#001433]'>
+        <div className='absolute left-[95px] top-[8px] z-50 w-64 rounded-lg border border-gray-200 bg-white shadow-lg dark:border-revlr-dark-border dark:bg-revlr-dark-card'>
+            <div className='flex cursor-pointer items-center justify-between bg-blue-50 px-4 py-2 dark:bg-revlr-dark-bg'>
+                <div className='flex items-center gap-2 font-inter text-sm font-semibold text-gray-900 dark:text-white'>
                     <svg
                         width='20'
                         height='20'
@@ -80,20 +184,25 @@ const EventFilterDropdown = ({
             <div className='px-4 py-6'>
                 {/* Sort */}
                 <div className='mb-4'>
-                    <label className='mb-1 block text-sm font-medium text-[#001433]'>
+                    <label className='mb-1 block text-sm font-medium text-gray-900 dark:text-white'>
                         Sort
                     </label>
                     <div className='relative'>
                         <select
                             value={sort}
-                            onChange={(e) => setSort(e.target.value)}
-                            className='block w-full appearance-none rounded-md border border-gray-300 py-2 pl-3 pr-10 text-sm font-normal'
+                            onChange={(e) => handleSortChange(e.target.value)}
+                            className='block w-full appearance-none rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm font-normal text-gray-900 dark:border-revlr-dark-border dark:bg-revlr-dark-bg dark:text-white'
                         >
-                            <option>Trending</option>
-                            <option>Newest</option>
-                            <option>Price: Low to High</option>
-                            <option>Price: High to Low</option>
-                            <option>Upcoming</option>
+                            <option value=''>Select sort option</option>
+                            <option value='Trending'>Trending</option>
+                            <option value='Newest'>Newest</option>
+                            <option value='Price: Low to High'>
+                                Price: Low to High
+                            </option>
+                            <option value='Price: High to Low'>
+                                Price: High to Low
+                            </option>
+                            <option value='Upcoming'>Upcoming</option>
                         </select>
                         <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700'>
                             <svg
@@ -114,56 +223,130 @@ const EventFilterDropdown = ({
 
                 {/* Date Range */}
                 <div className='mb-4'>
-                    <label className='mb-1 block text-sm font-medium text-[#001433]'>
+                    <label className='mb-1 block text-sm font-medium text-gray-900 dark:text-white'>
                         Date Range
                     </label>
-                    <div className='relative'>
-                        <select
-                            value={dateRange}
-                            onChange={(e) => setDateRange(e.target.value)}
-                            className='block w-full appearance-none rounded-md border border-gray-300 py-2 pl-3 pr-10 text-sm font-normal'
-                        >
-                            <option>Today</option>
-                            <option>Tomorrow</option>
-                            <option>This Week</option>
-                            <option>This Weekend</option>
-                            <option>Next Week</option>
-                            <option>This Month</option>
-                        </select>
-                        <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700'>
-                            <svg
-                                className='size-4'
-                                xmlns='http://www.w3.org/2000/svg'
-                                viewBox='0 0 20 20'
-                                fill='currentColor'
+                    <div className='space-y-2'>
+                        <div className='relative'>
+                            <select
+                                value={useCustomDateRange ? '' : dateRange}
+                                onChange={(e) =>
+                                    handleDateRangeChange(e.target.value)
+                                }
+                                className='block w-full appearance-none rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm font-normal text-gray-900 dark:border-revlr-dark-border dark:bg-revlr-dark-bg dark:text-white'
+                                disabled={useCustomDateRange}
                             >
-                                <path
-                                    fillRule='evenodd'
-                                    d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'
-                                    clipRule='evenodd'
-                                />
-                            </svg>
+                                <option value=''>Select date range</option>
+                                <option value='Today'>Today</option>
+                                <option value='Tomorrow'>Tomorrow</option>
+                                <option value='This Week'>This Week</option>
+                                <option value='This Weekend'>
+                                    This Weekend
+                                </option>
+                                <option value='Next Week'>Next Week</option>
+                                <option value='This Month'>This Month</option>
+                            </select>
+                            <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700'>
+                                <svg
+                                    className='size-4'
+                                    xmlns='http://www.w3.org/2000/svg'
+                                    viewBox='0 0 20 20'
+                                    fill='currentColor'
+                                >
+                                    <path
+                                        fillRule='evenodd'
+                                        d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'
+                                        clipRule='evenodd'
+                                    />
+                                </svg>
+                            </div>
                         </div>
+
+                        <div className='flex items-center'>
+                            <input
+                                type='checkbox'
+                                id='custom-date'
+                                checked={useCustomDateRange}
+                                onChange={(e) => {
+                                    if (e.target.checked) {
+                                        setUseCustomDateRange(true);
+                                        setDateRange('');
+                                        handleCustomDateChange();
+                                    } else {
+                                        setUseCustomDateRange(false);
+                                        setCustomStartDate('');
+                                        setCustomEndDate('');
+                                        setAppliedFilters((prev) => ({
+                                            ...prev,
+                                            customDateRange: false,
+                                        }));
+                                    }
+                                }}
+                                className='mr-2 size-4 text-[#0066FF]'
+                            />
+                            <label
+                                htmlFor='custom-date'
+                                className='text-sm text-gray-900 dark:text-white'
+                            >
+                                Custom date range
+                            </label>
+                        </div>
+
+                        {useCustomDateRange && (
+                            <div className='space-y-2'>
+                                <div>
+                                    <label className='mb-1 block text-xs text-gray-600 dark:text-gray-300'>
+                                        Start Date
+                                    </label>
+                                    <input
+                                        type='datetime-local'
+                                        value={customStartDate}
+                                        onChange={(e) => {
+                                            setCustomStartDate(e.target.value);
+                                            handleCustomDateChange();
+                                        }}
+                                        className='block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 dark:border-revlr-dark-border dark:bg-revlr-dark-bg dark:text-white'
+                                    />
+                                </div>
+                                <div>
+                                    <label className='mb-1 block text-xs text-gray-600 dark:text-gray-300'>
+                                        End Date
+                                    </label>
+                                    <input
+                                        type='datetime-local'
+                                        value={customEndDate}
+                                        onChange={(e) => {
+                                            setCustomEndDate(e.target.value);
+                                            handleCustomDateChange();
+                                        }}
+                                        className='block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 dark:border-revlr-dark-border dark:bg-revlr-dark-bg dark:text-white'
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 {/* Location */}
                 <div className='mb-4'>
-                    <label className='mb-1 block text-sm font-medium text-[#001433]'>
+                    <label className='mb-1 block text-sm font-medium text-gray-900 dark:text-white'>
                         Location
                     </label>
                     <div className='relative'>
                         <select
                             value={location}
-                            onChange={(e) => setLocation(e.target.value)}
-                            className='block w-full appearance-none rounded-md border border-gray-300 py-2 pl-3 pr-10 text-sm font-normal'
+                            onChange={(e) =>
+                                handleLocationChange(e.target.value)
+                            }
+                            className='block w-full appearance-none rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm font-normal text-gray-900 dark:border-revlr-dark-border dark:bg-revlr-dark-bg dark:text-white'
                         >
-                            <option>Lagos</option>
-                            <option>Abuja</option>
-                            <option>Port Harcourt</option>
-                            <option>Kano</option>
-                            <option>Ibadan</option>
-                            <option>Enugu</option>
+                            <option value=''>Select location</option>
+                            <option value='Lagos'>Lagos</option>
+                            <option value='Abuja'>Abuja</option>
+                            <option value='Port Harcourt'>Port Harcourt</option>
+                            <option value='Kano'>Kano</option>
+                            <option value='Ibadan'>Ibadan</option>
+                            <option value='Enugu'>Enugu</option>
                         </select>
                         <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700'>
                             <svg
@@ -184,12 +367,16 @@ const EventFilterDropdown = ({
 
                 {/* Price Range */}
                 <div className='mb-8'>
-                    <label className='mb-3 block text-sm font-medium text-[#001433]'>
+                    <label className='mb-3 block text-sm font-medium text-gray-900 dark:text-white'>
                         Price Range
                     </label>
                     <div className='mb-2 flex justify-between'>
-                        <span className='text-gray-900'>${priceRange[0]}</span>
-                        <span className='text-gray-900'>${priceRange[1]}+</span>
+                        <span className='text-gray-900 dark:text-white'>
+                            ${priceRange[0]}
+                        </span>
+                        <span className='text-gray-900 dark:text-white'>
+                            ${priceRange[1]}+
+                        </span>
                     </div>
                     <div className='relative mb-4 h-4'>
                         <input
@@ -197,7 +384,11 @@ const EventFilterDropdown = ({
                             min='0'
                             max='5000'
                             value={priceRange[0]}
-                            onChange={handleMinPriceChange}
+                            onChange={(e) => {
+                                const newMin = parseInt(e.target.value);
+                                const newRange = [newMin, priceRange[1]];
+                                handlePriceRangeChange(newRange);
+                            }}
                             className='absolute h-1 w-full cursor-pointer appearance-none rounded-md bg-gray-200'
                         />
                         <input
@@ -205,7 +396,11 @@ const EventFilterDropdown = ({
                             min='0'
                             max='5000'
                             value={priceRange[1]}
-                            onChange={handleMaxPriceChange}
+                            onChange={(e) => {
+                                const newMax = parseInt(e.target.value);
+                                const newRange = [priceRange[0], newMax];
+                                handlePriceRangeChange(newRange);
+                            }}
                             className='absolute h-1 w-full cursor-pointer appearance-none bg-transparent'
                         />
                     </div>
@@ -221,7 +416,7 @@ const EventFilterDropdown = ({
 
                 {/* Event Type */}
                 <div className='mb-6'>
-                    <label className='mb-2 block text-sm font-medium text-[#001433]'>
+                    <label className='mb-2 block text-sm font-medium text-gray-900 dark:text-white'>
                         Event Type
                     </label>
                     <div className='space-y-2'>
@@ -231,12 +426,14 @@ const EventFilterDropdown = ({
                                 name='event-type'
                                 type='radio'
                                 checked={eventType === 'In-person'}
-                                onChange={() => setEventType('In-person')}
-                                className='size-4 border-gray-300 text-[#0066FF]'
+                                onChange={() =>
+                                    handleEventTypeChange('In-person')
+                                }
+                                className='size-4 border-gray-300 text-[#0066FF] dark:border-revlr-dark-border'
                             />
                             <label
                                 htmlFor='in-person'
-                                className='ml-2 block text-sm font-medium text-[#001433]'
+                                className='ml-2 block text-sm font-medium text-gray-900 dark:text-white'
                             >
                                 In-person
                             </label>
@@ -247,12 +444,14 @@ const EventFilterDropdown = ({
                                 name='event-type'
                                 type='radio'
                                 checked={eventType === 'Virtual'}
-                                onChange={() => setEventType('Virtual')}
-                                className='size-4 border-gray-300 text-[#0066FF]'
+                                onChange={() =>
+                                    handleEventTypeChange('Virtual')
+                                }
+                                className='size-4 border-gray-300 text-[#0066FF] dark:border-revlr-dark-border'
                             />
                             <label
                                 htmlFor='virtual'
-                                className='ml-2 block text-sm font-medium text-[#001433]'
+                                className='ml-2 block text-sm font-medium text-gray-900 dark:text-white'
                             >
                                 Virtual
                             </label>
@@ -263,12 +462,12 @@ const EventFilterDropdown = ({
                                 name='event-type'
                                 type='radio'
                                 checked={eventType === 'Hybrid'}
-                                onChange={() => setEventType('Hybrid')}
-                                className='size-4 border-gray-300 text-[#0066FF]'
+                                onChange={() => handleEventTypeChange('Hybrid')}
+                                className='size-4 border-gray-300 text-[#0066FF] dark:border-revlr-dark-border'
                             />
                             <label
                                 htmlFor='hybrid'
-                                className='ml-2 block text-sm font-medium text-[#001433]'
+                                className='ml-2 block text-sm font-medium text-gray-900 dark:text-white'
                             >
                                 Hybrid
                             </label>
@@ -278,15 +477,23 @@ const EventFilterDropdown = ({
 
                 {/* Action Buttons */}
                 <div className='flex justify-between'>
-                    <button
-                        onClick={onCancel}
-                        className='rounded-lg border border-[#E5F0FF] px-6 py-2 text-sm font-semibold text-[#0066FF]'
-                    >
-                        Cancel
-                    </button>
+                    <div className='flex space-x-2'>
+                        <button
+                            onClick={onCancel}
+                            className='rounded-lg border border-blue-200 px-4 py-2 text-sm font-semibold text-[#0066FF] hover:bg-blue-50 dark:border-revlr-dark-border dark:text-blue-400 dark:hover:bg-revlr-dark-bg'
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleReset}
+                            className='rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 dark:border-revlr-dark-border dark:text-gray-300 dark:hover:bg-revlr-dark-bg'
+                        >
+                            Reset
+                        </button>
+                    </div>
                     <button
                         onClick={handleApply}
-                        className='rounded-lg bg-[#0066FF] px-6 py-2 text-sm font-medium text-white'
+                        className='rounded-lg bg-[#0066FF] px-6 py-2 text-sm font-medium text-white hover:bg-blue-700'
                     >
                         Apply
                     </button>

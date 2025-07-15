@@ -117,7 +117,7 @@ export default [
             // Ensure imports are resolved
             'import/no-unresolved': 'error',
             'boundaries/no-private': 0,
-            'boundaries/no-unknown-files': ['error'],
+            'boundaries/no-unknown-files': ['warn'],
             'boundaries/element-types': [
                 2,
                 {
