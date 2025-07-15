@@ -5,6 +5,7 @@ This document describes the comprehensive event category filtering system implem
 ## Overview
 
 The new system provides:
+
 - **Type-safe category handling** with enum-based categories
 - **Multiple filtering options** (single, multiple, grouped, search)
 - **Reusable components** across different parts of the application
@@ -16,25 +17,28 @@ The new system provides:
 ### Core Components
 
 1. **Event Categories (`eventCategories.ts`)**
-   - Defines 24 comprehensive event categories
-   - Provides category grouping and metadata
-   - Includes utility functions for category operations
+
+    - Defines 24 comprehensive event categories
+    - Provides category grouping and metadata
+    - Includes utility functions for category operations
 
 2. **Category Filter Hook (`useCategoryFilter.ts`)**
-   - Manages category filter state and actions
-   - Provides search and grouping functionality
-   - Handles multiple category selection
+
+    - Manages category filter state and actions
+    - Provides search and grouping functionality
+    - Handles multiple category selection
 
 3. **Category Filter Component (`CategoryFilter.tsx`)**
-   - Reusable UI component with multiple variants
-   - Supports tabs, dropdown, sidebar, and chips layouts
-   - Configurable search and grouping options
+    - Reusable UI component with multiple variants
+    - Supports tabs, dropdown, sidebar, and chips layouts
+    - Configurable search and grouping options
 
 ## Available Categories
 
 The system includes 24 predefined categories organized into 6 groups:
 
 ### Business & Professional
+
 - Business & Professional
 - Technology & Innovation
 - Finance & Investment
@@ -42,6 +46,7 @@ The system includes 24 predefined categories organized into 6 groups:
 - Real Estate
 
 ### Arts & Entertainment
+
 - Arts & Culture
 - Music & Entertainment
 - Fashion & Beauty
@@ -49,23 +54,27 @@ The system includes 24 predefined categories organized into 6 groups:
 - Film & Media
 
 ### Health & Lifestyle
+
 - Health & Wellness
 - Sports & Fitness
 - Food & Drink
 - Travel & Adventure
 
 ### Education & Community
+
 - Education & Learning
 - Community & Social
 - Family & Kids
 - Charity & Causes
 
 ### Technology & Gaming
+
 - Technology & Innovation
 - Gaming & Esports
 - Science & Research
 
 ### Other
+
 - Religion & Spirituality
 - Government & Politics
 - Automotive
@@ -80,19 +89,19 @@ import CategoryFilter from '../components/CategoryFilter';
 import { EventCategory } from '../lib/constants/eventCategories';
 
 function MyComponent() {
-  const handleCategoryChange = (categories: EventCategory[]) => {
-    console.log('Selected categories:', categories);
-    // Apply filtering logic
-  };
+    const handleCategoryChange = (categories: EventCategory[]) => {
+        console.log('Selected categories:', categories);
+        // Apply filtering logic
+    };
 
-  return (
-    <CategoryFilter
-      variant="dropdown"
-      onCategoryChange={handleCategoryChange}
-      showSearch={true}
-      showGrouped={false}
-    />
-  );
+    return (
+        <CategoryFilter
+            variant='dropdown'
+            onCategoryChange={handleCategoryChange}
+            showSearch={true}
+            showGrouped={false}
+        />
+    );
 }
 ```
 
@@ -103,32 +112,28 @@ import { useCategoryFilter } from '../hooks/useCategoryFilter';
 import { EventCategory } from '../lib/constants/eventCategories';
 
 function MyComponent() {
-  const categoryFilter = useCategoryFilter();
-  const { state, actions, data } = categoryFilter;
+    const categoryFilter = useCategoryFilter();
+    const { state, actions, data } = categoryFilter;
 
-  const handleSelectTech = () => {
-    actions.toggleCategory(EventCategory.TechnologyInnovation);
-  };
+    const handleSelectTech = () => {
+        actions.toggleCategory(EventCategory.TechnologyInnovation);
+    };
 
-  const handleSelectBusinessGroup = () => {
-    actions.toggleGroup('Business & Professional');
-  };
+    const handleSelectBusinessGroup = () => {
+        actions.toggleGroup('Business & Professional');
+    };
 
-  return (
-    <div>
-      <button onClick={handleSelectTech}>
-        Toggle Technology
-      </button>
-      <button onClick={handleSelectBusinessGroup}>
-        Toggle Business Group
-      </button>
-      
-      {/* Display selected categories */}
-      <div>
-        Selected: {data.selectedCategoryDescriptions.join(', ')}
-      </div>
-    </div>
-  );
+    return (
+        <div>
+            <button onClick={handleSelectTech}>Toggle Technology</button>
+            <button onClick={handleSelectBusinessGroup}>
+                Toggle Business Group
+            </button>
+
+            {/* Display selected categories */}
+            <div>Selected: {data.selectedCategoryDescriptions.join(', ')}</div>
+        </div>
+    );
 }
 ```
 
@@ -136,10 +141,10 @@ function MyComponent() {
 
 ```tsx
 <CategoryFilter
-  variant="tabs"
-  onCategoryChange={handleCategoryChange}
-  showSearch={false}
-  className="w-full"
+    variant='tabs'
+    onCategoryChange={handleCategoryChange}
+    showSearch={false}
+    className='w-full'
 />
 ```
 
@@ -147,12 +152,12 @@ function MyComponent() {
 
 ```tsx
 <CategoryFilter
-  variant="sidebar"
-  onCategoryChange={handleCategoryChange}
-  showSearch={true}
-  showGrouped={true}
-  maxHeight="500px"
-  className="w-64"
+    variant='sidebar'
+    onCategoryChange={handleCategoryChange}
+    showSearch={true}
+    showGrouped={true}
+    maxHeight='500px'
+    className='w-64'
 />
 ```
 
@@ -160,10 +165,10 @@ function MyComponent() {
 
 ```tsx
 <CategoryFilter
-  variant="chips"
-  onCategoryChange={handleCategoryChange}
-  initialCategories={selectedCategories}
-  className="mb-4"
+    variant='chips'
+    onCategoryChange={handleCategoryChange}
+    initialCategories={selectedCategories}
+    className='mb-4'
 />
 ```
 
@@ -175,14 +180,14 @@ function MyComponent() {
 import { useCategoryFilterToApi } from '../hooks/useCategoryFilter';
 
 function MyComponent() {
-  const categoryFilter = useCategoryFilter();
-  const { state } = categoryFilter;
-  const apiParams = useCategoryFilterToApi(state);
+    const categoryFilter = useCategoryFilter();
+    const { state } = categoryFilter;
+    const apiParams = useCategoryFilterToApi(state);
 
-  // apiParams will be:
-  // {} - if no categories selected
-  // { category: "TechnologyInnovation" } - if single category
-  // { categories: ["Tech", "Business"] } - if multiple categories
+    // apiParams will be:
+    // {} - if no categories selected
+    // { category: "TechnologyInnovation" } - if single category
+    // { categories: ["Tech", "Business"] } - if multiple categories
 }
 ```
 
@@ -201,21 +206,25 @@ const artCategory = mapLegacyCategory('Art'); // Returns EventCategory.ArtsCultu
 ## Component Variants
 
 ### 1. Tabs Variant
+
 - **Use case**: Horizontal category navigation
 - **Features**: Shows first 8 categories as tabs with "All" option
 - **Best for**: Main navigation, landing pages
 
 ### 2. Dropdown Variant
+
 - **Use case**: Compact category selection
 - **Features**: Search, grouping, multiple selection
 - **Best for**: Filters, forms, limited space
 
 ### 3. Sidebar Variant
+
 - **Use case**: Detailed category filtering
 - **Features**: Full search, grouping, clear all
 - **Best for**: Filter panels, admin interfaces
 
 ### 4. Chips Variant
+
 - **Use case**: Display selected categories
 - **Features**: Shows selected categories as removable chips
 - **Best for**: Active filter display, confirmation
@@ -243,11 +252,11 @@ const grouped = getCategoriesByGroup();
 ### Utility Functions
 
 ```tsx
-import { 
-  getAllCategories,
-  getGroupForCategory,
-  fromString,
-  fromStringList
+import {
+    getAllCategories,
+    getGroupForCategory,
+    fromString,
+    fromStringList,
 } from '../lib/constants/eventCategories';
 
 // Get all available categories
@@ -274,56 +283,61 @@ const categories = fromStringList(['Tech', 'Business']);
 ### Example Migration
 
 **Before:**
+
 ```tsx
 const categories = ['All', 'Tech', 'Art', 'Business'];
 const [activeCategory, setActiveCategory] = useState('All');
 
 // Hardcoded category tabs
-{categories.map(category => (
-  <button 
-    key={category}
-    onClick={() => setActiveCategory(category)}
-  >
-    {category}
-  </button>
-))}
+{
+    categories.map((category) => (
+        <button key={category} onClick={() => setActiveCategory(category)}>
+            {category}
+        </button>
+    ));
+}
 ```
 
 **After:**
+
 ```tsx
 import CategoryFilter from '../components/CategoryFilter';
 
 const handleCategoryChange = (categories: EventCategory[]) => {
-  // Handle multiple categories
-  applyFilters(categories);
+    // Handle multiple categories
+    applyFilters(categories);
 };
 
 <CategoryFilter
-  variant="tabs"
-  onCategoryChange={handleCategoryChange}
-  showSearch={false}
-/>
+    variant='tabs'
+    onCategoryChange={handleCategoryChange}
+    showSearch={false}
+/>;
 ```
 
 ## Best Practices
 
 ### 1. Component Selection
+
 - Use **tabs** for main navigation
 - Use **dropdown** for compact filtering
 - Use **sidebar** for detailed filtering
 - Use **chips** to display active filters
 
 ### 2. Performance
+
 - The hook uses `useMemo` for expensive operations
 - Category data is cached and reused
 - Search is debounced for better performance
 
 ### 3. Accessibility
+
 - All variants include proper ARIA labels
 - Keyboard navigation is supported
 - Screen reader friendly
 
 ### 4. Styling
+
 - Components use Tailwind CSS classes
 - Easily customizable through className prop
 - Consistent with existing design system
@@ -331,6 +345,7 @@ const handleCategoryChange = (categories: EventCategory[]) => {
 ## Future Enhancements
 
 ### Planned Features
+
 1. **Custom Categories**: Allow users to create custom categories
 2. **Category Analytics**: Track popular categories and usage
 3. **Localization**: Support multiple languages
@@ -338,6 +353,7 @@ const handleCategoryChange = (categories: EventCategory[]) => {
 5. **AI Categorization**: Auto-suggest categories based on content
 
 ### API Enhancements
+
 1. **Multiple Category Support**: Backend support for multiple categories
 2. **Category Metadata**: Additional category information
 3. **Category Statistics**: Usage and popularity data
@@ -356,7 +372,10 @@ const handleCategoryChange = (categories: EventCategory[]) => {
 ```tsx
 // Log category filter state
 console.log('Category State:', categoryFilter.state);
-console.log('Selected Categories:', categoryFilter.data.selectedCategoryDescriptions);
+console.log(
+    'Selected Categories:',
+    categoryFilter.data.selectedCategoryDescriptions
+);
 console.log('Has Active Filters:', categoryFilter.data.hasActiveFilters);
 ```
 
@@ -373,6 +392,7 @@ When adding new categories:
 ## Support
 
 For questions or issues with the category filtering system:
+
 - Check this documentation first
 - Review the component props and hook API
 - Test with different variants to find the best fit
