@@ -1,13 +1,14 @@
+import { UserView } from '@lib/services';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type TUser = { id: string; name: string; email: string };
+// type TUser = { id: string; name: string; email: string };
 
 interface AuthState {
-    user: TUser | null;
+    user: UserView | null;
     token: string | null;
     isAuthenticated: boolean;
-    setUser: (user: TUser, token: string) => void;
+    setUser: (user: UserView, token: string) => void;
     logout: () => void;
 }
 
@@ -17,7 +18,7 @@ export const useAuthStore = create<AuthState>()(
             user: null,
             token: null,
             isAuthenticated: false,
-            setUser: (user: TUser, token: string) =>
+            setUser: (user: UserView, token: string) =>
                 set({ user, token, isAuthenticated: true }),
             logout: () =>
                 set({ user: null, token: null, isAuthenticated: false }),

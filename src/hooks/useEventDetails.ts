@@ -1,61 +1,43 @@
-import { useState, useEffect } from 'react';
-import { EventsService } from '../lib/services/services/EventsService';
-import { EventView } from '../lib/services/models/EventView';
+'use client';
 
-interface UseEventDetailsReturn {
-    event: EventView | null;
-    loading: boolean;
-    error: string | null;
-    refetch: () => void;
-}
+import { useState, useEffect, useCallback } from 'react';
+// import {  EventView } from '@lib/services/models/Event';
+import { EventsService } from '@lib/services/services/EventsService';
+import { StandardResponseOfEventView } from '@lib/services/models/StandardResponseOfEventView';
+import { EventView } from '@lib/services';
 
-export const useEventDetails = (eventId: string): UseEventDetailsReturn => {
+export const useEventDetails = (eventId: string) => {
     const [event, setEvent] = useState<EventView | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchEvent = async () => {
+    const fetchEventDetails = useCallback(async () => {
         if (!eventId) {
-            setError('Event ID is required');
             setLoading(false);
             return;
         }
 
+        setLoading(true);
+        setError(null);
+
         try {
-            setLoading(true);
-            setError(null);
-
-            const response = await EventsService.getApiEvents1({ eventId });
-
+            const response: StandardResponseOfEventView =
+                await EventsService.getApiEvents1({ eventId });
             if (response.data) {
-                setEvent(response.data);
+                setEvent(response.data as EventView);
             } else {
-                setError('Event not found');
+                setError(response.message || 'Failed to fetch event details');
             }
         } catch (err: unknown) {
-            console.error('Error fetching event details:', err);
-            const errorMessage =
-                err instanceof Error
-                    ? err.message
-                    : 'Failed to fetch event details';
-            setError(errorMessage);
+            setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
             setLoading(false);
         }
-    };
-
-    useEffect(() => {
-        fetchEvent();
     }, [eventId]);
 
-    const refetch = () => {
-        fetchEvent();
-    };
+    useEffect(() => {
+        fetchEventDetails();
+    }, [fetchEventDetails]);
 
-    return {
-        event,
-        loading,
-        error,
-        refetch,
-    };
+    return { event, loading, error, refetch: fetchEventDetails };
 };

@@ -1,43 +1,30 @@
 'use client';
 
-import { useEffect } from 'react';
-import AuthForm from './components/AuthForm';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useValidateLogin } from '@hooks/useValidateLogin';
 import { useTheme } from '../../lib/ThemeContext';
 import Link from 'next/link';
+import VerifyForm from './components/VerifyForm';
+import { StandardResponseOfUserView } from '@lib/services';
+import { useAuthStore } from '@src/stores/authStore';
 
-const Login = () => {
+const Verify = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const token = searchParams.get('token');
+    const { setUser } = useAuthStore();
+    let token = searchParams.get('token');
+    if (token) {
+        token = token.replace(/ /g, '+');
+    }
     const email = searchParams.get('email') || '';
-    const { isSuccess, error, execute } = useValidateLogin();
     const { theme, toggleTheme } = useTheme();
 
-    useEffect(() => {
-        const verifyToken = async () => {
-            if (!token) return;
-
-            try {
-                await execute(email, token);
-                if (isSuccess) {
-                    router.push('/dashboard');
-                    console.log('Token verified successfully!');
-                }
-                if (error) {
-                    console.error('Error during sign up:', error);
-                }
-            } catch (err) {
-                console.error('Error verifying token:', err);
-            }
-        };
-
-        verifyToken();
-    }, [token, router]);
-
-    const handleSuccess = () => {
-        console.log('Login successful!');
+    const handleSuccess = (data: StandardResponseOfUserView) => {
+        setUser(data.data!, data?.data?.token as string);
+        if (data.data?.isOrganizer as boolean) {
+            router.push('/dashboard/event/create-event');
+        } else {
+            router.push('/dashboard');
+        }
     };
 
     return (
@@ -101,74 +88,35 @@ const Login = () => {
                             <div className='space-y-6'>
                                 <div className='inline-flex items-center gap-2 rounded-full border border-revlr-primary-blue/20 bg-gradient-to-r from-revlr-primary-blue/10 to-revlr-accent-purple/10 px-4 py-2 dark:from-revlr-primary-blue/20 dark:to-revlr-accent-purple/20'>
                                     <span className='text-revlr-primary-blue dark:text-revlr-primary-yellow'>
-                                        🚀
+                                        ✅
                                     </span>
                                     <span className='text-sm font-medium text-revlr-primary-blue dark:text-revlr-primary-yellow'>
-                                        Welcome Back
+                                        Final Step
                                     </span>
                                 </div>
 
                                 <h1 className='font-montserrat text-4xl font-bold leading-tight text-gray-900 dark:text-white md:text-5xl'>
-                                    Continue Your
+                                    Complete Your
                                     <span className='bg-gradient-to-r from-revlr-primary-blue to-revlr-accent-purple bg-clip-text text-transparent'>
                                         {' '}
-                                        Event Journey
+                                        Profile
                                     </span>
                                 </h1>
 
                                 <p className='text-lg leading-relaxed text-gray-600 dark:text-gray-300'>
-                                    Access your dashboard to manage events, view
-                                    analytics, and connect with your audience.
-                                    Your next great event is just a login away.
+                                    Just a few more details to get you started.
+                                    Let us know who you are to personalize your
+                                    experience.
                                 </p>
-                            </div>
-
-                            {/* Features */}
-                            <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
-                                {[
-                                    { icon: '📊', text: 'Real-time Analytics' },
-                                    { icon: '🎫', text: 'Smart Ticketing' },
-                                    { icon: '💳', text: 'Secure Payments' },
-                                    { icon: '🔄', text: 'Easy Management' },
-                                ].map((feature, index) => (
-                                    <div
-                                        key={index}
-                                        className='flex items-center gap-3 rounded-xl border border-gray-200/50 bg-white/60 p-4 backdrop-blur-sm transition-all duration-300 hover:shadow-lg dark:border-revlr-dark-border dark:bg-revlr-dark-card/60'
-                                    >
-                                        <span className='text-2xl'>
-                                            {feature.icon}
-                                        </span>
-                                        <span className='font-medium text-gray-800 dark:text-gray-200'>
-                                            {feature.text}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Stats */}
-                            <div className='grid grid-cols-3 gap-6 border-t border-gray-200/50 pt-8 dark:border-revlr-dark-border'>
-                                {[
-                                    { number: '50K+', label: 'Events' },
-                                    { number: '2M+', label: 'Tickets' },
-                                    { number: '98%', label: 'Satisfaction' },
-                                ].map((stat, index) => (
-                                    <div key={index} className='text-center'>
-                                        <div className='text-2xl font-bold text-gray-900 dark:text-white'>
-                                            {stat.number}
-                                        </div>
-                                        <div className='text-sm text-gray-600 dark:text-gray-400'>
-                                            {stat.label}
-                                        </div>
-                                    </div>
-                                ))}
                             </div>
                         </div>
 
-                        {/* Right Side - Login Form */}
+                        {/* Right Side - Verification Form */}
                         <div className='flex justify-center lg:justify-end'>
-                            <AuthForm
-                                mode='login'
-                                onSuccess={() => handleSuccess()}
+                            <VerifyForm
+                                email={email}
+                                token={token}
+                                onSuccess={handleSuccess}
                             />
                         </div>
                     </div>
@@ -182,4 +130,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Verify;

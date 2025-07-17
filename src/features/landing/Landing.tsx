@@ -6,8 +6,6 @@ import { Navbar } from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import FeaturesSection from './components/FeaturesSection';
 import FAQSection from './components/FAQSection';
-import EventListing from './components/EventListing';
-import ResaleCard from './components/ResaleCard';
 
 const Landing = () => {
     const [isOrganizer, setIsOrganizer] = useState(true);
@@ -24,8 +22,6 @@ const Landing = () => {
                 </div>
             ) : (
                 <div className='mx-auto max-w-[1440px]'>
-                    <EventListing />
-                    <ResaleCard />
                     <FAQSection isOrganizer={isOrganizer} />
                 </div>
             )}

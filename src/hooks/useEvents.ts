@@ -174,7 +174,7 @@ export const useEvents = (
                 setLoading(false);
             }
         },
-        [filters, pageSize]
+        [pageSize]
     );
 
     const refetch = useCallback(() => {
