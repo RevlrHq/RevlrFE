@@ -23,20 +23,22 @@ const Settings = () => {
     });
 
     // FAQ accordion state
-    const [openFaq, setOpenFaq] = useState(null);
+    const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-    const toggleFaq = (index) => {
+    const toggleFaq = (index: number) => {
         setOpenFaq(openFaq === index ? null : index);
     };
 
-    const handleChannelChange = (channel) => {
+    const handleChannelChange = (
+        channel: keyof typeof notificationChannels
+    ) => {
         setNotificationChannels({
             ...notificationChannels,
             [channel]: !notificationChannels[channel],
         });
     };
 
-    const handleAlertToggle = (alert) => {
+    const handleAlertToggle = (alert: keyof typeof alertPreferences) => {
         setAlertPreferences({
             ...alertPreferences,
             [alert]: !alertPreferences[alert],
@@ -75,8 +77,8 @@ const Settings = () => {
                     </h2>
 
                     <div className='flex flex-row gap-16'>
-                        <div className='flex-shrink-0'>
-                            <div className='relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-blue-100'>
+                        <div className='shrink-0'>
+                            <div className='relative flex size-28 items-center justify-center overflow-hidden rounded-full bg-blue-100'>
                                 <div className='absolute text-2xl font-bold text-blue-600'>
                                     MC
                                 </div>
@@ -97,7 +99,7 @@ const Settings = () => {
                             </div>
                         </div>
 
-                        <div className='grid flex-grow grid-cols-1 gap-4 md:grid-cols-2'>
+                        <div className='grid grow grid-cols-1 gap-4 md:grid-cols-2'>
                             <div>
                                 <input
                                     type='text'
@@ -238,7 +240,7 @@ const Settings = () => {
                                         }`}
                                     >
                                         <span
-                                            className={`inline-block size-4 transform rounded-full bg-white transition ${
+                                            className={`inline-block size-4 rounded-full bg-white transition${
                                                 alertPreferences.payoutUpdates
                                                     ? 'translate-x-6'
                                                     : 'translate-x-1'

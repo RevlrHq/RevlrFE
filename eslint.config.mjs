@@ -33,7 +33,7 @@ export default [
             '**/.yarn-tarball.tgz',
             '**/.yarnignore',
             '**/.yarnrc.yml',
-            'src/lib/services/', // ignore our codegen services folder
+            'src/lib/services/**', // ignore our codegen services folder
         ],
     },
     {

@@ -95,7 +95,7 @@ const EventDetailsPage = () => {
                                 <div className='flex items-center'>
                                     <span className='mr-2'>👤</span>
                                     <span className='text-gray-700 dark:text-gray-300'>
-                                        {event.organizer?.name || 'N/A'}
+                                        {event.organizerName || 'N/A'}
                                     </span>
                                 </div>
                             </div>
@@ -115,13 +115,14 @@ const EventDetailsPage = () => {
                                                         {ticket.name}
                                                     </p>
                                                     <p className='text-sm text-gray-600 dark:text-gray-400'>
-                                                        {ticket.price > 0
+                                                        {ticket.price &&
+                                                        ticket.price > 0
                                                             ? `₦${ticket.price.toLocaleString()}`
                                                             : 'Free'}
                                                     </p>
                                                 </div>
                                                 <Link
-                                                    href={`/ticket-checkout?eventId=${event.id}&ticketId=${ticket.id}&ticketName=${ticket.name}&ticketPrice=${ticket.price}`}
+                                                    href={`/ticket-checkout?eventId=${event.id}&ticketId=${ticket.id}&ticketName=${ticket.name}&ticketPrice=${ticket.price || 0}`}
                                                     className='rounded-lg bg-revlr-primary-blue px-4 py-2 text-white hover:bg-revlr-primary-blue/90'
                                                 >
                                                     Register
