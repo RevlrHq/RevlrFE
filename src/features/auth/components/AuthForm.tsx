@@ -203,7 +203,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                         <p className='text-sm text-green-600 dark:text-green-400'>
                             {mode === 'signup'
                                 ? 'Account created! Check your email for verification.'
-                                : 'Login successful! Redirecting...'}
+                                : 'Login successful! Please check tyour email for any further instructions.'}
                         </p>
                     </div>
                 )}

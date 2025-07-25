@@ -1,44 +1,159 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import AuthForm from './components/AuthForm';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useValidateLogin } from '@hooks/useValidateLogin';
 import { useTheme } from '../../lib/ThemeContext';
+import { useAuthStore } from '../../stores/authStore';
 import Link from 'next/link';
 
 const Login = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const token = searchParams.get('token');
+
+    // Get token and fix the space issue caused by URL decoding of + characters
+    const rawToken = searchParams.get('token');
+    const token = rawToken ? rawToken.replace(/ /g, '+') : null;
     const email = searchParams.get('email') || '';
-    const { isSuccess, error, execute } = useValidateLogin();
+    const { isLoading, error, execute } = useValidateLogin();
     const { theme, toggleTheme } = useTheme();
+    const { setUser } = useAuthStore();
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [verificationError, setVerificationError] = useState<string | null>(
+        null
+    );
+    const hasVerified = useRef(false);
 
     useEffect(() => {
         const verifyToken = async () => {
-            if (!token) return;
+            if (!token || !email || hasVerified.current) return;
+
+            hasVerified.current = true;
+            setIsVerifying(true);
+            setVerificationError(null);
 
             try {
-                await execute(email, token);
-                if (isSuccess) {
+                const response = await execute(email, token);
+
+                // The response should contain user data and token
+                if (response && response.data) {
+                    const userData = response.data;
+                    const authToken = userData.token || token;
+
+                    // Set user in auth store
+                    setUser(userData, authToken);
+
+                    // Redirect to dashboard
                     router.push('/dashboard');
-                    console.log('Token verified successfully!');
-                }
-                if (error) {
-                    console.error('Error during sign up:', error);
                 }
             } catch (err) {
                 console.error('Error verifying token:', err);
+                setVerificationError(
+                    err instanceof Error
+                        ? err.message
+                        : 'Failed to verify login token'
+                );
+                hasVerified.current = false; // Allow retry on error
+            } finally {
+                setIsVerifying(false);
             }
         };
 
         verifyToken();
-    }, [token, router]);
+    }, [token, email]); // Removed execute, setUser, router from dependencies
 
     const handleSuccess = () => {
-        console.log('Login successful!');
+        router.push('/dashboard');
     };
+
+    // Show loading state during token verification
+    if (token && email && (isVerifying || isLoading)) {
+        return (
+            <div className='relative min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 transition-all duration-500 dark:from-revlr-dark-bg dark:via-revlr-dark-bg dark:to-revlr-dark-card'>
+                <div className='bg-[url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%230066FF" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")] dark:bg-[url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23FFD700" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")] absolute inset-0'></div>
+
+                <div className='relative z-10 flex min-h-screen items-center justify-center px-6'>
+                    <div className='space-y-6 text-center'>
+                        <div className='inline-flex size-16 items-center justify-center rounded-full bg-gradient-to-r from-revlr-primary-blue to-revlr-accent-purple'>
+                            <div className='size-8 animate-spin rounded-full border-4 border-white border-t-transparent'></div>
+                        </div>
+                        <div className='space-y-2'>
+                            <h2 className='text-2xl font-bold text-gray-900 dark:text-white'>
+                                Verifying your login...
+                            </h2>
+                            <p className='text-gray-600 dark:text-gray-400'>
+                                Please wait while we authenticate your account
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Show error state if token verification failed
+    if (token && email && (verificationError || error)) {
+        return (
+            <div className='relative min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 transition-all duration-500 dark:from-revlr-dark-bg dark:via-revlr-dark-bg dark:to-revlr-dark-card'>
+                <div className='bg-[url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%230066FF" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")] dark:bg-[url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23FFD700" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")] absolute inset-0'></div>
+
+                <header className='relative z-10 flex items-center justify-between p-6 md:p-8'>
+                    <Link
+                        href='/'
+                        className='font-montserrat text-2xl font-extrabold text-revlr-primary-blue transition-colors duration-300 dark:text-white'
+                    >
+                        <span className='text-revlr-primary-yellow'>🎉</span>
+                        REVLR
+                    </Link>
+                </header>
+
+                <div className='relative z-10 flex min-h-[calc(100vh-120px)] items-center justify-center px-6'>
+                    <div className='max-w-md space-y-6 text-center'>
+                        <div className='inline-flex size-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20'>
+                            <svg
+                                className='size-8 text-red-600 dark:text-red-400'
+                                fill='none'
+                                stroke='currentColor'
+                                viewBox='0 0 24 24'
+                            >
+                                <path
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                    strokeWidth={2}
+                                    d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z'
+                                />
+                            </svg>
+                        </div>
+                        <div className='space-y-2'>
+                            <h2 className='text-2xl font-bold text-gray-900 dark:text-white'>
+                                Login Failed
+                            </h2>
+                            <p className='text-gray-600 dark:text-gray-400'>
+                                {verificationError ||
+                                    error?.message ||
+                                    'The login link is invalid or has expired.'}
+                            </p>
+                        </div>
+                        <div className='space-y-3'>
+                            <button
+                                onClick={() => router.push('/auth/login')}
+                                className='w-full rounded-lg bg-gradient-to-r from-revlr-primary-blue to-revlr-accent-purple px-6 py-3 font-medium text-white transition-all duration-200 hover:shadow-lg'
+                            >
+                                Try Again
+                            </button>
+                            <Link
+                                href='/'
+                                className='block text-sm text-gray-600 transition-colors hover:text-revlr-primary-blue dark:text-gray-400 dark:hover:text-revlr-primary-yellow'
+                            >
+                                Return to Home
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className='relative min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 transition-all duration-500 dark:from-revlr-dark-bg dark:via-revlr-dark-bg dark:to-revlr-dark-card'>

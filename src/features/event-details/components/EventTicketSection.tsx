@@ -98,13 +98,57 @@ const EventTicketSection = ({ event }: EventTicketSectionProps) => {
 
     if (!hasTickets) {
         return (
-            <div className='rounded-lg bg-white p-6 shadow-sm dark:bg-revlr-dark-card dark:shadow-none'>
-                <h2 className='mb-4 text-lg font-semibold text-gray-900 dark:text-white'>
-                    Event Registration
-                </h2>
+            <div className='rounded-2xl border border-gray-200/50 bg-white/80 p-6 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl dark:border-revlr-dark-border dark:bg-revlr-dark-card/80'>
+                <div className='mb-4 flex items-center gap-3'>
+                    <div className='rounded-xl bg-gradient-to-br from-revlr-primary-blue to-revlr-accent-purple p-3'>
+                        <svg
+                            className='size-5 text-white'
+                            fill='none'
+                            viewBox='0 0 24 24'
+                            stroke='currentColor'
+                        >
+                            <path
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                strokeWidth={2}
+                                d='M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z'
+                            />
+                        </svg>
+                    </div>
+                    <h2 className='font-montserrat text-lg font-bold text-gray-900 dark:text-white'>
+                        Event Registration
+                    </h2>
+                </div>
                 <div className='py-8 text-center'>
+                    <div className='mx-auto mb-4 size-16 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 p-4 dark:from-revlr-dark-bg dark:to-revlr-dark-border'>
+                        <svg
+                            className='size-8 text-gray-400 dark:text-gray-500'
+                            fill='none'
+                            viewBox='0 0 24 24'
+                            stroke='currentColor'
+                        >
+                            <path
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                strokeWidth={2}
+                                d='M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z'
+                            />
+                        </svg>
+                    </div>
+                    <p className='text-sm text-gray-600 dark:text-gray-300'>
+                        No tickets available for this event
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className='rounded-2xl border border-gray-200/50 bg-white/80 p-6 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl dark:border-revlr-dark-border dark:bg-revlr-dark-card/80'>
+            <div className='mb-6 flex items-center gap-3'>
+                <div className='rounded-xl bg-gradient-to-br from-revlr-primary-blue to-revlr-accent-purple p-3'>
                     <svg
-                        className='mx-auto size-12 text-gray-400 dark:text-gray-500'
+                        className='size-5 text-white'
                         fill='none'
                         viewBox='0 0 24 24'
                         stroke='currentColor'
@@ -116,19 +160,11 @@ const EventTicketSection = ({ event }: EventTicketSectionProps) => {
                             d='M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z'
                         />
                     </svg>
-                    <p className='mt-2 text-sm text-gray-600 dark:text-gray-300'>
-                        No tickets available for this event
-                    </p>
                 </div>
+                <h2 className='font-montserrat text-lg font-bold text-gray-900 dark:text-white'>
+                    Select Tickets
+                </h2>
             </div>
-        );
-    }
-
-    return (
-        <div className='rounded-lg bg-white p-6 shadow-sm dark:bg-revlr-dark-card dark:shadow-none'>
-            <h2 className='mb-4 text-lg font-semibold text-gray-900 dark:text-white'>
-                Select Tickets
-            </h2>
 
             <div className='space-y-4'>
                 {tickets.map((ticket) => {
@@ -144,10 +180,10 @@ const EventTicketSection = ({ event }: EventTicketSectionProps) => {
                     return (
                         <div
                             key={ticket.id}
-                            className={`rounded-lg border p-4 ${
+                            className={`rounded-xl border p-4 transition-all duration-300 ${
                                 available
-                                    ? 'border-gray-200 dark:border-revlr-dark-border'
-                                    : 'border-gray-100 bg-gray-50 dark:border-gray-700 dark:bg-gray-800'
+                                    ? 'border-gray-200/50 bg-gradient-to-br from-white to-gray-50 shadow-sm hover:shadow-md dark:border-revlr-dark-border/50 dark:from-revlr-dark-card dark:to-revlr-dark-bg'
+                                    : 'border-gray-200/30 bg-gray-50/50 dark:border-gray-700/30 dark:bg-gray-800/50'
                             }`}
                         >
                             <div className='flex items-start justify-between'>
@@ -176,7 +212,7 @@ const EventTicketSection = ({ event }: EventTicketSectionProps) => {
                                         <span
                                             className={`text-lg font-semibold ${
                                                 available
-                                                    ? 'text-blue-600 dark:text-blue-400'
+                                                    ? 'bg-gradient-to-r from-revlr-primary-blue to-revlr-accent-purple bg-clip-text text-transparent'
                                                     : 'text-gray-400 dark:text-gray-500'
                                             }`}
                                         >
@@ -211,11 +247,11 @@ const EventTicketSection = ({ event }: EventTicketSectionProps) => {
                                                 )
                                             }
                                             disabled={selectedQuantity === 0}
-                                            className='flex size-8 items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
+                                            className='flex size-8 items-center justify-center rounded-full border border-gray-200/50 bg-white/80 text-gray-600 shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-gradient-to-r hover:from-revlr-primary-blue hover:to-revlr-accent-purple hover:text-white hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 dark:border-revlr-dark-border/50 dark:bg-revlr-dark-card/80 dark:text-gray-300'
                                         >
                                             -
                                         </button>
-                                        <span className='w-8 text-center text-sm font-medium text-gray-900 dark:text-white'>
+                                        <span className='w-8 text-center text-sm font-semibold text-gray-900 dark:text-white'>
                                             {selectedQuantity}
                                         </span>
                                         <button
@@ -228,7 +264,7 @@ const EventTicketSection = ({ event }: EventTicketSectionProps) => {
                                             disabled={
                                                 selectedQuantity >= maxQuantity
                                             }
-                                            className='flex size-8 items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
+                                            className='flex size-8 items-center justify-center rounded-full border border-gray-200/50 bg-white/80 text-gray-600 shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-gradient-to-r hover:from-revlr-primary-blue hover:to-revlr-accent-purple hover:text-white hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 dark:border-revlr-dark-border/50 dark:bg-revlr-dark-card/80 dark:text-gray-300'
                                         >
                                             +
                                         </button>
@@ -280,9 +316,16 @@ const EventTicketSection = ({ event }: EventTicketSectionProps) => {
                     <button
                         onClick={handleRegister}
                         disabled={isRegistering}
-                        className='w-full rounded-md bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+                        className='w-full rounded-xl bg-gradient-to-r from-revlr-primary-blue to-revlr-accent-purple px-6 py-4 font-semibold text-white shadow-lg transition-all duration-200 hover:from-revlr-primary-blue/90 hover:to-revlr-accent-purple/90 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-revlr-primary-blue/50 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
                     >
-                        {isRegistering ? 'Processing...' : 'Register for Event'}
+                        {isRegistering ? (
+                            <div className='flex items-center justify-center gap-2'>
+                                <div className='size-4 animate-spin rounded-full border-2 border-white border-t-transparent'></div>
+                                Processing...
+                            </div>
+                        ) : (
+                            'Register for Event'
+                        )}
                     </button>
                 </div>
             )}
@@ -291,7 +334,7 @@ const EventTicketSection = ({ event }: EventTicketSectionProps) => {
                 <div className='mt-6 border-t border-gray-200 pt-4 dark:border-revlr-dark-border'>
                     <button
                         disabled
-                        className='w-full cursor-not-allowed rounded-md bg-gray-300 px-4 py-3 text-sm font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400'
+                        className='w-full cursor-not-allowed rounded-xl bg-gray-200/50 px-6 py-4 font-semibold text-gray-400 backdrop-blur-sm dark:bg-gray-700/50 dark:text-gray-500'
                     >
                         Select tickets to register
                     </button>
