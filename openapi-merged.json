@@ -6,10 +6,7 @@
     },
     "servers": [
         {
-            "url": "http://revlr-api-dev-g6dtb4cebbfpfgcv.canadacentral-01.azurewebsites.net:80/"
-        },
-        {
-            "url": "https://revlr-api-dev-g6dtb4cebbfpfgcv.canadacentral-01.azurewebsites.net:443/"
+            "url": "https://revlr-api-dev-g6dtb4cebbfpfgcv.canadacentral-01.azurewebsites.net/"
         }
     ],
     "tags": [
@@ -267,6 +264,30 @@
                         }
                     },
                     {
+                        "name": "Categories",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
+                        "name": "CategoryGroup",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "CategorySearch",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "StartDate",
                         "in": "query",
                         "schema": {
@@ -307,6 +328,42 @@
                     },
                     {
                         "name": "IncludeTickets",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "Status",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "Organizer",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "DaysFromNow",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "City",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "IncludePastEvents",
                         "in": "query",
                         "schema": {
                             "type": "boolean"
@@ -1032,6 +1089,53 @@
                             "text/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/StandardResponseOfEventView"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/Events/categories": {
+            "get": {
+                "tags": ["Events"],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponseOfEventCategoriesResponse"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponseOfEventCategoriesResponse"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponseOfEventCategoriesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponseOfEventCategoriesResponse"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponseOfEventCategoriesResponse"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponseOfEventCategoriesResponse"
                                 }
                             }
                         }
@@ -2414,7 +2518,61 @@
                 }
             }
         },
+        "/api/Seed/clear-data": {
+            "post": {
+                "tags": ["Seed"],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponseOfstring"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponseOfstring"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponseOfstring"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/Seed/seed-data": {
+            "post": {
+                "tags": ["Seed"],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponseOfstring"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponseOfstring"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponseOfstring"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/Seed/reset-and-seed": {
             "post": {
                 "tags": ["Seed"],
                 "responses": {
@@ -2470,6 +2628,24 @@
         },
         "/api/Test/test-endpoint": {
             "get": {
+                "tags": ["Test"],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/Test/cors-test": {
+            "get": {
+                "tags": ["Test"],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "options": {
                 "tags": ["Test"],
                 "responses": {
                     "200": {
@@ -2576,6 +2752,36 @@
                     }
                 }
             },
+            "EventCategoriesResponse": {
+                "type": "object",
+                "properties": {
+                    "categories": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EventCategoryInfo"
+                        }
+                    },
+                    "categoryGroups": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {}
+                        }
+                    }
+                },
+                "nullable": true
+            },
+            "EventCategoryInfo": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                }
+            },
             "EventCreationRequest": {
                 "required": ["eventName", "eventDescription", "eventCategory"],
                 "type": "object",
@@ -2648,6 +2854,12 @@
                     "paystackReference": {
                         "type": "string",
                         "nullable": true
+                    },
+                    "isNewUser": {
+                        "type": "boolean"
+                    },
+                    "newUserInfo": {
+                        "$ref": "#/components/schemas/NewUserRegistrationInfo"
                     }
                 }
             },
@@ -2727,6 +2939,12 @@
                     },
                     "financingDetails": {
                         "$ref": "#/components/schemas/FinancingApplicationSummary"
+                    },
+                    "isNewUserRegistration": {
+                        "type": "boolean"
+                    },
+                    "verificationEmailSent": {
+                        "type": "boolean"
                     }
                 },
                 "nullable": true
@@ -2807,6 +3025,12 @@
                     },
                     "financingDetails": {
                         "$ref": "#/components/schemas/FinancingApplicationSummary"
+                    },
+                    "isNewUserRegistration": {
+                        "type": "boolean"
+                    },
+                    "verificationEmailSent": {
+                        "type": "boolean"
                     }
                 }
             },
@@ -2996,7 +3220,10 @@
                     "description": {
                         "type": "string"
                     },
-                    "eventCategory": {
+                    "category": {
+                        "type": "string"
+                    },
+                    "categoryDescription": {
                         "type": "string"
                     },
                     "images": {
@@ -3102,7 +3329,10 @@
                     "description": {
                         "type": "string"
                     },
-                    "eventCategory": {
+                    "category": {
+                        "type": "string"
+                    },
+                    "categoryDescription": {
                         "type": "string"
                     },
                     "images": {
@@ -3547,6 +3777,24 @@
             "LocationType": {
                 "type": "integer"
             },
+            "NewUserRegistrationInfo": {
+                "required": ["firstName", "lastName"],
+                "type": "object",
+                "properties": {
+                    "firstName": {
+                        "maxLength": 100,
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "maxLength": 100,
+                        "type": "string"
+                    },
+                    "isOrganizer": {
+                        "type": "boolean"
+                    }
+                },
+                "nullable": true
+            },
             "PagedCollectionOfEventRegistrationView": {
                 "required": ["items"],
                 "type": "object",
@@ -3697,6 +3945,29 @@
                     },
                     "data": {
                         "type": "boolean"
+                    },
+                    "statusCode": {
+                        "$ref": "#/components/schemas/HttpStatusCode"
+                    },
+                    "errors": {},
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "StandardResponseOfEventCategoriesResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/EventCategoriesResponse"
                     },
                     "statusCode": {
                         "$ref": "#/components/schemas/HttpStatusCode"

@@ -9,7 +9,8 @@ export type EventView = {
     id?: string;
     title?: string;
     description?: string;
-    eventCategory?: string;
+    category?: string;
+    categoryDescription?: string;
     images?: Array<string>;
     bannerImageUrl?: string | null;
     organizerLogo?: string;

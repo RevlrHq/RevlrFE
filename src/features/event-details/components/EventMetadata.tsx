@@ -107,7 +107,7 @@ const EventMetadata = ({ event }: EventMetadataProps) => {
                 </div>
 
                 {/* Event Category */}
-                {event.eventCategory && (
+                {event.category && (
                     <div className='rounded-xl border border-gray-200/30 bg-gradient-to-r from-gray-50 to-white p-4 dark:border-revlr-dark-border/30 dark:from-revlr-dark-bg dark:to-revlr-dark-card'>
                         <div className='flex items-center justify-between'>
                             <span className='font-medium text-gray-700 dark:text-gray-300'>
@@ -115,7 +115,7 @@ const EventMetadata = ({ event }: EventMetadataProps) => {
                             </span>
                             <span className='inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-revlr-primary-blue/10 to-revlr-accent-purple/10 px-4 py-2 text-sm font-semibold text-revlr-primary-blue dark:from-revlr-primary-blue/20 dark:to-revlr-accent-purple/20 dark:text-revlr-primary-yellow'>
                                 <span>🎫</span>
-                                {event.eventCategory}
+                                {event.category}
                             </span>
                         </div>
                     </div>

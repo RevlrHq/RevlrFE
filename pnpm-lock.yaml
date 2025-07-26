@@ -13,6 +13,9 @@ importers:
             '@microsoft/signalr':
                 specifier: ^8.0.7
                 version: 8.0.7
+            '@paystack/inline-js':
+                specifier: ^2.22.7
+                version: 2.22.7
             '@radix-ui/react-checkbox':
                 specifier: ^1.1.3
                 version: 1.1.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
@@ -1238,6 +1241,13 @@ packages:
                 integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==,
             }
         engines: { node: '>=12.4.0' }
+
+    '@paystack/inline-js@2.22.7':
+        resolution:
+            {
+                integrity: sha512-95/BkaJ61XTiL74k+x+3fp4NGDKHp4JZA9PXL+/DFd8gIPjI0TEA1ocHSjh1FRMIdpcfgpHLoTWMRvfBsQXstQ==,
+            }
+        engines: { node: '>= 22.0.0' }
 
     '@pkgjs/parseargs@0.11.0':
         resolution:
@@ -7868,6 +7878,8 @@ snapshots:
 
     '@nolyfill/is-core-module@1.0.39': {}
 
+    '@paystack/inline-js@2.22.7': {}
+
     '@pkgjs/parseargs@0.11.0':
         optional: true
 
@@ -11150,6 +11162,7 @@ snapshots:
         dependencies:
             '@hookform/resolvers': 3.10.0(react-hook-form@7.54.2(react@18.3.1))
             '@microsoft/signalr': 8.0.7
+            '@paystack/inline-js': 2.22.7
             '@radix-ui/react-checkbox': 1.1.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
             '@radix-ui/react-dialog': 1.1.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
             '@radix-ui/react-label': 2.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)

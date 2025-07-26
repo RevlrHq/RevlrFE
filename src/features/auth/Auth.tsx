@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSignUp } from '@hooks/useSignUp';
+import { usePostLoginAction } from '@hooks/usePostLoginAction';
 import AuthForm from './components/AuthForm';
 import { useTheme } from '../../lib/ThemeContext';
 import Link from 'next/link';
@@ -13,6 +14,9 @@ const Auth = () => {
     const [showButton, setShowButton] = useState(false);
     const { isSuccess, error, execute } = useSignUp();
     const { theme, toggleTheme } = useTheme();
+
+    // Initialize post-login action hook
+    usePostLoginAction();
 
     useEffect(() => {
         if (seconds > 0) {

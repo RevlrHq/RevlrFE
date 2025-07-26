@@ -24,4 +24,6 @@ export type EventRegistrationView = {
     isFinanced?: boolean;
     financingApplicationId?: string | null;
     financingDetails?: FinancingApplicationSummary;
+    isNewUserRegistration?: boolean;
+    verificationEmailSent?: boolean;
 };

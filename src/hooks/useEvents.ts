@@ -137,7 +137,7 @@ export const useEvents = (
                     categories: currentFilters.Categories,
                     startDate: apiParams.StartDate as string,
                     endDate: apiParams.EndDate as string,
-                    locationType: apiParams.LocationType as string | number,
+                    locationType: apiParams.LocationType as string | undefined,
                     minPrice: apiParams.MinPrice as number,
                     maxPrice: apiParams.MaxPrice as number,
                     includeTickets: apiParams.IncludeTickets as boolean,

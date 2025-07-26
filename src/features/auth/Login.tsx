@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import AuthForm from './components/AuthForm';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useValidateLogin } from '@hooks/useValidateLogin';
+import { usePostLoginAction } from '@hooks/usePostLoginAction';
 import { useTheme } from '../../lib/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import Link from 'next/link';
@@ -24,6 +25,9 @@ const Login = () => {
         null
     );
     const hasVerified = useRef(false);
+
+    // Initialize post-login action hook
+    usePostLoginAction();
 
     useEffect(() => {
         const verifyToken = async () => {

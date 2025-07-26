@@ -101,14 +101,14 @@ const EnhancedEventHeader = ({ event }: EnhancedEventHeaderProps) => {
             {/* Event Title and Info with Landing Page Styling */}
             <div className='space-y-8'>
                 {/* Category Badge */}
-                {event.eventCategory && (
+                {event.category && (
                     <div className='flex justify-center'>
                         <div className='inline-flex items-center gap-2 rounded-full border border-revlr-primary-blue/20 bg-gradient-to-r from-revlr-primary-blue/10 to-revlr-accent-purple/10 px-6 py-3 dark:from-revlr-primary-blue/20 dark:to-revlr-accent-purple/20'>
                             <span className='text-revlr-primary-blue dark:text-revlr-primary-yellow'>
                                 🎫
                             </span>
                             <span className='text-sm font-medium text-revlr-primary-blue dark:text-revlr-primary-yellow'>
-                                {event.eventCategory}
+                                {event.category}
                             </span>
                         </div>
                     </div>

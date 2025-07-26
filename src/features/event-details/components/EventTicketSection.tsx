@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { EventView } from '../../../lib/services/models/EventView';
 import { EventTicketView } from '../../../lib/services/models/EventTicketView';
+import { useAuthStore } from '../../../stores/authStore';
+import TicketRegistrationFlow from './TicketRegistrationFlow';
 
 interface EventTicketSectionProps {
     event: EventView;
@@ -15,7 +17,8 @@ const EventTicketSection = ({ event }: EventTicketSectionProps) => {
     const [selectedTickets, setSelectedTickets] = useState<TicketSelection[]>(
         []
     );
-    const [isRegistering, setIsRegistering] = useState(false);
+    const [showRegistrationFlow, setShowRegistrationFlow] = useState(false);
+    const { isAuthenticated } = useAuthStore();
 
     const tickets = event.tickets || [];
     const hasTickets = tickets.length > 0;
@@ -51,18 +54,36 @@ const EventTicketSection = ({ event }: EventTicketSectionProps) => {
         );
     };
 
-    const handleRegister = async () => {
+    const handleRegister = () => {
         if (selectedTickets.length === 0) return;
 
-        setIsRegistering(true);
-        try {
-            // TODO: Implement registration logic
-            console.log('Registering for tickets:', selectedTickets);
-            // This would typically navigate to a registration/checkout page
-        } catch (error) {
-            console.error('Registration failed:', error);
-        } finally {
-            setIsRegistering(false);
+        // If user is authenticated, proceed directly to checkout
+        if (isAuthenticated) {
+            // TODO: Implement authenticated user registration logic
+            console.log(
+                'Authenticated user registering for tickets:',
+                selectedTickets
+            );
+            // For now, just navigate to checkout with tickets
+            const ticketsForCheckout = selectedTickets.map((selection) => {
+                const ticket = tickets.find((t) => t.id === selection.ticketId);
+                return {
+                    ticketId: selection.ticketId,
+                    quantity: selection.quantity,
+                    ticketName: ticket?.name || 'Unknown Ticket',
+                    ticketPrice: ticket?.price || 0,
+                };
+            });
+
+            const checkoutParams = new URLSearchParams({
+                eventId: event.id!,
+                tickets: JSON.stringify(ticketsForCheckout),
+            });
+
+            window.location.href = `/ticket-checkout?${checkoutParams.toString()}`;
+        } else {
+            // Show registration flow for non-authenticated users
+            setShowRegistrationFlow(true);
         }
     };
 
@@ -315,17 +336,9 @@ const EventTicketSection = ({ event }: EventTicketSectionProps) => {
                     </div>
                     <button
                         onClick={handleRegister}
-                        disabled={isRegistering}
-                        className='w-full rounded-xl bg-gradient-to-r from-revlr-primary-blue to-revlr-accent-purple px-6 py-4 font-semibold text-white shadow-lg transition-all duration-200 hover:from-revlr-primary-blue/90 hover:to-revlr-accent-purple/90 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-revlr-primary-blue/50 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+                        className='w-full rounded-xl bg-gradient-to-r from-revlr-primary-blue to-revlr-accent-purple px-6 py-4 font-semibold text-white shadow-lg transition-all duration-200 hover:from-revlr-primary-blue/90 hover:to-revlr-accent-purple/90 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-revlr-primary-blue/50 focus:ring-offset-2'
                     >
-                        {isRegistering ? (
-                            <div className='flex items-center justify-center gap-2'>
-                                <div className='size-4 animate-spin rounded-full border-2 border-white border-t-transparent'></div>
-                                Processing...
-                            </div>
-                        ) : (
-                            'Register for Event'
-                        )}
+                        Register for Event
                     </button>
                 </div>
             )}
@@ -339,6 +352,25 @@ const EventTicketSection = ({ event }: EventTicketSectionProps) => {
                         Select tickets to register
                     </button>
                 </div>
+            )}
+
+            {/* Registration Flow Modal */}
+            {showRegistrationFlow && (
+                <TicketRegistrationFlow
+                    event={event}
+                    selectedTickets={selectedTickets.map((selection) => {
+                        const ticket = tickets.find(
+                            (t) => t.id === selection.ticketId
+                        );
+                        return {
+                            ticketId: selection.ticketId,
+                            quantity: selection.quantity,
+                            ticketName: ticket?.name || 'Unknown Ticket',
+                            ticketPrice: ticket?.price || 0,
+                        };
+                    })}
+                    onClose={() => setShowRegistrationFlow(false)}
+                />
             )}
         </div>
     );

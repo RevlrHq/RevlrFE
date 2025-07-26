@@ -16,4 +16,24 @@ export class TestService {
             url: '/api/Test/test-endpoint',
         });
     }
+    /**
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static getApiTestCorsTest(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/Test/cors-test',
+        });
+    }
+    /**
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static optionsApiTestCorsTest(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'OPTIONS',
+            url: '/api/Test/cors-test',
+        });
+    }
 }

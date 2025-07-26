@@ -12,10 +12,30 @@ export class SeedService {
      * @returns StandardResponseOfstring OK
      * @throws ApiError
      */
+    public static postApiSeedClearData(): CancelablePromise<StandardResponseOfstring> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/Seed/clear-data',
+        });
+    }
+    /**
+     * @returns StandardResponseOfstring OK
+     * @throws ApiError
+     */
     public static postApiSeedSeedData(): CancelablePromise<StandardResponseOfstring> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/Seed/seed-data',
+        });
+    }
+    /**
+     * @returns StandardResponseOfstring OK
+     * @throws ApiError
+     */
+    public static postApiSeedResetAndSeed(): CancelablePromise<StandardResponseOfstring> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/Seed/reset-and-seed',
         });
     }
     /**

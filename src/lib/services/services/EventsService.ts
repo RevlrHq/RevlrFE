@@ -7,6 +7,7 @@ import type { EventRegistrationRequest } from '../models/EventRegistrationReques
 import type { EventRegistrationWithFinancingRequest } from '../models/EventRegistrationWithFinancingRequest';
 import type { EventTicketCreationRequest } from '../models/EventTicketCreationRequest';
 import type { StandardResponseOfboolean } from '../models/StandardResponseOfboolean';
+import type { StandardResponseOfEventCategoriesResponse } from '../models/StandardResponseOfEventCategoriesResponse';
 import type { StandardResponseOfEventRegistrationView } from '../models/StandardResponseOfEventRegistrationView';
 import type { StandardResponseOfEventView } from '../models/StandardResponseOfEventView';
 import type { StandardResponseOfFinancingAuthorizationView } from '../models/StandardResponseOfFinancingAuthorizationView';
@@ -52,6 +53,8 @@ export class EventsService {
         searchTerm,
         category,
         categories,
+        categoryGroup,
+        categorySearch,
         startDate,
         endDate,
         locationType,
@@ -60,6 +63,7 @@ export class EventsService {
         includeTickets,
         status,
         organizer,
+        daysFromNow,
         city,
         includePastEvents,
     }: {
@@ -69,56 +73,46 @@ export class EventsService {
         sortOrder?: string;
         searchTerm?: string;
         category?: string;
-        categories?: string[];
+        categories?: Array<string>;
+        categoryGroup?: string;
+        categorySearch?: string;
         startDate?: string;
         endDate?: string;
-        locationType?: string | number;
+        locationType?: string;
         minPrice?: number;
         maxPrice?: number;
         includeTickets?: boolean;
         status?: string;
         organizer?: string;
+        daysFromNow?: number;
         city?: string;
         includePastEvents?: boolean;
     }): CancelablePromise<StandardResponseOfPagedCollectionOfEventView> {
-        // Build query parameters
-        const queryParams: any = {
-            PageNumber: pageNumber,
-            PageSize: pageSize,
-            SortBy: sortBy,
-            SortOrder: sortOrder,
-            SearchTerm: searchTerm,
-            Category: category,
-            StartDate: startDate,
-            EndDate: endDate,
-            LocationType: locationType,
-            MinPrice: minPrice,
-            MaxPrice: maxPrice,
-            IncludeTickets: includeTickets,
-            Status: status,
-            Organizer: organizer,
-            City: city,
-            IncludePastEvents: includePastEvents,
-        };
-
-        // Handle multiple categories by adding them as separate query parameters
-        if (categories && categories.length > 0) {
-            categories.forEach((cat) => {
-                if (!queryParams.Categories) {
-                    queryParams.Categories = [];
-                }
-                if (Array.isArray(queryParams.Categories)) {
-                    queryParams.Categories.push(cat);
-                } else {
-                    queryParams.Categories = [queryParams.Categories, cat];
-                }
-            });
-        }
-
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Events',
-            query: queryParams,
+            query: {
+                PageNumber: pageNumber,
+                PageSize: pageSize,
+                SortBy: sortBy,
+                SortOrder: sortOrder,
+                SearchTerm: searchTerm,
+                Category: category,
+                Categories: categories,
+                CategoryGroup: categoryGroup,
+                CategorySearch: categorySearch,
+                StartDate: startDate,
+                EndDate: endDate,
+                LocationType: locationType,
+                MinPrice: minPrice,
+                MaxPrice: maxPrice,
+                IncludeTickets: includeTickets,
+                Status: status,
+                Organizer: organizer,
+                DaysFromNow: daysFromNow,
+                City: city,
+                IncludePastEvents: includePastEvents,
+            },
             errors: {
                 500: `Internal Server Error`,
             },
@@ -261,6 +255,19 @@ export class EventsService {
                 400: `Bad Request`,
                 401: `Unauthorized`,
                 404: `Not Found`,
+                500: `Internal Server Error`,
+            },
+        });
+    }
+    /**
+     * @returns StandardResponseOfEventCategoriesResponse OK
+     * @throws ApiError
+     */
+    public static getApiEventsCategories(): CancelablePromise<StandardResponseOfEventCategoriesResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/Events/categories',
+            errors: {
                 500: `Internal Server Error`,
             },
         });
