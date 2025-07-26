@@ -134,15 +134,10 @@ export const useEventRegistration = () => {
                     return paymentResult;
                 } else {
                     // Free event - registration is complete
-                    toast({
-                        title: 'Registration Successful!',
-                        description:
-                            'You have successfully registered for this event.',
-                    });
-
                     return {
                         success: true,
                         registrationId: response.data.id,
+                        paymentReference: null,
                         requiresPayment: false,
                     };
                 }
@@ -265,6 +260,7 @@ export const useEventRegistration = () => {
                 return {
                     success: true,
                     registrationId: response.data.id,
+                    paymentReference: paystackReference,
                     requiresPayment: false,
                     message:
                         response.message || 'Payment verified successfully',

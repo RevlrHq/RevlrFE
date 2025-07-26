@@ -4,6 +4,8 @@ import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Navbar } from '@components/Navbar';
 import Footer from '@components/Footer';
+import RegistrationSuccess from '@components/RegistrationSuccess';
+import PaymentFailure from '@components/PaymentFailure';
 import { useEventRegistration } from '../../hooks/useEventRegistration';
 
 interface GuestInfo {
@@ -24,6 +26,14 @@ const CheckoutPage = () => {
     const searchParams = useSearchParams();
     const [guestInfo, setGuestInfo] = useState<GuestInfo | null>(null);
     const [tickets, setTickets] = useState<TicketInfo[]>([]);
+    const [eventName, setEventName] = useState<string>('');
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [showFailureModal, setShowFailureModal] = useState(false);
+    const [registrationData, setRegistrationData] = useState<{
+        registrationId?: string;
+        paymentReference?: string;
+    }>({});
+    const [paymentError, setPaymentError] = useState<string>('');
     const { registerForEvent, isLoading } = useEventRegistration();
 
     const eventId = searchParams.get('eventId');
@@ -93,6 +103,11 @@ const CheckoutPage = () => {
             return;
         }
 
+        // Reset previous states
+        setPaymentError('');
+        setShowSuccessModal(false);
+        setShowFailureModal(false);
+
         try {
             const result = await registerForEvent({
                 eventId,
@@ -107,12 +122,39 @@ const CheckoutPage = () => {
                 'success' in result &&
                 result.success
             ) {
-                // Registration successful - the hook will handle success messages and payment flow
+                // Registration successful
+                setRegistrationData({
+                    registrationId: (result as { registrationId?: string })
+                        .registrationId,
+                    paymentReference: (result as { paymentReference?: string })
+                        .paymentReference,
+                });
+                setEventName(searchParams.get('eventName') || 'Event');
+                setShowSuccessModal(true);
                 console.log('Registration completed successfully');
+            } else {
+                // Registration failed
+                const errorMessage =
+                    (result as { error?: string })?.error ||
+                    'Registration failed. Please try again.';
+                setPaymentError(errorMessage);
+                setShowFailureModal(true);
             }
         } catch (error) {
             console.error('Registration failed:', error);
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'An unexpected error occurred. Please try again.';
+            setPaymentError(errorMessage);
+            setShowFailureModal(true);
         }
+    };
+
+    const handleRetryPayment = () => {
+        setShowFailureModal(false);
+        setPaymentError('');
+        // The user can try the payment again by clicking the submit button
     };
 
     //log variables for debugging
@@ -476,6 +518,25 @@ const CheckoutPage = () => {
                 </div>
             </main>
             <Footer />
+
+            {/* Success Modal */}
+            <RegistrationSuccess
+                eventName={eventName}
+                registrationId={registrationData.registrationId}
+                paymentReference={registrationData.paymentReference}
+                isVisible={showSuccessModal}
+                onClose={() => setShowSuccessModal(false)}
+            />
+
+            {/* Failure Modal */}
+            <PaymentFailure
+                eventName={eventName}
+                errorMessage={paymentError}
+                paymentReference={registrationData.paymentReference}
+                isVisible={showFailureModal}
+                onClose={() => setShowFailureModal(false)}
+                onRetry={handleRetryPayment}
+            />
         </div>
     );
 };
