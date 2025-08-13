@@ -1,7 +1,7 @@
-import { redirect } from 'next/navigation';
+import Dashboard from '@features/dashboard/Dashboard';
 
 const page = () => {
-    redirect('/dashboard/event');
+    return <Dashboard />;
 };
 
 export default page;

@@ -11,10 +11,10 @@ interface SidebarItem {
     subcategories?: string[];
 }
 
-const navigationItems = [
+const userNavigationItems = [
     {
         name: 'Dashboard',
-        path: '/dashboard',
+        path: '/user-dashboard',
         icon: (color: string) => (
             <svg
                 width='24'
@@ -32,8 +32,8 @@ const navigationItems = [
         subcategories: [],
     },
     {
-        name: 'Events',
-        path: '/dashboard/event',
+        name: 'Browse Events',
+        path: '/events',
         icon: (color: string) => (
             <svg
                 width='24'
@@ -43,16 +43,16 @@ const navigationItems = [
                 xmlns='http://www.w3.org/2000/svg'
             >
                 <path
-                    d='M16 13H13C12.45 13 12 13.45 12 14V17C12 17.55 12.45 18 13 18H16C16.55 18 17 17.55 17 17V14C17 13.45 16.55 13 16 13ZM16 3V4H8V3C8 2.45 7.55 2 7 2C6.45 2 6 2.45 6 3V4H5C3.89 4 3.01 4.9 3.01 6L3 20C3 21.1 3.89 22 5 22H19C20.1 22 21 21.1 21 20V6C21 4.9 20.1 4 19 4H18V3C18 2.45 17.55 2 17 2C16.45 2 16 2.45 16 3ZM18 20H6C5.45 20 5 19.55 5 19V9H19V19C19 19.55 18.55 20 18 20Z'
+                    d='M15.5 14H20.5L22 15.5V20.5L20.5 22H15.5L14 20.5V15.5L15.5 14ZM16 16V20H20V16H16ZM10 2C13.31 2 16 4.69 16 8C16 11.31 13.31 14 10 14C6.69 14 4 11.31 4 8C4 4.69 6.69 2 10 2ZM10 4C7.79 4 6 5.79 6 8C6 10.21 7.79 12 10 12C12.21 12 14 10.21 14 8C14 5.79 12.21 4 10 4Z'
                     fill={color}
                 />
             </svg>
         ),
-        subcategories: ['/event/create-event', '/event/event-details'],
+        subcategories: [],
     },
     {
-        name: 'Payments',
-        path: '/dashboard/payment',
+        name: 'My Tickets',
+        path: '/user-dashboard/tickets',
         icon: (color: string) => (
             <svg
                 width='24'
@@ -62,20 +62,54 @@ const navigationItems = [
                 xmlns='http://www.w3.org/2000/svg'
             >
                 <path
-                    d='M23 8V18C23 19.1 22.1 20 21 20H5C4.45 20 4 19.55 4 19C4 18.45 4.45 18 5 18H21V8C21 7.45 21.45 7 22 7C22.55 7 23 7.45 23 8ZM4 16C2.34 16 1 14.66 1 13V7C1 5.34 2.34 4 4 4H16C17.66 4 19 5.34 19 7V14C19 15.1 18.1 16 17 16H4ZM7 10C7 11.66 8.34 13 10 13C11.66 13 13 11.66 13 10C13 8.34 11.66 7 10 7C8.34 7 7 8.34 7 10Z'
+                    d='M22 10V6C22 4.9 21.1 4 20 4H4C2.9 4 2 4.9 2 6V10C3.1 10 4 10.9 4 12C4 13.1 3.1 14 2 14V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V14C20.9 14 20 13.1 20 12C20 10.9 20.9 10 22 10ZM13 17.5H11V16.5H13V17.5ZM13 15.5H11V14.5H13V15.5ZM13 13.5H11V12.5H13V13.5ZM13 11.5H11V10.5H13V11.5ZM13 9.5H11V8.5H13V9.5ZM13 7.5H11V6.5H13V7.5Z'
                     fill={color}
                 />
             </svg>
         ),
-        subcategories: [
-            '/payment/insights',
-            '/payment/payout-management',
-            '/payment/order-history',
-        ],
+        subcategories: ['/tickets/upcoming', '/tickets/past'],
+    },
+    {
+        name: 'Saved Events',
+        path: '/user-dashboard/saved',
+        icon: (color: string) => (
+            <svg
+                width='24'
+                height='24'
+                viewBox='0 0 24 24'
+                fill='none'
+                xmlns='http://www.w3.org/2000/svg'
+            >
+                <path
+                    d='M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z'
+                    fill={color}
+                />
+            </svg>
+        ),
+        subcategories: [],
+    },
+    {
+        name: 'Friends',
+        path: '/user-dashboard/friends',
+        icon: (color: string) => (
+            <svg
+                width='24'
+                height='24'
+                viewBox='0 0 24 24'
+                fill='none'
+                xmlns='http://www.w3.org/2000/svg'
+            >
+                <path
+                    d='M16 4C18.21 4 20 5.79 20 8C20 10.21 18.21 12 16 12C13.79 12 12 10.21 12 8C12 5.79 13.79 4 16 4ZM16 14C18.67 14 24 15.34 24 18V20H8V18C8 15.34 13.33 14 16 14ZM8 4C10.21 4 12 5.79 12 8C12 10.21 10.21 12 8 12C5.79 12 4 10.21 4 8C4 5.79 5.79 4 8 4ZM8 14C10.67 14 16 15.34 16 18V20H0V18C0 15.34 5.33 14 8 14Z'
+                    fill={color}
+                />
+            </svg>
+        ),
+        subcategories: ['/friends/following', '/friends/invites'],
     },
     {
         name: 'Settings',
-        path: '/dashboard/settings',
+        path: '/user-dashboard/settings',
         icon: (color: string) => (
             <svg
                 width='24'
@@ -92,13 +126,13 @@ const navigationItems = [
         ),
         subcategories: [
             '/settings/profile',
-            '/settings/account',
+            '/settings/preferences',
             '/settings/notifications',
         ],
     },
 ];
 
-const Sidebar = () => {
+const UserSidebar = () => {
     const pathname = usePathname();
     const { theme } = useTheme();
 
@@ -139,7 +173,7 @@ const Sidebar = () => {
             </div>
 
             <nav className='flex-1 space-y-2 pt-4'>
-                {navigationItems.map((item: SidebarItem) => (
+                {userNavigationItems.map((item: SidebarItem) => (
                     <Link
                         key={item.path}
                         href={item.path}
@@ -203,4 +237,4 @@ const Sidebar = () => {
     );
 };
 
-export default Sidebar;
+export default UserSidebar;
