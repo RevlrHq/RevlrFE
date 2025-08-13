@@ -16,12 +16,12 @@ graph TB
     Hook --> API[Event APIs]
     Hook --> Storage[Local Storage]
     Hook --> State[Event State Management]
-    
+
     API --> Draft[Draft API]
     API --> Event[Event API]
     API --> Ticket[Ticket API]
     API --> Publish[Publish API]
-    
+
     State --> Form[Form State]
     State --> Upload[Upload State]
     State --> Validation[Validation State]
@@ -34,12 +34,12 @@ graph TB
     CreateEvent[CreateEvent Container] --> EventForm[EventForm Component]
     CreateEvent --> TicketForm[TicketForm Component]
     CreateEvent --> PreviewModal[PreviewModal Component]
-    
+
     EventForm --> BasicDetails[BasicDetails Section]
     EventForm --> LocationDetails[LocationDetails Section]
     EventForm --> OrganizerDetails[OrganizerDetails Section]
     EventForm --> ImageUpload[ImageUpload Component]
-    
+
     TicketForm --> TicketList[TicketList Component]
     TicketForm --> TicketEditor[TicketEditor Component]
     TicketForm --> TicketPreview[TicketPreview Component]
@@ -52,16 +52,19 @@ graph TB
 The Event Creation Integration follows the established REVLR design language:
 
 **Color Palette:**
+
 - Primary: `revlr-primary-blue` (#0066FF)
 - Secondary: `revlr-accent-purple`, `revlr-accent-green`, `revlr-accent-orange`
 - Accent: `revlr-primary-yellow`
 - Dark Mode: `revlr-dark-bg`, `revlr-dark-card`, `revlr-dark-border`
 
 **Typography:**
+
 - Primary: `font-inter` for body text and UI elements
 - Brand: `font-montserrat` for headings and brand elements
 
 **Component Styling:**
+
 - Buttons: Gradient backgrounds `bg-gradient-to-r from-revlr-primary-blue to-revlr-accent-purple`
 - Cards: `rounded-xl` with `shadow-lg` and theme-aware backgrounds
 - Inputs: `rounded-xl` with focus states using `focus:ring-revlr-primary-blue/20`
@@ -71,34 +74,37 @@ The Event Creation Integration follows the established REVLR design language:
 
 ```typescript
 interface UseEventCreationProps {
-  eventId?: string; // For editing existing events
-  initialData?: Partial<EventCreationData>;
+    eventId?: string; // For editing existing events
+    initialData?: Partial<EventCreationData>;
 }
 
 interface UseEventCreationReturn {
-  // State
-  eventData: EventCreationData;
-  tickets: EventTicket[];
-  currentStep: number;
-  isLoading: boolean;
-  isSaving: boolean;
-  errors: ValidationErrors;
-  
-  // Actions
-  updateEventData: (data: Partial<EventCreationData>) => void;
-  addTicket: (ticket: EventTicketCreationRequest) => Promise<void>;
-  updateTicket: (ticketId: string, updates: Partial<EventTicket>) => Promise<void>;
-  removeTicket: (ticketId: string) => Promise<void>;
-  saveDraft: () => Promise<void>;
-  publishEvent: () => Promise<void>;
-  
-  // Navigation
-  goToStep: (step: number) => void;
-  canProceedToStep: (step: number) => boolean;
-  
-  // Validation
-  validateCurrentStep: () => ValidationResult;
-  validateForPublishing: () => ValidationResult;
+    // State
+    eventData: EventCreationData;
+    tickets: EventTicket[];
+    currentStep: number;
+    isLoading: boolean;
+    isSaving: boolean;
+    errors: ValidationErrors;
+
+    // Actions
+    updateEventData: (data: Partial<EventCreationData>) => void;
+    addTicket: (ticket: EventTicketCreationRequest) => Promise<void>;
+    updateTicket: (
+        ticketId: string,
+        updates: Partial<EventTicket>
+    ) => Promise<void>;
+    removeTicket: (ticketId: string) => Promise<void>;
+    saveDraft: () => Promise<void>;
+    publishEvent: () => Promise<void>;
+
+    // Navigation
+    goToStep: (step: number) => void;
+    canProceedToStep: (step: number) => boolean;
+
+    // Validation
+    validateCurrentStep: () => ValidationResult;
+    validateForPublishing: () => ValidationResult;
 }
 ```
 
@@ -106,48 +112,48 @@ interface UseEventCreationReturn {
 
 ```typescript
 interface EventCreationData {
-  // Basic Information
-  title: string;
-  description: string;
-  category: EventCategory;
-  
-  // Date and Time
-  startDate: string;
-  endDate: string;
-  startTime: string;
-  endTime: string;
-  timezone: string;
-  
-  // Location
-  locationType: LocationType;
-  venue?: VenueDetails;
-  virtualLink?: string;
-  
-  // Images
-  images: EventImage[];
-  
-  // Organizer
-  organizer: OrganizerDetails;
-  
-  // Social Links
-  socialLinks: SocialLinks;
-  
-  // Metadata
-  status: 'draft' | 'published';
-  createdAt?: string;
-  updatedAt?: string;
+    // Basic Information
+    title: string;
+    description: string;
+    category: EventCategory;
+
+    // Date and Time
+    startDate: string;
+    endDate: string;
+    startTime: string;
+    endTime: string;
+    timezone: string;
+
+    // Location
+    locationType: LocationType;
+    venue?: VenueDetails;
+    virtualLink?: string;
+
+    // Images
+    images: EventImage[];
+
+    // Organizer
+    organizer: OrganizerDetails;
+
+    // Social Links
+    socialLinks: SocialLinks;
+
+    // Metadata
+    status: 'draft' | 'published';
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 interface EventTicket {
-  id?: string;
-  name: string;
-  description?: string;
-  price: number;
-  quantity: number;
-  salesStartDate: string;
-  salesEndDate: string;
-  purchaseLimit?: number;
-  isActive: boolean;
+    id?: string;
+    name: string;
+    description?: string;
+    price: number;
+    quantity: number;
+    salesStartDate: string;
+    salesEndDate: string;
+    purchaseLimit?: number;
+    isActive: boolean;
 }
 ```
 
@@ -155,22 +161,28 @@ interface EventTicket {
 
 ```typescript
 class EventCreationService {
-  // Draft Management
-  static async saveDraft(data: EventCreationRequest): Promise<EventView>;
-  static async loadDraft(eventId: string): Promise<EventView>;
-  
-  // Event Management
-  static async createEvent(data: EventCreationRequest): Promise<EventView>;
-  static async updateEvent(eventId: string, data: EventCreationRequest): Promise<EventView>;
-  
-  // Ticket Management
-  static async addTickets(eventId: string, tickets: EventTicketCreationRequest[]): Promise<EventView>;
-  
-  // Publishing
-  static async publishEvent(eventId: string): Promise<EventView>;
-  
-  // Image Upload
-  static async uploadImage(file: File): Promise<string>;
+    // Draft Management
+    static async saveDraft(data: EventCreationRequest): Promise<EventView>;
+    static async loadDraft(eventId: string): Promise<EventView>;
+
+    // Event Management
+    static async createEvent(data: EventCreationRequest): Promise<EventView>;
+    static async updateEvent(
+        eventId: string,
+        data: EventCreationRequest
+    ): Promise<EventView>;
+
+    // Ticket Management
+    static async addTickets(
+        eventId: string,
+        tickets: EventTicketCreationRequest[]
+    ): Promise<EventView>;
+
+    // Publishing
+    static async publishEvent(eventId: string): Promise<EventView>;
+
+    // Image Upload
+    static async uploadImage(file: File): Promise<string>;
 }
 ```
 
@@ -180,19 +192,19 @@ class EventCreationService {
 
 ```typescript
 interface EventCreationRequest {
-  title: string;
-  description: string;
-  category: string;
-  startDate: string;
-  endDate: string;
-  locationDetails: LocationDetails;
-  socialLinks?: EventSocialLinks;
-  customFields?: CustomField[];
-  organizerInfo?: {
-    name: string;
-    website?: string;
-    logo?: string;
-  };
+    title: string;
+    description: string;
+    category: string;
+    startDate: string;
+    endDate: string;
+    locationDetails: LocationDetails;
+    socialLinks?: EventSocialLinks;
+    customFields?: CustomField[];
+    organizerInfo?: {
+        name: string;
+        website?: string;
+        logo?: string;
+    };
 }
 ```
 
@@ -200,17 +212,17 @@ interface EventCreationRequest {
 
 ```typescript
 interface LocationDetails {
-  type: LocationType; // 0=In-Person, 1=Virtual, 2=Hybrid
-  venue?: {
-    name: string;
-    address: AddressInfo;
-    googleMapsUrl?: string;
-  };
-  virtualDetails?: {
-    platform: string;
-    link: string;
-    accessInstructions?: string;
-  };
+    type: LocationType; // 0=In-Person, 1=Virtual, 2=Hybrid
+    venue?: {
+        name: string;
+        address: AddressInfo;
+        googleMapsUrl?: string;
+    };
+    virtualDetails?: {
+        platform: string;
+        link: string;
+        accessInstructions?: string;
+    };
 }
 ```
 
@@ -218,14 +230,14 @@ interface LocationDetails {
 
 ```typescript
 interface EventTicketCreationRequest {
-  name: string;
-  description?: string;
-  price: number;
-  quantity: number;
-  salesPeriod: TicketSalesPeriod;
-  purchaseLimit?: number;
-  isTransferable?: boolean;
-  refundPolicy?: string;
+    name: string;
+    description?: string;
+    price: number;
+    quantity: number;
+    salesPeriod: TicketSalesPeriod;
+    purchaseLimit?: number;
+    isTransferable?: boolean;
+    refundPolicy?: string;
 }
 ```
 
@@ -235,18 +247,18 @@ interface EventTicketCreationRequest {
 
 ```typescript
 enum EventCreationErrorType {
-  VALIDATION_ERROR = 'validation_error',
-  NETWORK_ERROR = 'network_error',
-  AUTHENTICATION_ERROR = 'auth_error',
-  SERVER_ERROR = 'server_error',
-  UPLOAD_ERROR = 'upload_error'
+    VALIDATION_ERROR = 'validation_error',
+    NETWORK_ERROR = 'network_error',
+    AUTHENTICATION_ERROR = 'auth_error',
+    SERVER_ERROR = 'server_error',
+    UPLOAD_ERROR = 'upload_error',
 }
 
 interface EventCreationError {
-  type: EventCreationErrorType;
-  message: string;
-  field?: string;
-  details?: any;
+    type: EventCreationErrorType;
+    message: string;
+    field?: string;
+    details?: any;
 }
 ```
 
@@ -262,17 +274,17 @@ interface EventCreationError {
 
 ```typescript
 interface DraftBackup {
-  eventData: EventCreationData;
-  tickets: EventTicket[];
-  timestamp: number;
-  step: number;
+    eventData: EventCreationData;
+    tickets: EventTicket[];
+    timestamp: number;
+    step: number;
 }
 
 class DraftBackupService {
-  static saveDraft(data: DraftBackup): void;
-  static loadDraft(): DraftBackup | null;
-  static clearDraft(): void;
-  static hasDraft(): boolean;
+    static saveDraft(data: DraftBackup): void;
+    static loadDraft(): DraftBackup | null;
+    static clearDraft(): void;
+    static hasDraft(): boolean;
 }
 ```
 
@@ -369,16 +381,16 @@ class DraftBackupService {
 // Updated component structure following REVLR design language
 const CreateEventContainer = () => {
   const { theme } = useTheme();
-  
+
   return (
     <div className={`min-h-screen transition-colors duration-200 ${
-      theme === 'dark' 
-        ? 'bg-revlr-dark-bg text-white' 
+      theme === 'dark'
+        ? 'bg-revlr-dark-bg text-white'
         : 'bg-gray-50 text-gray-900'
     }`}>
       {/* Header with progress indicator */}
       <EventCreationHeader />
-      
+
       {/* Main form content */}
       <div className="p-6 space-y-6">
         <EventCreationForm />
@@ -393,11 +405,11 @@ const CreateEventContainer = () => {
 ```typescript
 const FormSection = ({ title, required, children }) => {
   const { theme } = useTheme();
-  
+
   return (
     <div className={`p-8 rounded-xl border shadow-lg ${
-      theme === 'dark' 
-        ? 'bg-revlr-dark-card border-revlr-dark-border' 
+      theme === 'dark'
+        ? 'bg-revlr-dark-card border-revlr-dark-border'
         : 'bg-white border-gray-200'
     }`}>
       <label className="mb-6 block font-inter text-lg font-semibold">
@@ -429,7 +441,7 @@ const PrimaryButton = ({ children, loading, ...props }) => (
 ```typescript
 const FormInput = ({ label, error, required, ...props }) => {
   const { theme } = useTheme();
-  
+
   return (
     <div className="space-y-2">
       <label className="font-inter text-sm font-medium">
@@ -438,8 +450,8 @@ const FormInput = ({ label, error, required, ...props }) => {
       </label>
       <input
         className={`w-full rounded-xl border px-4 py-3 font-inter text-sm transition-all duration-200 ${
-          error 
-            ? 'border-red-500 focus:ring-red-500/20' 
+          error
+            ? 'border-red-500 focus:ring-red-500/20'
             : theme === 'dark'
               ? 'border-revlr-dark-border bg-revlr-dark-card text-white focus:border-revlr-primary-blue focus:ring-revlr-primary-blue/20'
               : 'border-gray-300 bg-white focus:border-revlr-primary-blue focus:ring-revlr-primary-blue/20'
