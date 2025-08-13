@@ -165,7 +165,7 @@ export default [
     ...compat.extends('plugin:tailwindcss/recommended', 'prettier'),
     ...compat
         .extends(
-            "next/core-web-vitals",
+            'next/core-web-vitals',
             'plugin:@typescript-eslint/recommended',
             'plugin:tailwindcss/recommended',
             // 'plugin:boundaries/recommended',
