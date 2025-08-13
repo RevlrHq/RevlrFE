@@ -63,9 +63,9 @@ export const PublishSuccessModal: React.FC<PublishSuccessModalProps> = ({
                             theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                         }`}
                     >
-                        Your event "{eventData.eventName}" has been successfully
-                        published and is now live for attendees to discover and
-                        register.
+                        Your event &quot;{eventData.eventName}&quot; has been
+                        successfully published and is now live for attendees to
+                        discover and register.
                     </p>
 
                     {/* Event Preview Card */}

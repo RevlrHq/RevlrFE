@@ -5,22 +5,29 @@ import { render } from '../test-utils';
 import AppLogo from '@components/app-logo';
 
 jest.mock('next/link', () => {
-    return ({
+    function MockLink({
         children,
         href,
     }: {
         children: React.ReactNode;
         href: string;
-    }) => <a href={href}>{children}</a>;
+    }) {
+        return <a href={href}>{children}</a>;
+    }
+
+    MockLink.displayName = 'MockLink';
+    return MockLink;
 });
 
-jest.mock(
-    'next/image',
-    () => (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
+jest.mock('next/image', () => {
+    function MockImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
         // const { ...rest } = props;
         return <img {...props} />;
     }
-);
+
+    MockImage.displayName = 'MockImage';
+    return MockImage;
+});
 
 describe('AppLogo', () => {
     it('renders the logo', () => {

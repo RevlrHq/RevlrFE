@@ -84,7 +84,7 @@ const PaymentFailure = ({
                             Payment Failed
                         </h2>
                         <p className='mt-2 text-gray-600 dark:text-gray-400'>
-                            We couldn't process your payment
+                            We couldn&apos;t process your payment
                         </p>
                     </div>
 

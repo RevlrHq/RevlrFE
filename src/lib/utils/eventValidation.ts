@@ -12,7 +12,7 @@ export class EventValidationUtils {
     static validateBasicInfo(eventData: EventCreationData): ValidationResult {
         const errors: ValidationErrors = {};
 
-        if (!eventData.eventName?.trim()) {
+        if (!eventData || !eventData.eventName?.trim()) {
             errors.eventName = 'Event name is required';
         } else if (eventData.eventName.length < 3) {
             errors.eventName = 'Event name must be at least 3 characters long';
@@ -20,7 +20,7 @@ export class EventValidationUtils {
             errors.eventName = 'Event name must be less than 100 characters';
         }
 
-        if (!eventData.eventDescription?.trim()) {
+        if (!eventData || !eventData.eventDescription?.trim()) {
             errors.eventDescription = 'Event description is required';
         } else if (eventData.eventDescription.length < 10) {
             errors.eventDescription =
@@ -30,7 +30,7 @@ export class EventValidationUtils {
                 'Event description must be less than 2000 characters';
         }
 
-        if (!eventData.eventCategory?.trim()) {
+        if (!eventData || !eventData.eventCategory?.trim()) {
             errors.eventCategory = 'Event category is required';
         }
 
@@ -62,11 +62,19 @@ export class EventValidationUtils {
             errors.endTime = 'End time is required';
         }
 
+        // Validate timezone
+        if (!eventData.timezone?.trim()) {
+            errors.timezone = 'Timezone is required';
+        } else if (!this.isValidTimezone(eventData.timezone)) {
+            errors.timezone = 'Please enter a valid timezone';
+        }
+
         // Validate date logic
         if (eventData.dateRange?.startDate && eventData.dateRange?.endDate) {
             const startDate = new Date(eventData.dateRange.startDate);
             const endDate = new Date(eventData.dateRange.endDate);
             const now = new Date();
+            now.setHours(0, 0, 0, 0); // Reset time for date comparison
 
             if (startDate < now) {
                 errors.startDate = 'Start date cannot be in the past';
@@ -86,7 +94,7 @@ export class EventValidationUtils {
                 const endTime = this.parseTime(eventData.timeRange.endTime);
 
                 if (startTime >= endTime) {
-                    errors.endTime = 'End time must be after start time';
+                    errors.timeRange = 'End time must be after start time';
                 }
             }
         }
@@ -140,7 +148,7 @@ export class EventValidationUtils {
                 }
                 if (!eventData.locationDetails?.eventLink?.trim()) {
                     errors.eventLink =
-                        'Event link is required for hybrid events';
+                        'Event link is required for virtual events';
                 } else if (
                     !this.isValidUrl(eventData.locationDetails.eventLink)
                 ) {
@@ -169,11 +177,17 @@ export class EventValidationUtils {
     static validateOrganizer(eventData: EventCreationData): ValidationResult {
         const errors: ValidationErrors = {};
 
+        // Validate organizer name length
+        if (eventData.organizerName && eventData.organizerName.length > 100) {
+            errors.organizerName =
+                'Organizer name must be a maximum of 100 characters';
+        }
+
         if (
             eventData.organizerWebsite &&
             !this.isValidUrl(eventData.organizerWebsite)
         ) {
-            errors.organizerWebsite = 'Please enter a valid website URL';
+            errors.organizerWebsite = 'Please enter a valid URL';
         }
 
         // Validate social links
@@ -182,25 +196,25 @@ export class EventValidationUtils {
                 eventData.socials.facebook &&
                 !this.isValidUrl(eventData.socials.facebook)
             ) {
-                errors.facebookUrl = 'Please enter a valid Facebook URL';
+                errors.facebook = 'Please enter a valid URL';
             }
             if (
                 eventData.socials.instagram &&
                 !this.isValidUrl(eventData.socials.instagram)
             ) {
-                errors.instagramUrl = 'Please enter a valid Instagram URL';
+                errors.instagram = 'Please enter a valid URL';
             }
             if (
                 eventData.socials.twitter &&
                 !this.isValidUrl(eventData.socials.twitter)
             ) {
-                errors.twitterUrl = 'Please enter a valid Twitter URL';
+                errors.twitter = 'Please enter a valid URL';
             }
             if (
                 eventData.socials.website &&
                 !this.isValidUrl(eventData.socials.website)
             ) {
-                errors.websiteUrl = 'Please enter a valid website URL';
+                errors.websiteUrl = 'Please enter a valid URL';
             }
         }
 
@@ -216,8 +230,8 @@ export class EventValidationUtils {
     static validateTickets(tickets: EventTicket[]): ValidationResult {
         const errors: ValidationErrors = {};
 
-        if (tickets.length === 0) {
-            errors.tickets = 'At least one ticket type is required';
+        if (!tickets || tickets.length === 0) {
+            errors.tickets = 'At least one ticket is required';
             return { isValid: false, errors };
         }
 
@@ -226,28 +240,34 @@ export class EventValidationUtils {
 
             if (!ticket.name?.trim()) {
                 ticketErrors.push('Ticket name is required');
+            } else if (ticket.name.length > 100) {
+                ticketErrors.push(
+                    'Ticket name must be a maximum of 100 characters'
+                );
+            }
+
+            if (ticket.description && ticket.description.length > 500) {
+                ticketErrors.push(
+                    'Ticket description must be a maximum of 500 characters'
+                );
             }
 
             if (ticket.type === 'paid') {
                 if (!ticket.price || ticket.price <= 0) {
-                    ticketErrors.push(
-                        'Price must be greater than 0 for paid tickets'
-                    );
+                    ticketErrors.push('Price must be greater than 0');
                 }
             }
 
             if (!ticket.quantity || ticket.quantity <= 0) {
-                ticketErrors.push('Quantity must be greater than 0');
+                ticketErrors.push('Quantity must be at least 1');
             }
 
             if (!ticket.purchaseLimit || ticket.purchaseLimit <= 0) {
-                ticketErrors.push('Purchase limit must be greater than 0');
+                ticketErrors.push('Purchase limit must be at least 1');
             }
 
             if (ticket.purchaseLimit > ticket.quantity) {
-                ticketErrors.push(
-                    'Purchase limit cannot exceed total quantity'
-                );
+                ticketErrors.push('Purchase limit cannot exceed quantity');
             }
 
             // Validate sales period
@@ -265,6 +285,14 @@ export class EventValidationUtils {
                 ) {
                     const startDate = new Date(ticket.salesPeriod.startDate);
                     const endDate = new Date(ticket.salesPeriod.endDate);
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0);
+
+                    if (startDate < now) {
+                        ticketErrors.push(
+                            'Sales start date cannot be in the past'
+                        );
+                    }
 
                     if (endDate <= startDate) {
                         ticketErrors.push(
@@ -377,6 +405,19 @@ export class EventValidationUtils {
     private static parseTime(timeString: string): number {
         const [hours, minutes] = timeString.split(':').map(Number);
         return hours * 60 + minutes;
+    }
+
+    /**
+     * Check if a string is a valid timezone
+     */
+    private static isValidTimezone(timezone: string): boolean {
+        try {
+            // Use Intl.DateTimeFormat to validate timezone
+            Intl.DateTimeFormat(undefined, { timeZone: timezone });
+            return true;
+        } catch {
+            return false;
+        }
     }
 
     /**

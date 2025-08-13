@@ -24,10 +24,21 @@ export const PrePublishValidation: React.FC<PrePublishValidationProps> = ({
 }) => {
     const { theme } = useTheme();
 
-    const validationSummary = EventValidationUtils.getValidationSummary(
-        eventData,
-        tickets
-    );
+    let validationSummary;
+    try {
+        validationSummary = EventValidationUtils.getValidationSummary(
+            eventData,
+            tickets
+        );
+    } catch {
+        // Fallback to basic validation if summary fails
+        validationSummary = {
+            totalErrors: Object.keys(errors || {}).length,
+            errorsByCategory: {},
+            missingRequiredFields: Object.keys(errors || {}),
+        };
+    }
+
     const hasErrors = validationSummary.totalErrors > 0;
 
     // Helper function to get category for a field

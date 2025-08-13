@@ -365,7 +365,7 @@ export const TicketManagement: React.FC<TicketManagementProps> = ({
                                 </span>
                             </div>
 
-                            {tickets.some((t) => t.type === 'paid') && (
+                            {tickets.length > 0 && (
                                 <div className='flex items-center justify-between border-t border-gray-200 pt-2 dark:border-revlr-dark-border'>
                                     <span
                                         className={`text-sm ${

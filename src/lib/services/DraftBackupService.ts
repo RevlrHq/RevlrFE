@@ -217,18 +217,21 @@ export class DraftBackupService {
     } {
         try {
             let used = 0;
-            let available = 0;
 
             // Calculate used storage
-            for (let key in localStorage) {
-                if (localStorage.hasOwnProperty(key)) {
-                    used += localStorage[key].length + key.length;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key) {
+                    const value = localStorage.getItem(key);
+                    if (value) {
+                        used += key.length + value.length;
+                    }
                 }
             }
 
             // Estimate available storage (most browsers have ~5-10MB limit)
             const estimatedLimit = 5 * 1024 * 1024; // 5MB
-            available = estimatedLimit - used;
+            const available = Math.max(0, estimatedLimit - used);
 
             return {
                 used,

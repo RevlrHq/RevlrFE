@@ -226,48 +226,8 @@ describe('ImageUploadService', () => {
     describe('uploadImage', () => {
         // Mock canvas and image for compression tests
         beforeEach(() => {
-            // Mock HTMLCanvasElement
-            const mockCanvas = {
-                width: 0,
-                height: 0,
-                getContext: jest.fn(() => ({
-                    drawImage: jest.fn(),
-                })),
-                toBlob: jest.fn((callback) => {
-                    const blob = new Blob(['compressed'], {
-                        type: 'image/jpeg',
-                    });
-                    callback(blob);
-                }),
-            };
-
-            jest.spyOn(document, 'createElement').mockImplementation(
-                (tagName) => {
-                    if (tagName === 'canvas') {
-                        return mockCanvas as unknown as HTMLCanvasElement;
-                    }
-                    return document.createElement(tagName);
-                }
-            );
-
-            // Mock Image
-            global.Image = class {
-                onload: (() => void) | null = null;
-                onerror: (() => void) | null = null;
-                src = '';
-                width = 800;
-                height = 600;
-
-                constructor() {
-                    setTimeout(() => {
-                        if (this.onload) {
-                            this.onload();
-                        }
-                    }, 0);
-                }
-            } as unknown as typeof Image;
-
-            // Mock URL.createObjectURL
+            // The canvas mock is already set up in test-setup.ts
+            // Just ensure URL.createObjectURL is mocked
             global.URL.createObjectURL = jest.fn(() => 'blob:mock-url');
         });
 
@@ -281,7 +241,7 @@ describe('ImageUploadService', () => {
                 id: 'test-uuid-123',
                 url: 'https://ucarecdn.com/test-uuid-123/',
                 cdnUrl: 'https://ucarecdn.com/test-uuid-123/',
-                name: 'test-image.jpg',
+                name: 'test.jpg',
                 size: 1024000,
                 mimeType: 'image/jpeg',
                 order: 0,

@@ -137,12 +137,12 @@ const RegistrationSuccess = ({
                             </div>
                             <div>
                                 <h4 className='font-semibold text-blue-900 dark:text-blue-100'>
-                                    What's Next?
+                                    What&apos;s Next?
                                 </h4>
                                 <p className='text-sm text-blue-700 dark:text-blue-200'>
-                                    You'll receive a confirmation email with
-                                    your ticket details shortly. Keep an eye on
-                                    your inbox for event updates.
+                                    You&apos;ll receive a confirmation email
+                                    with your ticket details shortly. Keep an
+                                    eye on your inbox for event updates.
                                 </p>
                             </div>
                         </div>

@@ -20,6 +20,7 @@ describe('Event Publishing Workflow', () => {
             startTime: '10:00',
             endTime: '18:00',
         },
+        timezone: 'America/New_York',
         images: [
             {
                 id: 'img1',

@@ -1,6 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { EventCreationService } from '../lib/services/EventCreationService';
 import { DraftBackupService } from '../lib/services/DraftBackupService';
+import { useAutoSave } from './useDebounce';
+import {
+    monitoring,
+    MonitoringService,
+} from '../lib/services/MonitoringService';
 import type {
     EventCreationData,
     EventTicket,
@@ -85,45 +90,93 @@ export function useEventCreation({
         hasUnsavedChanges: false,
     });
 
-    const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const [hasBackup, setHasBackup] = useState(DraftBackupService.hasDraft());
+    // const formStartTimeRef = useRef<number>(Date.now()); // Commented out - unused
 
-    // Auto-save functionality
-    const scheduleAutoSave = useCallback(() => {
-        if (autoSaveTimeoutRef.current) {
-            clearTimeout(autoSaveTimeoutRef.current);
-        }
+    // Debounced auto-save functionality
+    const autoSaveData = useCallback(
+        async (data: {
+            eventData: EventCreationData;
+            tickets: EventTicket[];
+        }) => {
+            try {
+                // Try to save to server first
+                const response = await EventCreationService.saveDraft(
+                    data.eventData
+                );
 
-        autoSaveTimeoutRef.current = setTimeout(() => {
-            if (state.hasUnsavedChanges && !state.isSaving) {
+                if (response.success) {
+                    // Clear local backup on successful server save
+                    DraftBackupService.clearDraft();
+                    setHasBackup(false);
+
+                    // Update state with server response
+                    setState((prev) => ({
+                        ...prev,
+                        eventData: response.data
+                            ? { ...prev.eventData, ...response.data }
+                            : prev.eventData,
+                        lastSaved: new Date(),
+                        hasUnsavedChanges: false,
+                    }));
+                } else {
+                    throw new Error(response.message || 'Server save failed');
+                }
+            } catch (error) {
+                // Fallback to local storage
                 DraftBackupService.autoSave(
-                    state.eventData,
-                    state.tickets,
+                    data.eventData,
+                    data.tickets,
                     state.currentStep
                 );
-            }
-        }, autoSaveInterval);
-    }, [
-        state.eventData,
-        state.tickets,
-        state.currentStep,
-        state.hasUnsavedChanges,
-        state.isSaving,
-        autoSaveInterval,
-    ]);
+                setHasBackup(true);
 
-    // Schedule auto-save when data changes
-    useEffect(() => {
-        if (state.hasUnsavedChanges) {
-            scheduleAutoSave();
+                // Track the fallback
+                monitoring.recordError({
+                    message: `Auto-save fallback: ${(error as Error).message}`,
+                    component: 'useEventCreation',
+                    action: 'auto_save_fallback',
+                    timestamp: Date.now(),
+                    sessionId:
+                        MonitoringService.getInstance().exportData().sessionId,
+                });
+            }
+        },
+        [state.currentStep]
+    );
+
+    useAutoSave(
+        { eventData: state.eventData, tickets: state.tickets },
+        autoSaveData,
+        {
+            delay: autoSaveInterval,
+            enabled: state.hasUnsavedChanges && !state.isSaving,
+            onSaveStart: () => {
+                monitoring.recordUserBehavior({
+                    event: 'auto_save',
+                    component: 'useEventCreation',
+                    action: 'start',
+                });
+            },
+            onSaveSuccess: () => {
+                monitoring.recordUserBehavior({
+                    event: 'auto_save',
+                    component: 'useEventCreation',
+                    action: 'success',
+                });
+            },
+            onSaveError: (error) => {
+                monitoring.recordError({
+                    message: error.message,
+                    component: 'useEventCreation',
+                    action: 'auto_save_error',
+                    timestamp: Date.now(),
+                    sessionId:
+                        MonitoringService.getInstance().exportData().sessionId,
+                });
+            },
         }
-
-        return () => {
-            if (autoSaveTimeoutRef.current) {
-                clearTimeout(autoSaveTimeoutRef.current);
-            }
-        };
-    }, [scheduleAutoSave, state.hasUnsavedChanges]);
+    );
 
     // Load event on mount if eventId is provided
     useEffect(() => {

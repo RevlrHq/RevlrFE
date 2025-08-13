@@ -17,7 +17,6 @@ const compat = new FlatCompat({
 });
 
 export default [
-    importPlugin.flatConfigs.recommended,
     {
         ignores: [
             '**/node_modules/**',
@@ -40,6 +39,8 @@ export default [
         plugins: {
             '@typescript-eslint': typescriptEslint,
             tailwindcss,
+            import: importPlugin,
+            boundaries,
         },
         // files: ['**/*.{ts,tsx,js,mjs,cjs}'],
         languageOptions: {
@@ -52,11 +53,13 @@ export default [
             'tailwindcss/migration-from-tailwind-2': 'off',
             'tailwindcss/no-custom-classname': 'off',
             '@typescript-eslint/ban-ts-comment': 'off',
-        },
-    },
-    {
-        plugins: {
-            boundaries,
+            '@typescript-eslint/no-unused-vars': 'error',
+            '@typescript-eslint/no-explicit-any': 'error',
+            // React rules
+            'react/no-unescaped-entities': 'off',
+            // Import rules
+            'import/no-cycle': 'error',
+            'import/no-unresolved': 'error',
         },
         settings: {
             'import/resolver': {
@@ -76,6 +79,7 @@ export default [
                     pattern: [
                         'src/components/*',
                         'src/lib/*',
+                        'src/lib/**/*',
                         'src/stores/**/*',
                         'src/hooks/**/*',
                         'src/providers/**/*',
@@ -114,11 +118,6 @@ export default [
             ],
         },
         rules: {
-            ...boundaries.configs.recommended.rules,
-            // Prevent circular dependencies
-            'import/no-cycle': 'error',
-            // Ensure imports are resolved
-            'import/no-unresolved': 'error',
             'boundaries/no-private': 0,
             'boundaries/no-unknown-files': ['warn'],
             'boundaries/element-types': [
@@ -166,7 +165,7 @@ export default [
     ...compat.extends('plugin:tailwindcss/recommended', 'prettier'),
     ...compat
         .extends(
-            // "next/core-web-vitals",
+            "next/core-web-vitals",
             'plugin:@typescript-eslint/recommended',
             'plugin:tailwindcss/recommended',
             // 'plugin:boundaries/recommended',
@@ -175,6 +174,10 @@ export default [
         .map((config) => ({
             ...config,
             files: ['**/*.ts', '**/*.tsx'],
+            rules: {
+                ...config.rules,
+                'react/no-unescaped-entities': 'off',
+            },
         })),
     {
         files: ['**/*.ts', '**/*.tsx'],

@@ -9,6 +9,7 @@ import type {
     EventCreationResponse,
     EventCreationError,
 } from '../../types/event-creation';
+import { monitoring } from './MonitoringService';
 
 export class EventCreationService {
     /**
@@ -17,12 +18,22 @@ export class EventCreationService {
     static async saveDraft(
         eventData: EventCreationData
     ): Promise<EventCreationResponse> {
+        const startTime = Date.now();
+
         try {
             const request = this.mapToEventCreationRequest(eventData, true);
             const response: StandardResponseOfEventView =
                 await EventsService.postApiEventsDraft({
                     requestBody: request,
                 });
+
+            const duration = Date.now() - startTime;
+            monitoring.trackApiCall(
+                '/api/Events/draft',
+                'POST',
+                duration,
+                response.success ?? false
+            );
 
             if (response.success && response.data) {
                 return {
@@ -37,6 +48,15 @@ export class EventCreationService {
                 message: response.message || 'Failed to save draft',
             };
         } catch (error) {
+            const duration = Date.now() - startTime;
+            monitoring.trackApiCall(
+                '/api/Events/draft',
+                'POST',
+                duration,
+                false,
+                undefined,
+                (error as any)?.message
+            );
             return this.handleError(error, 'Failed to save draft');
         }
     }

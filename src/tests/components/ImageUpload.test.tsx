@@ -79,12 +79,15 @@ describe('ImageUpload Component', () => {
     });
 
     it('should handle file selection via input', async () => {
-        render(<ImageUpload images={[]} onImagesChange={mockOnImagesChange} />);
+        const { container } = render(
+            <ImageUpload images={[]} onImagesChange={mockOnImagesChange} />
+        );
 
         const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-        const input = screen.getByRole('textbox', {
-            hidden: true,
-        }) as HTMLInputElement;
+        const input = container.querySelector(
+            'input[type="file"]'
+        ) as HTMLInputElement;
+        expect(input).toBeInTheDocument();
 
         fireEvent.change(input, { target: { files: [file] } });
 
@@ -140,12 +143,15 @@ describe('ImageUpload Component', () => {
             .spyOn(window, 'alert')
             .mockImplementation(() => {});
 
-        render(<ImageUpload images={[]} onImagesChange={mockOnImagesChange} />);
+        const { container } = render(
+            <ImageUpload images={[]} onImagesChange={mockOnImagesChange} />
+        );
 
         const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-        const input = screen.getByRole('textbox', {
-            hidden: true,
-        }) as HTMLInputElement;
+        const input = container.querySelector(
+            'input[type="file"]'
+        ) as HTMLInputElement;
+        expect(input).toBeInTheDocument();
 
         fireEvent.change(input, { target: { files: [file] } });
 
@@ -206,7 +212,7 @@ describe('ImageUpload Component', () => {
     });
 
     it('should disable upload when disabled prop is true', () => {
-        render(
+        const { container } = render(
             <ImageUpload
                 images={[]}
                 onImagesChange={mockOnImagesChange}
@@ -214,12 +220,13 @@ describe('ImageUpload Component', () => {
             />
         );
 
-        const uploadArea = screen.getByText('Add Event Images').closest('div');
+        // Find the main upload area div (the one with border-dashed)
+        const uploadArea = container.querySelector('.border-dashed');
         expect(uploadArea).toHaveClass('cursor-not-allowed', 'opacity-50');
 
-        const input = screen.getByRole('textbox', {
-            hidden: true,
-        }) as HTMLInputElement;
+        const input = container.querySelector(
+            'input[type="file"]'
+        ) as HTMLInputElement;
         expect(input).toBeDisabled();
     });
 
@@ -284,15 +291,21 @@ describe('ImageUpload Component', () => {
     });
 
     it('should show uploading progress', async () => {
-        // Mock uploadImages to simulate progress
+        // Mock uploadImages to simulate progress with delay
         mockImageUploadService.uploadImages.mockImplementation(
             async (files, onProgress, onFileComplete) => {
+                // Simulate async behavior with a small delay
+                await new Promise((resolve) => setTimeout(resolve, 10));
+
                 // Simulate progress updates
                 if (onProgress) {
                     onProgress(0, 50);
+                    await new Promise((resolve) => setTimeout(resolve, 10));
                     onProgress(0, 100);
                 }
 
+                // Simulate completion after progress
+                await new Promise((resolve) => setTimeout(resolve, 10));
                 if (onFileComplete) {
                     onFileComplete(0, mockEventImage);
                 }
@@ -301,18 +314,24 @@ describe('ImageUpload Component', () => {
             }
         );
 
-        render(<ImageUpload images={[]} onImagesChange={mockOnImagesChange} />);
+        const { container } = render(
+            <ImageUpload images={[]} onImagesChange={mockOnImagesChange} />
+        );
 
         const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-        const input = screen.getByRole('textbox', {
-            hidden: true,
-        }) as HTMLInputElement;
+        const input = container.querySelector(
+            'input[type="file"]'
+        ) as HTMLInputElement;
+        expect(input).toBeInTheDocument();
 
         fireEvent.change(input, { target: { files: [file] } });
 
         // Should show uploading section
-        await waitFor(() => {
-            expect(screen.getByText('Uploading...')).toBeInTheDocument();
-        });
+        await waitFor(
+            () => {
+                expect(screen.getByText('Uploading...')).toBeInTheDocument();
+            },
+            { timeout: 1000 }
+        );
     });
 });

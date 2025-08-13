@@ -23,6 +23,7 @@ export interface EventCreationData {
         address?: string;
         googleMapsLink?: string;
         eventLink?: string;
+        platform?: string;
     };
 
     // Images and Media
@@ -39,6 +40,7 @@ export interface EventCreationData {
         instagram?: string;
         twitter?: string;
         website?: string;
+        linkedin?: string;
     };
 
     // Metadata

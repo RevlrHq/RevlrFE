@@ -155,8 +155,8 @@ const VendorAccessPage = () => {
                             }`}
                         >
                             <strong>Note:</strong> Vendor access is typically
-                            approved within 24-48 hours. You'll receive an email
-                            confirmation once your access is activated.
+                            approved within 24-48 hours. You&apos;ll receive an
+                            email confirmation once your access is activated.
                         </p>
                     </div>
                 </div>

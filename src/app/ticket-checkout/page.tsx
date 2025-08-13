@@ -76,7 +76,7 @@ const CheckoutPage = () => {
                 },
             ]);
         }
-    }, [searchParams]);
+    }, [searchParams, tickets.length]);
 
     const getTotalPrice = () => {
         return tickets.reduce(
@@ -199,7 +199,8 @@ const CheckoutPage = () => {
                         </span>
                     </h1>
                     <p className='mt-4 text-lg text-gray-600 dark:text-gray-300'>
-                        You're just one step away from securing your tickets
+                        You&apos;re just one step away from securing your
+                        tickets
                     </p>
                 </div>
 

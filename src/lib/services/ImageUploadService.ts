@@ -100,7 +100,7 @@ export class ImageUploadService {
     }
 
     /**
-     * Compress image before upload
+     * Compress image before upload with advanced optimization
      */
     static async compressImage(
         file: File,
@@ -132,14 +132,35 @@ export class ImageUploadService {
                 canvas.width = width;
                 canvas.height = height;
 
-                // Draw and compress
-                ctx?.drawImage(img, 0, 0, width, height);
+                // Enable image smoothing for better quality
+                if (ctx) {
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+
+                    // Draw with anti-aliasing
+                    ctx.drawImage(img, 0, 0, width, height);
+                }
+
+                // Try WebP format first for better compression
+                const tryWebP =
+                    file.type !== 'image/webp' && this.supportsWebP();
+                const outputType = tryWebP ? 'image/webp' : file.type;
+                const quality = tryWebP
+                    ? opts.compressionQuality * 0.9
+                    : opts.compressionQuality;
 
                 canvas.toBlob(
                     (blob) => {
                         if (blob) {
+                            // Check if compression actually reduced file size
+                            if (blob.size >= file.size && !tryWebP) {
+                                // If compressed file is larger, use original
+                                resolve(file);
+                                return;
+                            }
+
                             const compressedFile = new File([blob], file.name, {
-                                type: file.type,
+                                type: outputType,
                                 lastModified: Date.now(),
                             });
                             resolve(compressedFile);
@@ -147,8 +168,8 @@ export class ImageUploadService {
                             reject(new Error('Failed to compress image'));
                         }
                     },
-                    file.type,
-                    opts.compressionQuality
+                    outputType,
+                    quality
                 );
             };
 
@@ -156,6 +177,80 @@ export class ImageUploadService {
                 reject(new Error('Failed to load image for compression'));
             img.src = URL.createObjectURL(file);
         });
+    }
+
+    /**
+     * Check if browser supports WebP format
+     */
+    private static supportsWebP(): boolean {
+        const canvas = document.createElement('canvas');
+        canvas.width = 1;
+        canvas.height = 1;
+        return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+    }
+
+    /**
+     * Progressive image compression with multiple quality levels
+     */
+    static async progressiveCompress(
+        file: File,
+        targetSizeKB: number = 500,
+        options: Partial<ImageUploadOptions> = {}
+    ): Promise<File> {
+        const targetSize = targetSizeKB * 1024;
+        let quality = options.compressionQuality || 0.8;
+        let compressedFile = file;
+
+        // If file is already small enough, return as is
+        if (file.size <= targetSize) {
+            return file;
+        }
+
+        const maxAttempts = 5;
+        let attempts = 0;
+
+        while (compressedFile.size > targetSize && attempts < maxAttempts) {
+            compressedFile = await this.compressImage(compressedFile, {
+                ...options,
+                compressionQuality: quality,
+            });
+
+            quality *= 0.8; // Reduce quality for next attempt
+            attempts++;
+        }
+
+        return compressedFile;
+    }
+
+    /**
+     * Batch compress multiple images with progress tracking
+     */
+    static async batchCompress(
+        files: File[],
+        onProgress?: (index: number, progress: number) => void,
+        options: Partial<ImageUploadOptions> = {}
+    ): Promise<File[]> {
+        const compressedFiles: File[] = [];
+
+        for (let i = 0; i < files.length; i++) {
+            onProgress?.(i, 0);
+
+            try {
+                const compressed = await this.progressiveCompress(
+                    files[i],
+                    500,
+                    options
+                );
+                compressedFiles.push(compressed);
+                onProgress?.(i, 100);
+            } catch (error) {
+                console.warn(`Failed to compress ${files[i].name}:`, error);
+                compressedFiles.push(files[i]); // Use original if compression fails
+                onProgress?.(i, 100);
+            }
+        }
+
+        return compressedFiles;
     }
 
     /**
