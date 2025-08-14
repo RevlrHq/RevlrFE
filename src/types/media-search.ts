@@ -119,4 +119,23 @@ export interface MediaProviderConfig {
     baseUrl: string;
     rateLimit: RateLimit;
     enabled: boolean;
+    oauth?: {
+        clientId: string;
+        clientSecret: string;
+        redirectUri: string;
+        scopes?: string[];
+    };
+}
+
+export interface MediaProviderAuthState {
+    isAuthenticated: boolean;
+    accessToken?: string;
+    scopes?: string[];
+    user?: {
+        id: string;
+        username: string;
+        name: string;
+        profileUrl?: string;
+        avatarUrl?: string;
+    };
 }

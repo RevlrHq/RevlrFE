@@ -8,7 +8,9 @@ import {
     AttributionInfo,
     LicenseInfo,
     MediaProviderErrorType,
+    MediaProviderAuthState,
 } from '@/types/media-search';
+import { UnsplashOAuthService, UnsplashOAuthConfig } from '../auth/UnsplashOAuthService';
 
 // Unsplash API response types
 interface UnsplashPhoto {
@@ -105,6 +107,7 @@ export class UnsplashProvider extends MediaProvider {
     readonly name = 'Unsplash';
     readonly baseUrl = 'https://api.unsplash.com';
     readonly rateLimit: RateLimit;
+    private oauthService?: UnsplashOAuthService;
 
     // Featured collections for category-based suggestions
     private readonly featuredCollections: Record<string, string> = {
@@ -128,6 +131,16 @@ export class UnsplashProvider extends MediaProvider {
     constructor(config: MediaProviderConfig) {
         super(config);
         this.rateLimit = config.rateLimit;
+        
+        // Initialize OAuth service if configuration is provided
+        if (config.oauth) {
+            this.oauthService = new UnsplashOAuthService({
+                clientId: config.oauth.clientId,
+                clientSecret: config.oauth.clientSecret,
+                redirectUri: config.oauth.redirectUri,
+                scopes: config.oauth.scopes,
+            });
+        }
     }
 
     /**
@@ -148,9 +161,7 @@ export class UnsplashProvider extends MediaProvider {
             const response = await this.makeRequest<UnsplashSearchResponse>(
                 url,
                 {
-                    headers: {
-                        Authorization: `Client-ID ${this.config.apiKey}`,
-                    },
+                    headers: this.getAuthHeaders(),
                 }
             );
 
@@ -201,9 +212,7 @@ export class UnsplashProvider extends MediaProvider {
                 url = `${this.baseUrl}/collections/${collectionId}/photos?per_page=30&order_by=popular`;
 
                 response = await this.makeRequest<UnsplashPhoto[]>(url, {
-                    headers: {
-                        Authorization: `Client-ID ${this.config.apiKey}`,
-                    },
+                    headers: this.getAuthHeaders(),
                 });
 
                 const items = (response as UnsplashPhoto[]).map((photo) =>
@@ -221,9 +230,7 @@ export class UnsplashProvider extends MediaProvider {
                 url = `${this.baseUrl}/photos?per_page=30&order_by=popular`;
 
                 response = await this.makeRequest<UnsplashPhoto[]>(url, {
-                    headers: {
-                        Authorization: `Client-ID ${this.config.apiKey}`,
-                    },
+                    headers: this.getAuthHeaders(),
                 });
 
                 const items = (response as UnsplashPhoto[]).map((photo) =>
@@ -394,9 +401,7 @@ export class UnsplashProvider extends MediaProvider {
         try {
             const url = `${this.baseUrl}/photos/${photoId}/download`;
             await this.makeRequest(url, {
-                headers: {
-                    Authorization: `Client-ID ${this.config.apiKey}`,
-                },
+                headers: this.getAuthHeaders(),
             });
         } catch (error) {
             // Log the error but don't fail the download
@@ -498,6 +503,277 @@ export class UnsplashProvider extends MediaProvider {
                 return `Photography: ${photographer} via Unsplash`;
             default:
                 return item.attribution.text || `Photo by ${photographer}`;
+        }
+    }
+
+    // OAuth Authentication Methods
+
+    /**
+     * Get authentication headers for API requests
+     */
+    private getAuthHeaders(): Record<string, string> {
+        if (this.oauthService) {
+            return this.oauthService.getAuthorizationHeader();
+        }
+        return {
+            'Authorization': `Client-ID ${this.config.apiKey}`,
+        };
+    }
+
+    /**
+     * Get OAuth service instance
+     */
+    getOAuthService(): UnsplashOAuthService | undefined {
+        return this.oauthService;
+    }
+
+    /**
+     * Check if user is authenticated via OAuth
+     */
+    isAuthenticated(): boolean {
+        return this.oauthService?.isAuthenticated() || false;
+    }
+
+    /**
+     * Get current authentication state
+     */
+    getAuthState(): MediaProviderAuthState {
+        if (!this.oauthService) {
+            return { isAuthenticated: false };
+        }
+
+        const authState = this.oauthService.getAuthState();
+        return {
+            isAuthenticated: authState.isAuthenticated,
+            accessToken: authState.accessToken,
+            scopes: authState.scopes,
+            user: authState.user ? {
+                id: authState.user.id,
+                username: authState.user.username,
+                name: authState.user.name,
+                profileUrl: authState.user.links.html,
+                avatarUrl: authState.user.profile_image.medium,
+            } : undefined,
+        };
+    }
+
+    /**
+     * Get authorization URL for OAuth flow
+     */
+    getAuthorizationUrl(state?: string): string | undefined {
+        return this.oauthService?.getAuthorizationUrl(state);
+    }
+
+    /**
+     * Handle OAuth callback
+     */
+    async handleOAuthCallback(
+        code?: string,
+        error?: string,
+        state?: string
+    ): Promise<{ success: boolean; error?: string }> {
+        if (!this.oauthService) {
+            return {
+                success: false,
+                error: 'OAuth not configured for this provider',
+            };
+        }
+
+        return this.oauthService.handleCallback(code, error, state);
+    }
+
+    /**
+     * Sign out user
+     */
+    async signOut(): Promise<void> {
+        if (this.oauthService) {
+            await this.oauthService.revokeToken();
+        }
+    }
+
+    /**
+     * Check if user has specific scope
+     */
+    hasScope(scope: string): boolean {
+        return this.oauthService?.hasScope(scope) || false;
+    }
+
+    /**
+     * Get available scopes for current user
+     */
+    getAvailableScopes(): string[] {
+        return this.oauthService?.getAvailableScopes() || [];
+    }
+
+    /**
+     * Like a photo (requires write_likes scope)
+     */
+    async likePhoto(photoId: string): Promise<{ success: boolean; error?: string }> {
+        if (!this.oauthService?.isAuthenticated()) {
+            return {
+                success: false,
+                error: 'Authentication required to like photos',
+            };
+        }
+
+        if (!this.hasScope('write_likes')) {
+            return {
+                success: false,
+                error: 'write_likes scope required to like photos',
+            };
+        }
+
+        try {
+            const url = `${this.baseUrl}/photos/${photoId}/like`;
+            await this.makeRequest(url, {
+                method: 'POST',
+                headers: this.getAuthHeaders(),
+            });
+
+            return { success: true };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to like photo',
+            };
+        }
+    }
+
+    /**
+     * Unlike a photo (requires write_likes scope)
+     */
+    async unlikePhoto(photoId: string): Promise<{ success: boolean; error?: string }> {
+        if (!this.oauthService?.isAuthenticated()) {
+            return {
+                success: false,
+                error: 'Authentication required to unlike photos',
+            };
+        }
+
+        if (!this.hasScope('write_likes')) {
+            return {
+                success: false,
+                error: 'write_likes scope required to unlike photos',
+            };
+        }
+
+        try {
+            const url = `${this.baseUrl}/photos/${photoId}/like`;
+            await this.makeRequest(url, {
+                method: 'DELETE',
+                headers: this.getAuthHeaders(),
+            });
+
+            return { success: true };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to unlike photo',
+            };
+        }
+    }
+
+    /**
+     * Get user's liked photos (requires read_user scope)
+     */
+    async getUserLikedPhotos(page = 1, perPage = 20): Promise<ProviderResult> {
+        if (!this.oauthService?.isAuthenticated()) {
+            throw this.handleError(
+                new Error('Authentication required to get liked photos'),
+                'getUserLikedPhotos'
+            );
+        }
+
+        if (!this.hasScope('read_user')) {
+            throw this.handleError(
+                new Error('read_user scope required to get liked photos'),
+                'getUserLikedPhotos'
+            );
+        }
+
+        try {
+            const authState = this.oauthService.getAuthState();
+            const username = authState.user?.username;
+
+            if (!username) {
+                throw new Error('User information not available');
+            }
+
+            const url = `${this.baseUrl}/users/${username}/likes?page=${page}&per_page=${perPage}`;
+            const response = await this.makeRequest<UnsplashPhoto[]>(url, {
+                headers: this.getAuthHeaders(),
+            });
+
+            const items = response.map((photo) => this.transformUnsplashPhoto(photo));
+
+            return {
+                providerId: this.id,
+                items,
+                totalResults: items.length,
+                hasMore: items.length === perPage,
+                nextPage: items.length === perPage ? page + 1 : undefined,
+            };
+        } catch (error) {
+            const providerError = this.handleError(error, 'getUserLikedPhotos');
+            return {
+                providerId: this.id,
+                items: [],
+                totalResults: 0,
+                hasMore: false,
+                error: providerError,
+            };
+        }
+    }
+
+    /**
+     * Get user's photos (requires read_user scope)
+     */
+    async getUserPhotos(page = 1, perPage = 20): Promise<ProviderResult> {
+        if (!this.oauthService?.isAuthenticated()) {
+            throw this.handleError(
+                new Error('Authentication required to get user photos'),
+                'getUserPhotos'
+            );
+        }
+
+        if (!this.hasScope('read_user')) {
+            throw this.handleError(
+                new Error('read_user scope required to get user photos'),
+                'getUserPhotos'
+            );
+        }
+
+        try {
+            const authState = this.oauthService.getAuthState();
+            const username = authState.user?.username;
+
+            if (!username) {
+                throw new Error('User information not available');
+            }
+
+            const url = `${this.baseUrl}/users/${username}/photos?page=${page}&per_page=${perPage}`;
+            const response = await this.makeRequest<UnsplashPhoto[]>(url, {
+                headers: this.getAuthHeaders(),
+            });
+
+            const items = response.map((photo) => this.transformUnsplashPhoto(photo));
+
+            return {
+                providerId: this.id,
+                items,
+                totalResults: items.length,
+                hasMore: items.length === perPage,
+                nextPage: items.length === perPage ? page + 1 : undefined,
+            };
+        } catch (error) {
+            const providerError = this.handleError(error, 'getUserPhotos');
+            return {
+                providerId: this.id,
+                items: [],
+                totalResults: 0,
+                hasMore: false,
+                error: providerError,
+            };
         }
     }
 }

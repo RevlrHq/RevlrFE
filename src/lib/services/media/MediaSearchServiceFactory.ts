@@ -33,10 +33,19 @@ export class MediaSearchServiceFactory {
         const defaultConfigs: Record<string, MediaProviderConfig> = {
             unsplash: {
                 apiKey:
-                    process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY || 'demo-key',
+                    process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY || 
+                    process.env.UNSPLASH_ACCESS_KEY || 
+                    'demo-key',
+                secretKey: process.env.UNSPLASH_SECRET_KEY,
                 baseUrl: 'https://api.unsplash.com',
                 rateLimit: { requests: 50, window: 3600 },
                 enabled: true,
+                oauth: process.env.UNSPLASH_SECRET_KEY ? {
+                    clientId: process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY || process.env.UNSPLASH_ACCESS_KEY || '',
+                    clientSecret: process.env.UNSPLASH_SECRET_KEY || '',
+                    redirectUri: process.env.NEXT_PUBLIC_UNSPLASH_REDIRECT_URI || `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/auth/unsplash/callback`,
+                    scopes: ['public', 'read_user', 'write_likes', 'read_collections'],
+                } : undefined,
             },
             pexels: {
                 apiKey: process.env.NEXT_PUBLIC_PEXELS_API_KEY || 'demo-key',
