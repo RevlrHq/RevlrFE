@@ -41,9 +41,9 @@ describe('ImageUpload Component - Basic Tests', () => {
     it('should render empty upload area when no images', () => {
         render(<ImageUpload images={[]} onImagesChange={mockOnImagesChange} />);
 
-        expect(screen.getByText('Add Event Images')).toBeInTheDocument();
+        expect(screen.getByText('Upload from Device')).toBeInTheDocument();
         expect(
-            screen.getByText('Drag and drop images here, or click to select')
+            screen.getByText('Drag & drop or click to select')
         ).toBeInTheDocument();
         expect(screen.getByTestId('camera-icon')).toBeInTheDocument();
     });

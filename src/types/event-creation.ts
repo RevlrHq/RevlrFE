@@ -131,6 +131,31 @@ export interface EventImage {
     uploadProgress?: number;
     error?: string;
     order: number;
+
+    // Extended properties for external media
+    source?: 'upload' | 'external';
+    providerId?: string;
+    originalId?: string;
+    attribution?: {
+        required: boolean;
+        text?: string;
+        linkUrl?: string;
+        placement: 'event-description' | 'image-caption' | 'footer' | 'none';
+    };
+    license?: {
+        type: 'cc0' | 'unsplash' | 'pexels' | 'pixabay-standard';
+        name: string;
+        url: string;
+        commercialUse: boolean;
+        restrictions?: string[];
+    };
+    photographer?: {
+        name: string;
+        profileUrl?: string;
+        avatarUrl?: string;
+    };
+    downloadedAt?: string;
+    originalUrl?: string;
 }
 
 export interface ImageUploadOptions {

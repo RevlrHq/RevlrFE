@@ -37,8 +37,7 @@ interface VendorAuthProviderProps {
 }
 
 export const VendorAuthProvider = ({ children }: VendorAuthProviderProps) => {
-    const { user, token, isAuthenticated } = useAuthStore();
-    const [isLoading, setIsLoading] = useState(true);
+    const { user, token, isAuthenticated, _hasHydrated } = useAuthStore();
     const [showSessionWarning, setShowSessionWarning] = useState(false);
     const [warningMinutes, setWarningMinutes] = useState(0);
 
@@ -60,15 +59,8 @@ export const VendorAuthProvider = ({ children }: VendorAuthProviderProps) => {
         }
     );
 
-    // Initialize loading state
-    useEffect(() => {
-        // Small delay to allow auth store to hydrate from localStorage
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 100);
-
-        return () => clearTimeout(timer);
-    }, []);
+    // Use the auth store's hydration state instead of arbitrary delay
+    const isLoading = !_hasHydrated;
 
     // Vendor access checks
     const isVendor = VendorAuthUtils.isVendor(user);

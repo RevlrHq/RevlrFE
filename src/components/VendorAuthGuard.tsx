@@ -23,7 +23,7 @@ export const VendorAuthGuard = ({
     requireVendor = true,
 }: VendorAuthGuardProps) => {
     const router = useRouter();
-    const { user, isAuthenticated, token } = useAuthStore();
+    const { user, isAuthenticated, token, _hasHydrated } = useAuthStore();
     const [state, setState] = useState<VendorAuthGuardState>({
         isLoading: true,
         isAuthorized: false,
@@ -33,6 +33,12 @@ export const VendorAuthGuard = ({
     useEffect(() => {
         const checkVendorAccess = async () => {
             try {
+                // Wait for the auth store to hydrate from localStorage
+                if (!_hasHydrated) {
+                    setState((prev) => ({ ...prev, isLoading: true }));
+                    return;
+                }
+
                 // Check if user is authenticated
                 if (!isAuthenticated || !user || !token) {
                     setState({
@@ -84,7 +90,15 @@ export const VendorAuthGuard = ({
         };
 
         checkVendorAccess();
-    }, [isAuthenticated, user, token, requireVendor, router, fallbackPath]);
+    }, [
+        isAuthenticated,
+        user,
+        token,
+        requireVendor,
+        router,
+        fallbackPath,
+        _hasHydrated,
+    ]);
 
     // Show loading state
     if (state.isLoading) {

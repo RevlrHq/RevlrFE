@@ -33,6 +33,7 @@ import {
 } from '@src/components/LoadingStates';
 import { MobileFormLayout } from '@src/components/MobileFormLayout';
 import { AnnouncementRegion } from '@src/components/AnnouncementRegion';
+import DevAutoPopulateButton from '@src/components/DevAutoPopulateButton';
 import type { EventImage, EventCreationStep } from '@src/types/event-creation';
 import EventModal from './components/EventModal';
 
@@ -294,6 +295,27 @@ const CreateEvent = () => {
         }
     };
 
+    // Auto-populate handlers for development
+    const handleAutoPopulateEvent = (sampleEventData: any) => {
+        updateEventData(sampleEventData);
+        announce('Form auto-populated with sample data');
+    };
+
+    const handleAutoPopulateTickets = async (sampleTickets: any[]) => {
+        // Clear existing tickets first
+        for (const ticket of tickets) {
+            if (ticket.id) {
+                await removeTicket(ticket.id);
+            }
+        }
+
+        // Add sample tickets
+        for (const ticket of sampleTickets) {
+            const { id, ...ticketWithoutId } = ticket;
+            await addTicket(ticketWithoutId);
+        }
+    };
+
     // Progress steps configuration
     const progressSteps = [
         {
@@ -403,6 +425,8 @@ const CreateEvent = () => {
                                 onImagesChange={handleImagesChange}
                                 maxImages={5}
                                 maxFileSize={5 * 1024 * 1024}
+                                enableMediaSearch={true}
+                                eventCategory={eventData.eventCategory}
                                 error={
                                     typeof errors.images === 'string'
                                         ? errors.images
@@ -834,6 +858,12 @@ const CreateEvent = () => {
                     </div>
 
                     <div className='flex items-center space-x-3'>
+                        <DevAutoPopulateButton
+                            onPopulateEvent={handleAutoPopulateEvent}
+                            onPopulateTickets={handleAutoPopulateTickets}
+                            disabled={isSaving || isPublishing}
+                        />
+
                         <HelpTooltip
                             title='Keyboard Shortcuts'
                             content={

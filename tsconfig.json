@@ -19,6 +19,7 @@
             }
         ],
         "paths": {
+            "@/*": ["./src/*"],
             "@components/*": ["./src/components/*"],
             "@features/*": ["./src/features/*"],
             "@lib/*": ["./src/lib/*"],
@@ -35,5 +36,5 @@
         ".next/types/**/*.ts",
         "commitlint.config.js"
     ],
-    "exclude": ["node_modules", "src/lib/services"]
+    "exclude": ["node_modules"]
 }

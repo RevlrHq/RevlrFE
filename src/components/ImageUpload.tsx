@@ -5,7 +5,15 @@ import { useTheme } from '@src/lib/ThemeContext';
 import { ImageUploadService } from '@src/lib/services/ImageUploadService';
 import type { EventImage, ImageUploadOptions } from '@src/types/event-creation';
 import { CameraIcon, AddIcon } from '@src/icons';
-import { X, AlertCircle, Move, Eye } from 'lucide-react';
+import {
+    X,
+    AlertCircle,
+    Move,
+    Eye,
+    Search,
+    Image as ImageIcon,
+} from 'lucide-react';
+import { MediaSearchModal } from './MediaSearchModal';
 
 interface ImageUploadProps {
     images: EventImage[];
@@ -15,6 +23,8 @@ interface ImageUploadProps {
     className?: string;
     disabled?: boolean;
     error?: string;
+    enableMediaSearch?: boolean;
+    eventCategory?: string;
 }
 
 interface UploadingFile {
@@ -32,6 +42,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     className = '',
     disabled = false,
     error,
+    enableMediaSearch = true,
+    eventCategory,
 }) => {
     const { theme } = useTheme();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,6 +53,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         null
     );
     const [previewImage, setPreviewImage] = useState<EventImage | null>(null);
+    const [isMediaSearchOpen, setIsMediaSearchOpen] = useState(false);
 
     const uploadOptions: Partial<ImageUploadOptions> = {
         maxFiles: maxImages,
@@ -253,108 +266,294 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         }
     }, [disabled]);
 
+    // Handle media search
+    const handleMediaSearchOpen = useCallback(() => {
+        if (!disabled) {
+            setIsMediaSearchOpen(true);
+        }
+    }, [disabled]);
+
+    const handleMediaSearchClose = useCallback(() => {
+        setIsMediaSearchOpen(false);
+    }, []);
+
+    const handleMediaSearchSelect = useCallback(
+        (selectedImages: EventImage[]) => {
+            // Merge with existing images, respecting the max limit
+            const availableSlots = maxImages - images.length;
+            const imagesToAdd = selectedImages.slice(0, availableSlots);
+
+            if (imagesToAdd.length > 0) {
+                const newImages = [...images, ...imagesToAdd].map(
+                    (img, index) => ({
+                        ...img,
+                        order: index,
+                    })
+                );
+                onImagesChange(newImages);
+            }
+
+            setIsMediaSearchOpen(false);
+        },
+        [images, maxImages, onImagesChange]
+    );
+
     const canAddMore = images.length + uploadingFiles.length < maxImages;
 
     return (
         <div className={`space-y-4 ${className}`}>
             {/* Main upload area */}
-            <div
-                className={`relative rounded-xl border-2 border-dashed transition-all duration-200 ${
-                    isDragOver
-                        ? 'border-revlr-primary-blue bg-revlr-primary-blue/5'
-                        : error
-                          ? 'border-red-500 bg-red-50/50'
-                          : theme === 'dark'
-                            ? 'border-revlr-dark-border bg-revlr-dark-bg hover:border-revlr-primary-blue'
-                            : 'border-gray-300 bg-gray-50 hover:border-revlr-primary-blue'
-                } ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${
-                    images.length === 0 ? 'h-64' : 'h-32'
-                }`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                onClick={canAddMore ? handleUploadClick : undefined}
-            >
-                <input
-                    ref={fileInputRef}
-                    type='file'
-                    accept='image/jpeg,image/png,image/webp'
-                    multiple
-                    className='hidden'
-                    onChange={handleInputChange}
-                    disabled={disabled}
-                />
-
-                <div className='flex h-full flex-col items-center justify-center space-y-3 p-6'>
-                    {images.length === 0 ? (
-                        <>
-                            <div
-                                className={`rounded-full p-3 ${
-                                    theme === 'dark'
-                                        ? 'bg-revlr-dark-card'
-                                        : 'bg-white'
-                                }`}
-                            >
-                                <CameraIcon />
-                            </div>
-                            <div className='text-center'>
-                                <p
-                                    className={`font-inter text-lg font-medium ${
-                                        theme === 'dark'
-                                            ? 'text-white'
-                                            : 'text-gray-900'
-                                    }`}
-                                >
-                                    Add Event Images
-                                </p>
-                                <p
-                                    className={`mt-1 font-inter text-sm ${
-                                        theme === 'dark'
-                                            ? 'text-gray-400'
-                                            : 'text-gray-600'
-                                    }`}
-                                >
-                                    Drag and drop images here, or click to
-                                    select
-                                </p>
-                                <p
-                                    className={`mt-1 font-inter text-xs ${
-                                        theme === 'dark'
-                                            ? 'text-gray-500'
-                                            : 'text-gray-500'
-                                    }`}
-                                >
-                                    JPEG, PNG, WebP up to{' '}
-                                    {Math.round(maxFileSize / (1024 * 1024))}MB
-                                    each
-                                </p>
-                            </div>
-                        </>
-                    ) : canAddMore ? (
-                        <>
-                            <AddIcon />
-                            <p
-                                className={`font-inter text-sm font-medium ${
-                                    theme === 'dark'
-                                        ? 'text-gray-300'
-                                        : 'text-gray-600'
-                                }`}
-                            >
-                                Add More Images ({images.length}/{maxImages})
-                            </p>
-                        </>
-                    ) : (
-                        <p
-                            className={`font-inter text-sm ${
-                                theme === 'dark'
-                                    ? 'text-gray-400'
-                                    : 'text-gray-500'
-                            }`}
+            <div className='space-y-4'>
+                {/* Upload options when no images */}
+                {images.length === 0 ? (
+                    <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                        {/* Traditional Upload */}
+                        <div
+                            className={`relative rounded-xl border-2 border-dashed transition-all duration-200 ${
+                                isDragOver
+                                    ? 'border-revlr-primary-blue bg-revlr-primary-blue/5'
+                                    : error
+                                      ? 'border-red-500 bg-red-50/50'
+                                      : theme === 'dark'
+                                        ? 'border-revlr-dark-border bg-revlr-dark-bg hover:border-revlr-primary-blue'
+                                        : 'border-gray-300 bg-gray-50 hover:border-revlr-primary-blue'
+                            } ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} h-48`}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                            onClick={handleUploadClick}
+                            role='button'
+                            tabIndex={disabled ? -1 : 0}
+                            aria-label='Upload images from device'
+                            onKeyDown={(e) => {
+                                if (
+                                    (e.key === 'Enter' || e.key === ' ') &&
+                                    !disabled
+                                ) {
+                                    e.preventDefault();
+                                    handleUploadClick();
+                                }
+                            }}
                         >
-                            Maximum images reached ({maxImages})
-                        </p>
-                    )}
-                </div>
+                            <input
+                                ref={fileInputRef}
+                                type='file'
+                                accept='image/jpeg,image/png,image/webp'
+                                multiple
+                                className='hidden'
+                                onChange={handleInputChange}
+                                disabled={disabled}
+                                aria-hidden='true'
+                            />
+
+                            <div className='flex h-full flex-col items-center justify-center space-y-3 p-6'>
+                                <div
+                                    className={`rounded-full p-3 ${
+                                        theme === 'dark'
+                                            ? 'bg-revlr-dark-card'
+                                            : 'bg-white'
+                                    }`}
+                                >
+                                    <CameraIcon />
+                                </div>
+                                <div className='text-center'>
+                                    <p
+                                        className={`font-inter text-base font-medium ${
+                                            theme === 'dark'
+                                                ? 'text-white'
+                                                : 'text-gray-900'
+                                        }`}
+                                    >
+                                        Upload from Device
+                                    </p>
+                                    <p
+                                        className={`mt-1 font-inter text-sm ${
+                                            theme === 'dark'
+                                                ? 'text-gray-400'
+                                                : 'text-gray-600'
+                                        }`}
+                                    >
+                                        Drag & drop or click to select
+                                    </p>
+                                    <p
+                                        className={`mt-1 font-inter text-xs ${
+                                            theme === 'dark'
+                                                ? 'text-gray-500'
+                                                : 'text-gray-500'
+                                        }`}
+                                    >
+                                        JPEG, PNG, WebP up to{' '}
+                                        {Math.round(
+                                            maxFileSize / (1024 * 1024)
+                                        )}
+                                        MB
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Media Search Option */}
+                        {enableMediaSearch && (
+                            <div
+                                className={`relative rounded-xl border-2 border-dashed transition-all duration-200 ${
+                                    theme === 'dark'
+                                        ? 'border-revlr-dark-border bg-revlr-dark-bg hover:border-revlr-primary-blue'
+                                        : 'border-gray-300 bg-gray-50 hover:border-revlr-primary-blue'
+                                } ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} h-48`}
+                                onClick={handleMediaSearchOpen}
+                                role='button'
+                                tabIndex={disabled ? -1 : 0}
+                                aria-label='Browse media library'
+                                onKeyDown={(e) => {
+                                    if (
+                                        (e.key === 'Enter' || e.key === ' ') &&
+                                        !disabled
+                                    ) {
+                                        e.preventDefault();
+                                        handleMediaSearchOpen();
+                                    }
+                                }}
+                            >
+                                <div className='flex h-full flex-col items-center justify-center space-y-3 p-6'>
+                                    <div
+                                        className={`rounded-full p-3 ${
+                                            theme === 'dark'
+                                                ? 'bg-revlr-dark-card'
+                                                : 'bg-white'
+                                        }`}
+                                    >
+                                        <Search className='size-8 text-revlr-primary-blue' />
+                                    </div>
+                                    <div className='text-center'>
+                                        <p
+                                            className={`font-inter text-base font-medium ${
+                                                theme === 'dark'
+                                                    ? 'text-white'
+                                                    : 'text-gray-900'
+                                            }`}
+                                        >
+                                            Browse Media Library
+                                        </p>
+                                        <p
+                                            className={`mt-1 font-inter text-sm ${
+                                                theme === 'dark'
+                                                    ? 'text-gray-400'
+                                                    : 'text-gray-600'
+                                            }`}
+                                        >
+                                            Search high-quality stock images
+                                        </p>
+                                        <p
+                                            className={`mt-1 font-inter text-xs ${
+                                                theme === 'dark'
+                                                    ? 'text-gray-500'
+                                                    : 'text-gray-500'
+                                            }`}
+                                        >
+                                            From Unsplash, Pexels & more
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    /* Compact upload area when images exist */
+                    <div className='flex gap-4'>
+                        <div
+                            className={`flex-1 rounded-xl border-2 border-dashed transition-all duration-200 ${
+                                isDragOver
+                                    ? 'border-revlr-primary-blue bg-revlr-primary-blue/5'
+                                    : theme === 'dark'
+                                      ? 'border-revlr-dark-border bg-revlr-dark-bg hover:border-revlr-primary-blue'
+                                      : 'border-gray-300 bg-gray-50 hover:border-revlr-primary-blue'
+                            } ${disabled ? 'cursor-not-allowed opacity-50' : canAddMore ? 'cursor-pointer' : ''} h-20`}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                            onClick={canAddMore ? handleUploadClick : undefined}
+                            role={canAddMore ? 'button' : undefined}
+                            tabIndex={disabled || !canAddMore ? -1 : 0}
+                            aria-label={
+                                canAddMore
+                                    ? 'Upload more images from device'
+                                    : undefined
+                            }
+                            onKeyDown={(e) => {
+                                if (
+                                    (e.key === 'Enter' || e.key === ' ') &&
+                                    !disabled &&
+                                    canAddMore
+                                ) {
+                                    e.preventDefault();
+                                    handleUploadClick();
+                                }
+                            }}
+                        >
+                            <input
+                                ref={fileInputRef}
+                                type='file'
+                                accept='image/jpeg,image/png,image/webp'
+                                multiple
+                                className='hidden'
+                                onChange={handleInputChange}
+                                disabled={disabled}
+                                aria-hidden='true'
+                            />
+
+                            <div className='flex h-full items-center justify-center space-x-3 p-4'>
+                                {canAddMore ? (
+                                    <>
+                                        <AddIcon />
+                                        <div>
+                                            <p
+                                                className={`font-inter text-sm font-medium ${
+                                                    theme === 'dark'
+                                                        ? 'text-gray-300'
+                                                        : 'text-gray-600'
+                                                }`}
+                                            >
+                                                Upload More ({images.length}/
+                                                {maxImages})
+                                            </p>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <p
+                                        className={`font-inter text-sm ${
+                                            theme === 'dark'
+                                                ? 'text-gray-400'
+                                                : 'text-gray-500'
+                                        }`}
+                                    >
+                                        Maximum images reached ({maxImages})
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Media Search Button */}
+                        {enableMediaSearch && canAddMore && (
+                            <button
+                                onClick={handleMediaSearchOpen}
+                                disabled={disabled}
+                                className={`rounded-xl border-2 border-dashed px-6 py-4 transition-all duration-200 ${
+                                    theme === 'dark'
+                                        ? 'border-revlr-dark-border bg-revlr-dark-bg text-gray-300 hover:border-revlr-primary-blue hover:text-white'
+                                        : 'border-gray-300 bg-gray-50 text-gray-600 hover:border-revlr-primary-blue hover:text-gray-900'
+                                } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
+                                aria-label='Browse media library'
+                            >
+                                <div className='flex items-center space-x-2'>
+                                    <Search className='size-5 text-revlr-primary-blue' />
+                                    <span className='whitespace-nowrap font-inter text-sm font-medium'>
+                                        Browse Library
+                                    </span>
+                                </div>
+                            </button>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* Error message */}
@@ -557,6 +756,18 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Media Search Modal */}
+            {enableMediaSearch && (
+                <MediaSearchModal
+                    isOpen={isMediaSearchOpen}
+                    onClose={handleMediaSearchClose}
+                    onSelectMedia={handleMediaSearchSelect}
+                    eventCategory={eventCategory}
+                    existingImages={images}
+                    maxImages={maxImages}
+                />
             )}
         </div>
     );
