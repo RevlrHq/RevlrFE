@@ -34,6 +34,7 @@ import {
 import { MobileFormLayout } from '@src/components/MobileFormLayout';
 import { AnnouncementRegion } from '@src/components/AnnouncementRegion';
 import DevAutoPopulateButton from '@src/components/DevAutoPopulateButton';
+import { Toaster } from '@src/components/ui/toaster';
 import type {
     EventImage,
     EventCreationStep,
@@ -810,6 +811,8 @@ const CreateEvent = () => {
                     isVisible={isLoading}
                     message='Loading event data...'
                 />
+
+                <Toaster />
             </div>
         );
     }
@@ -1046,6 +1049,8 @@ const CreateEvent = () => {
                 isVisible={isLoading}
                 message='Loading event data...'
             />
+
+            <Toaster />
         </div>
     );
 };

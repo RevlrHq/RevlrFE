@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { EventCreationService } from '../lib/services/EventCreationService';
 import { DraftBackupService } from '../lib/services/DraftBackupService';
 import { useAutoSave } from './useDebounce';
+import { useToast } from './use-toast';
 import {
     monitoring,
     MonitoringService,
@@ -91,6 +92,7 @@ export function useEventCreation({
     });
 
     const [hasBackup, setHasBackup] = useState(DraftBackupService.hasDraft());
+    const { toast } = useToast();
     // const formStartTimeRef = useRef<number>(Date.now()); // Commented out - unused
 
     // Debounced auto-save functionality
@@ -119,6 +121,14 @@ export function useEventCreation({
                         lastSaved: new Date(),
                         hasUnsavedChanges: false,
                     }));
+
+                    // Show success toast for auto-save
+                    toast({
+                        title: 'Draft saved',
+                        description:
+                            'Your changes have been automatically saved to draft.',
+                        variant: 'default',
+                    });
                 } else {
                     throw new Error(response.message || 'Server save failed');
                 }
@@ -142,7 +152,7 @@ export function useEventCreation({
                 });
             }
         },
-        [state.currentStep]
+        [state.currentStep, toast]
     );
 
     useAutoSave(
@@ -150,7 +160,10 @@ export function useEventCreation({
         autoSaveData,
         {
             delay: autoSaveInterval,
-            enabled: state.hasUnsavedChanges && !state.isSaving,
+            enabled:
+                state.hasUnsavedChanges &&
+                !state.isSaving &&
+                !!state.eventData.eventName?.trim(),
             onSaveStart: () => {
                 monitoring.recordUserBehavior({
                     event: 'auto_save',
@@ -300,6 +313,15 @@ export function useEventCreation({
 
     // Save draft
     const saveDraft = useCallback(async (): Promise<EventCreationResponse> => {
+        // Check if event name is provided before saving
+        if (!state.eventData.eventName?.trim()) {
+            return {
+                success: false,
+                message: 'Event name is required before saving draft',
+                errors: { eventName: 'Event name is required' },
+            };
+        }
+
         setState((prev) => ({ ...prev, isSaving: true, errors: {} }));
 
         try {
@@ -335,6 +357,14 @@ export function useEventCreation({
                 // Clear local backup after successful save
                 DraftBackupService.clearDraft();
                 setHasBackup(false);
+
+                // Show success toast for manual save
+                toast({
+                    title: 'Draft saved',
+                    description:
+                        'Your event has been saved to draft successfully.',
+                    variant: 'default',
+                });
             } else {
                 setState((prev) => ({
                     ...prev,
@@ -365,7 +395,7 @@ export function useEventCreation({
         } finally {
             setState((prev) => ({ ...prev, isSaving: false }));
         }
-    }, [state.eventData, state.tickets, state.currentStep]);
+    }, [state.eventData, state.tickets, state.currentStep, toast]);
 
     // Publish event
     const publishEvent =
