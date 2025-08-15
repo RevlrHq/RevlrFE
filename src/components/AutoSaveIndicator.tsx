@@ -222,8 +222,9 @@ export const RecoveryPrompt: React.FC<RecoveryPromptProps> = ({
                             }`}
                         >
                             We found unsaved changes from your previous session
-                            {lastSaved && ` from ${lastSaved.toLocaleString()}`}
-                            . Would you like to restore them?
+                            {lastSaved &&
+                                ` from ${lastSaved.toLocaleString()}`}. Would
+                            you like to restore them?
                         </p>
                     </div>
                 </div>
