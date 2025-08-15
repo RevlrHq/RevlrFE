@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+
 import type { StandardResponseOfstring } from '../models/StandardResponseOfstring';
 import type { StandardResponseOfUserView } from '../models/StandardResponseOfUserView';
 import type { VerifyAndRegisterUserInput } from '../models/VerifyAndRegisterUserInput';
