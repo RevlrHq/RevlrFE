@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+
 import type { PaymentStatus } from './PaymentStatus';
 export type EventRegistrationSummary = {
     registrationId?: string;
