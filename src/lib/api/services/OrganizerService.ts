@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+ 
 import type { BulkEventActionRequest } from '../models/BulkEventActionRequest';
 import type { EventDuplicationRequest } from '../models/EventDuplicationRequest';
 import type { OrganizerRevenueReportRequest } from '../models/OrganizerRevenueReportRequest';
@@ -92,8 +92,6 @@ export class OrganizerService {
         maxRevenue,
         minRegistrations,
         maxRegistrations,
-        sortBy,
-        sortOrder,
     }: {
         pageNumber?: number;
         pageSize?: number;
@@ -110,8 +108,6 @@ export class OrganizerService {
         maxRevenue?: number;
         minRegistrations?: number;
         maxRegistrations?: number;
-        sortBy?: string;
-        sortOrder?: string;
     }): CancelablePromise<StandardResponseOfPagedCollectionOfEventSummaryView> {
         return __request(OpenAPI, {
             method: 'GET',
@@ -132,8 +128,6 @@ export class OrganizerService {
                 MaxRevenue: maxRevenue,
                 MinRegistrations: minRegistrations,
                 MaxRegistrations: maxRegistrations,
-                SortBy: sortBy,
-                SortOrder: sortOrder,
             },
             errors: {
                 401: `Unauthorized`,
@@ -251,8 +245,6 @@ export class OrganizerService {
         registrationEndDate,
         minAmount,
         maxAmount,
-        sortBy,
-        sortOrder,
     }: {
         pageNumber?: number;
         pageSize?: number;
@@ -266,8 +258,6 @@ export class OrganizerService {
         registrationEndDate?: string;
         minAmount?: number;
         maxAmount?: number;
-        sortBy?: string;
-        sortOrder?: string;
     }): CancelablePromise<StandardResponseOfPagedCollectionOfEventRegistrationSummary> {
         return __request(OpenAPI, {
             method: 'GET',
@@ -285,8 +275,6 @@ export class OrganizerService {
                 RegistrationEndDate: registrationEndDate,
                 MinAmount: minAmount,
                 MaxAmount: maxAmount,
-                SortBy: sortBy,
-                SortOrder: sortOrder,
             },
             errors: {
                 401: `Unauthorized`,

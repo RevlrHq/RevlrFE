@@ -122,7 +122,23 @@ module.exports = {
                     'accent-purple': '#8B5CF6',
                     'accent-green': '#10B981',
                     'accent-orange': '#F59E0B',
+                    'accent-pink': '#EC4899',
+                    'accent-cyan': '#06B6D4',
                 },
+            },
+            backgroundImage: {
+                'revlr-gradient':
+                    'linear-gradient(135deg, #0066FF 0%, #8B5CF6 100%)',
+                'revlr-gradient-reverse':
+                    'linear-gradient(135deg, #8B5CF6 0%, #0066FF 100%)',
+                'revlr-warm-gradient':
+                    'linear-gradient(135deg, #F59E0B 0%, #FFD700 100%)',
+                'revlr-cool-gradient':
+                    'linear-gradient(135deg, #10B981 0%, #06B6D4 100%)',
+                'revlr-sunset-gradient':
+                    'linear-gradient(135deg, #F59E0B 0%, #EC4899 50%, #8B5CF6 100%)',
+                'revlr-ocean-gradient':
+                    'linear-gradient(135deg, #0066FF 0%, #06B6D4 50%, #10B981 100%)',
             },
         },
     },

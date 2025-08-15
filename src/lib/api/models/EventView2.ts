@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+ 
 import type { EventSocialLinks } from './EventSocialLinks';
 import type { EventTicketView } from './EventTicketView';
 import type { LocationType } from './LocationType';

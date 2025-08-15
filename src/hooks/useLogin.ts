@@ -1,5 +1,5 @@
 import { useRevlrService } from './useChitService';
-import { PasswordlessAuthService } from '@lib/services';
+import { PasswordlessAuthService } from '@lib/api';
 import { useState } from 'react';
 
 interface UseLoginHookReturn {

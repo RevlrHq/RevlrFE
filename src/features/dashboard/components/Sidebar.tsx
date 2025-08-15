@@ -3,70 +3,51 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '../../../lib/ThemeContext';
+import { useAuthStore } from '../../../stores/authStore';
+import {
+    LayoutDashboard,
+    Calendar,
+    CreditCard,
+    Settings,
+    LogOut,
+    Sparkles,
+    TrendingUp,
+    // Users,
+    BarChart3,
+} from 'lucide-react';
 
 interface SidebarItem {
     name: string;
     path: string;
-    icon: (color: string) => React.ReactNode;
+    icon: React.ComponentType<{ className?: string }>;
     subcategories?: string[];
+    badge?: string;
 }
 
-const navigationItems = [
+const navigationItems: SidebarItem[] = [
     {
         name: 'Dashboard',
         path: '/dashboard',
-        icon: (color: string) => (
-            <svg
-                width='24'
-                height='24'
-                viewBox='0 0 24 24'
-                fill='none'
-                xmlns='http://www.w3.org/2000/svg'
-            >
-                <path
-                    d='M3 13H11V3H3V13ZM3 21H11V15H3V21ZM13 21H21V11H13V21ZM13 3V9H21V3H13Z'
-                    fill={color}
-                />
-            </svg>
-        ),
+        icon: LayoutDashboard,
         subcategories: [],
     },
     {
         name: 'Events',
         path: '/dashboard/event',
-        icon: (color: string) => (
-            <svg
-                width='24'
-                height='24'
-                viewBox='0 0 24 24'
-                fill='none'
-                xmlns='http://www.w3.org/2000/svg'
-            >
-                <path
-                    d='M16 13H13C12.45 13 12 13.45 12 14V17C12 17.55 12.45 18 13 18H16C16.55 18 17 17.55 17 17V14C17 13.45 16.55 13 16 13ZM16 3V4H8V3C8 2.45 7.55 2 7 2C6.45 2 6 2.45 6 3V4H5C3.89 4 3.01 4.9 3.01 6L3 20C3 21.1 3.89 22 5 22H19C20.1 22 21 21.1 21 20V6C21 4.9 20.1 4 19 4H18V3C18 2.45 17.55 2 17 2C16.45 2 16 2.45 16 3ZM18 20H6C5.45 20 5 19.55 5 19V9H19V19C19 19.55 18.55 20 18 20Z'
-                    fill={color}
-                />
-            </svg>
-        ),
+        icon: Calendar,
         subcategories: ['/event/create-event', '/event/event-details'],
+        badge: 'New',
+    },
+    {
+        name: 'Analytics',
+        path: '/dashboard/analytics',
+        icon: BarChart3,
+        subcategories: ['/analytics/overview', '/analytics/events'],
     },
     {
         name: 'Payments',
         path: '/dashboard/payment',
-        icon: (color: string) => (
-            <svg
-                width='24'
-                height='24'
-                viewBox='0 0 24 24'
-                fill='none'
-                xmlns='http://www.w3.org/2000/svg'
-            >
-                <path
-                    d='M23 8V18C23 19.1 22.1 20 21 20H5C4.45 20 4 19.55 4 19C4 18.45 4.45 18 5 18H21V8C21 7.45 21.45 7 22 7C22.55 7 23 7.45 23 8ZM4 16C2.34 16 1 14.66 1 13V7C1 5.34 2.34 4 4 4H16C17.66 4 19 5.34 19 7V14C19 15.1 18.1 16 17 16H4ZM7 10C7 11.66 8.34 13 10 13C11.66 13 13 11.66 13 10C13 8.34 11.66 7 10 7C8.34 7 7 8.34 7 10Z'
-                    fill={color}
-                />
-            </svg>
-        ),
+        icon: CreditCard,
         subcategories: [
             '/payment/insights',
             '/payment/payout-management',
@@ -76,20 +57,7 @@ const navigationItems = [
     {
         name: 'Settings',
         path: '/dashboard/settings',
-        icon: (color: string) => (
-            <svg
-                width='24'
-                height='24'
-                viewBox='0 0 24 24'
-                fill='none'
-                xmlns='http://www.w3.org/2000/svg'
-            >
-                <path
-                    d='M19.5006 12C19.5006 11.77 19.4906 11.55 19.4706 11.32L21.3306 9.91C21.7306 9.61 21.8406 9.05 21.5906 8.61L19.7206 5.38C19.4706 4.94 18.9306 4.76 18.4706 4.96L16.3206 5.87C15.9506 5.61 15.5606 5.38 15.1506 5.19L14.8606 2.88C14.8006 2.38 14.3706 2 13.8706 2H10.1406C9.63064 2 9.20064 2.38 9.14064 2.88L8.85064 5.19C8.44064 5.38 8.05064 5.61 7.68064 5.87L5.53064 4.96C5.07064 4.76 4.53064 4.94 4.28064 5.38L2.41064 8.62C2.16064 9.06 2.27064 9.61 2.67064 9.92L4.53064 11.33C4.51064 11.55 4.50064 11.77 4.50064 12C4.50064 12.23 4.51064 12.45 4.53064 12.68L2.67064 14.09C2.27064 14.39 2.16064 14.95 2.41064 15.39L4.28064 18.62C4.53064 19.06 5.07064 19.24 5.53064 19.04L7.68064 18.13C8.05064 18.39 8.44064 18.62 8.85064 18.81L9.14064 21.12C9.20064 21.62 9.63064 22 10.1306 22H13.8606C14.3606 22 14.7906 21.62 14.8506 21.12L15.1406 18.81C15.5506 18.62 15.9406 18.39 16.3106 18.13L18.4606 19.04C18.9206 19.24 19.4606 19.06 19.7106 18.62L21.5806 15.39C21.8306 14.95 21.7206 14.4 21.3206 14.09L19.4606 12.68C19.4906 12.45 19.5006 12.23 19.5006 12ZM12.0406 15.5C10.1106 15.5 8.54064 13.93 8.54064 12C8.54064 10.07 10.1106 8.5 12.0406 8.5C13.9706 8.5 15.5406 10.07 15.5406 12C15.5406 13.93 13.9706 15.5 12.0406 15.5Z'
-                    fill={color}
-                />
-            </svg>
-        ),
+        icon: Settings,
         subcategories: [
             '/settings/profile',
             '/settings/account',
@@ -101,6 +69,7 @@ const navigationItems = [
 const Sidebar = () => {
     const pathname = usePathname();
     const { theme } = useTheme();
+    const { user } = useAuthStore();
 
     const isActive = (item: SidebarItem) => {
         if (pathname === item.path) return true;
@@ -111,91 +80,211 @@ const Sidebar = () => {
                     pathname.startsWith(`/dashboard${subPath}`)
             );
         }
-
         return false;
+    };
+
+    const getUserInitials = () => {
+        if (user?.firstName && user?.lastName) {
+            return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
+        }
+        if (user?.email) {
+            return user.email.charAt(0).toUpperCase();
+        }
+        return 'U';
+    };
+
+    const getUserDisplayName = () => {
+        if (user?.firstName && user?.lastName) {
+            return `${user.firstName} ${user.lastName}`;
+        }
+        if (user?.firstName) {
+            return user.firstName;
+        }
+        return user?.email?.split('@')[0] || 'User';
     };
 
     return (
         <div
-            className={`flex w-16 flex-col border-r md:w-64 ${
+            className={`relative flex w-16 flex-col border-r md:w-64 ${
                 theme === 'dark'
-                    ? 'border-revlr-dark-border bg-revlr-dark-card'
-                    : 'border-gray-200 bg-white'
-            }`}
+                    ? 'border-revlr-dark-border bg-gradient-to-b from-revlr-dark-card via-revlr-dark-card to-revlr-dark-card/95'
+                    : 'border-gray-200 bg-gradient-to-b from-white via-revlr-primary-grey/20 to-white'
+            } backdrop-blur-sm`}
         >
+            {/* Gradient overlay */}
+            <div className='pointer-events-none absolute inset-0 bg-gradient-to-b from-revlr-primary-blue/5 via-transparent to-revlr-accent-purple/5' />
+
+            {/* Logo Section */}
             <div
-                className={`border-b px-8 py-6 ${
+                className={`relative border-b p-6 ${
                     theme === 'dark'
-                        ? 'border-revlr-dark-border'
-                        : 'border-gray-200'
+                        ? 'border-revlr-dark-border/50'
+                        : 'border-gray-200/50'
                 }`}
             >
-                <Link
-                    href='/'
-                    className='text-xl font-bold text-revlr-primary-blue'
-                >
-                    ✨REVLR
+                <Link href='/' className='group flex items-center gap-2'>
+                    <div className='rounded-xl bg-gradient-to-br from-revlr-primary-blue to-revlr-accent-purple p-2 shadow-lg transition-all duration-200 group-hover:shadow-xl'>
+                        <Sparkles className='size-5 text-white' />
+                    </div>
+                    <span className='hidden bg-gradient-to-r from-revlr-primary-blue to-revlr-accent-purple bg-clip-text text-xl font-bold text-transparent md:block'>
+                        REVLR
+                    </span>
                 </Link>
             </div>
 
-            <nav className='flex-1 space-y-2 pt-4'>
-                {navigationItems.map((item: SidebarItem) => (
-                    <Link
-                        key={item.path}
-                        href={item.path}
-                        className={`flex items-center gap-4 px-4 py-3 text-sm font-medium transition-colors ${
-                            isActive(item)
-                                ? 'border-l-4 border-revlr-primary-blue bg-revlr-primary-blue/5 text-revlr-primary-blue'
-                                : `${theme === 'dark' ? 'text-gray-400 hover:bg-revlr-dark-border hover:text-white' : 'text-[#6B7380] hover:bg-gray-50 hover:text-gray-900'}`
-                        }`}
-                    >
-                        {item.icon(
-                            isActive(item)
-                                ? '#0066FF'
-                                : theme === 'dark'
-                                  ? '#9CA3AF'
-                                  : '#6B7380'
-                        )}
-                        <span className='hidden font-inter text-base font-semibold md:inline'>
-                            {item.name}
-                        </span>
-                    </Link>
-                ))}
-            </nav>
-
+            {/* User Info Section */}
             <div
-                className={`border-t p-4 ${
+                className={`relative border-b p-4 ${
                     theme === 'dark'
-                        ? 'border-revlr-dark-border'
-                        : 'border-gray-200'
+                        ? 'border-revlr-dark-border/50'
+                        : 'border-gray-200/50'
                 }`}
             >
+                <div
+                    className={`flex items-center gap-3 rounded-xl p-3 transition-all ${
+                        theme === 'dark'
+                            ? 'bg-gradient-to-br from-revlr-primary-blue/10 to-revlr-accent-purple/10 hover:from-revlr-primary-blue/20 hover:to-revlr-accent-purple/20'
+                            : 'bg-gradient-to-br from-revlr-primary-blue/5 to-revlr-accent-purple/5 hover:from-revlr-primary-blue/10 hover:to-revlr-accent-purple/10'
+                    } border border-white/10`}
+                >
+                    <div className='flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-revlr-primary-blue to-revlr-accent-purple text-sm font-semibold text-white shadow-inner md:size-10'>
+                        {getUserInitials()}
+                    </div>
+                    <div className='hidden min-w-0 flex-1 flex-col md:flex'>
+                        <span
+                            className={`truncate text-sm font-semibold ${
+                                theme === 'dark'
+                                    ? 'text-white'
+                                    : 'text-[#001433]'
+                            }`}
+                        >
+                            {getUserDisplayName()}
+                        </span>
+                        <span
+                            className={`truncate text-xs ${
+                                theme === 'dark'
+                                    ? 'text-gray-400'
+                                    : 'text-gray-600'
+                            }`}
+                        >
+                            {user?.isOrganizer ? 'Event Organizer' : 'Attendee'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Navigation */}
+            <nav className='relative flex-1 space-y-1 px-3 py-4'>
+                {navigationItems.map((item: SidebarItem) => {
+                    const IconComponent = item.icon;
+                    const active = isActive(item);
+
+                    return (
+                        <Link
+                            key={item.path}
+                            href={item.path}
+                            className={`group relative flex items-center gap-3 rounded-xl p-3 text-sm font-medium transition-all duration-200 ${
+                                active
+                                    ? `${
+                                          theme === 'dark'
+                                              ? 'border-l-4 border-revlr-primary-blue bg-gradient-to-r from-revlr-primary-blue/20 to-revlr-accent-purple/20 text-revlr-primary-blue shadow-lg'
+                                              : 'border-l-4 border-revlr-primary-blue bg-gradient-to-r from-revlr-primary-blue/10 to-revlr-accent-purple/10 text-revlr-primary-blue shadow-md'
+                                      }`
+                                    : `${
+                                          theme === 'dark'
+                                              ? 'text-gray-400 hover:bg-gradient-to-r hover:from-revlr-dark-border/50 hover:to-revlr-dark-border/30 hover:text-white'
+                                              : 'text-[#6B7380] hover:bg-gradient-to-r hover:from-gray-100/80 hover:to-gray-50 hover:text-gray-900'
+                                      } hover:shadow-sm`
+                            }`}
+                        >
+                            {/* Active indicator */}
+                            {active && (
+                                <div className='absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-gradient-to-b from-revlr-primary-blue to-revlr-accent-purple' />
+                            )}
+
+                            <div
+                                className={`rounded-lg p-1.5 transition-all ${
+                                    active
+                                        ? 'bg-gradient-to-br from-revlr-primary-blue/20 to-revlr-accent-purple/20'
+                                        : 'group-hover:bg-white/10'
+                                }`}
+                            >
+                                <IconComponent className='size-5' />
+                            </div>
+
+                            <span className='hidden font-inter font-semibold md:inline'>
+                                {item.name}
+                            </span>
+
+                            {/* Badge */}
+                            {item.badge && (
+                                <span className='ml-auto hidden rounded-full bg-gradient-to-r from-revlr-accent-orange to-revlr-primary-yellow px-2 py-0.5 text-xs font-medium text-white shadow-sm md:inline'>
+                                    {item.badge}
+                                </span>
+                            )}
+                        </Link>
+                    );
+                })}
+            </nav>
+
+            {/* Bottom Section */}
+            <div
+                className={`relative border-t p-4 ${
+                    theme === 'dark'
+                        ? 'border-revlr-dark-border/50'
+                        : 'border-gray-200/50'
+                }`}
+            >
+                {/* Quick Stats */}
+                <div
+                    className={`mb-4 hidden rounded-xl p-3 md:block ${
+                        theme === 'dark'
+                            ? 'bg-gradient-to-br from-revlr-accent-green/10 to-revlr-accent-green/5'
+                            : 'bg-gradient-to-br from-revlr-accent-green/10 to-revlr-accent-green/5'
+                    } border border-revlr-accent-green/20`}
+                >
+                    <div className='mb-1 flex items-center gap-2'>
+                        <TrendingUp className='size-4 text-revlr-accent-green' />
+                        <span
+                            className={`text-xs font-medium ${
+                                theme === 'dark'
+                                    ? 'text-gray-300'
+                                    : 'text-gray-700'
+                            }`}
+                        >
+                            This Month
+                        </span>
+                    </div>
+                    <div className='flex justify-between text-sm'>
+                        <span
+                            className={
+                                theme === 'dark'
+                                    ? 'text-gray-400'
+                                    : 'text-gray-600'
+                            }
+                        >
+                            Events
+                        </span>
+                        <span className='font-semibold text-revlr-accent-green'>
+                            12
+                        </span>
+                    </div>
+                </div>
+
+                {/* Logout */}
                 <Link
                     href='/logout'
-                    className={`flex items-center gap-4 rounded px-4 py-2 text-sm font-medium transition-colors ${
+                    className={`flex items-center gap-3 rounded-xl p-3 text-sm font-medium transition-all duration-200 ${
                         theme === 'dark'
-                            ? 'text-gray-400 hover:bg-revlr-dark-border hover:text-white'
-                            : 'text-gray-600 hover:bg-gray-100'
-                    }`}
+                            ? 'text-gray-400 hover:bg-gradient-to-r hover:from-red-500/20 hover:to-red-600/20 hover:text-red-400'
+                            : 'text-gray-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 hover:text-red-600'
+                    } group hover:shadow-sm`}
                 >
-                    <svg
-                        width='18'
-                        height='18'
-                        viewBox='0 0 18 18'
-                        fill='none'
-                        xmlns='http://www.w3.org/2000/svg'
-                    >
-                        <path
-                            d='M2.10352 2H8.10352C8.65352 2 9.10352 1.55 9.10352 1C9.10352 0.45 8.65352 0 8.10352 0H2.10352C1.00352 0 0.103516 0.9 0.103516 2V16C0.103516 17.1 1.00352 18 2.10352 18H8.10352C8.65352 18 9.10352 17.55 9.10352 17C9.10352 16.45 8.65352 16 8.10352 16H2.10352V2Z'
-                            fill={theme === 'dark' ? '#9CA3AF' : '#001433'}
-                        />
-                        <path
-                            d='M17.7535 8.65L14.9635 5.86C14.6435 5.54 14.1035 5.76 14.1035 6.21V8H7.10352C6.55352 8 6.10352 8.45 6.10352 9C6.10352 9.55 6.55352 10 7.10352 10H14.1035V11.79C14.1035 12.24 14.6435 12.46 14.9535 12.14L17.7435 9.35C17.9435 9.16 17.9435 8.84 17.7535 8.65Z'
-                            fill={theme === 'dark' ? '#9CA3AF' : '#001433'}
-                        />
-                    </svg>
-                    <span className='hidden font-inter text-base font-semibold md:inline'>
-                        Logout
+                    <div className='rounded-lg p-1.5 transition-all group-hover:bg-red-500/20'>
+                        <LogOut className='size-5' />
+                    </div>
+                    <span className='hidden font-inter font-semibold md:inline'>
+                        Sign Out
                     </span>
                 </Link>
             </div>
