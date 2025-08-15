@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+
 import type { FinancingApplicationSummary } from './FinancingApplicationSummary';
 export type EventRegistrationView2 = {
     id?: string;
