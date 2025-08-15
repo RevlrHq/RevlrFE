@@ -54,10 +54,12 @@ describe('AuthService', () => {
             const mockToken = 'test-token-123';
             mockAuthStore.getState.mockReturnValue({
                 token: mockToken,
+                refreshToken: null,
                 isAuthenticated: true,
                 user: null,
                 _hasHydrated: true,
                 setUser: jest.fn(),
+                updateTokens: jest.fn(),
                 logout: jest.fn(),
                 setHasHydrated: jest.fn(),
             });
@@ -72,10 +74,12 @@ describe('AuthService', () => {
             const mockToken = 'test-token-456';
             mockAuthStore.getState.mockReturnValue({
                 token: mockToken,
+                refreshToken: null,
                 isAuthenticated: true,
                 user: null,
                 _hasHydrated: true,
                 setUser: jest.fn(),
+                updateTokens: jest.fn(),
                 logout: jest.fn(),
                 setHasHydrated: jest.fn(),
             });
@@ -91,10 +95,12 @@ describe('AuthService', () => {
         it('should return empty string when no token is available', async () => {
             mockAuthStore.getState.mockReturnValue({
                 token: null,
+                refreshToken: null,
                 isAuthenticated: false,
                 user: null,
                 _hasHydrated: true,
                 setUser: jest.fn(),
+                updateTokens: jest.fn(),
                 logout: jest.fn(),
                 setHasHydrated: jest.fn(),
             });
@@ -145,10 +151,12 @@ describe('AuthService', () => {
             const mockToken = 'current-token';
             mockAuthStore.getState.mockReturnValue({
                 token: mockToken,
+                refreshToken: null,
                 isAuthenticated: true,
                 user: null,
                 _hasHydrated: true,
                 setUser: jest.fn(),
+                updateTokens: jest.fn(),
                 logout: jest.fn(),
                 setHasHydrated: jest.fn(),
             });
@@ -162,10 +170,12 @@ describe('AuthService', () => {
         it('should return authentication status from auth store', () => {
             mockAuthStore.getState.mockReturnValue({
                 token: 'token',
+                refreshToken: null,
                 isAuthenticated: true,
                 user: null,
                 _hasHydrated: true,
                 setUser: jest.fn(),
+                updateTokens: jest.fn(),
                 logout: jest.fn(),
                 setHasHydrated: jest.fn(),
             });
@@ -177,10 +187,12 @@ describe('AuthService', () => {
         it('should return false when not authenticated', () => {
             mockAuthStore.getState.mockReturnValue({
                 token: null,
+                refreshToken: null,
                 isAuthenticated: false,
                 user: null,
                 _hasHydrated: true,
                 setUser: jest.fn(),
+                updateTokens: jest.fn(),
                 logout: jest.fn(),
                 setHasHydrated: jest.fn(),
             });
@@ -195,10 +207,12 @@ describe('AuthService', () => {
             const mockToken = 'sync-token';
             mockAuthStore.getState.mockReturnValue({
                 token: mockToken,
+                refreshToken: null,
                 isAuthenticated: true,
                 user: null,
                 _hasHydrated: true,
                 setUser: jest.fn(),
+                updateTokens: jest.fn(),
                 logout: jest.fn(),
                 setHasHydrated: jest.fn(),
             });
@@ -211,10 +225,12 @@ describe('AuthService', () => {
         it('should clear token when user is not authenticated', () => {
             mockAuthStore.getState.mockReturnValue({
                 token: null,
+                refreshToken: null,
                 isAuthenticated: false,
                 user: null,
                 _hasHydrated: true,
                 setUser: jest.fn(),
+                updateTokens: jest.fn(),
                 logout: jest.fn(),
                 setHasHydrated: jest.fn(),
             });
@@ -226,39 +242,43 @@ describe('AuthService', () => {
     });
 
     describe('handleAuthError', () => {
-        it('should clear token and logout user', () => {
+        it('should clear token and logout user', async () => {
             const mockLogout = jest.fn();
             mockAuthStore.getState.mockReturnValue({
                 token: 'token',
+                refreshToken: null,
                 isAuthenticated: true,
                 user: null,
                 _hasHydrated: true,
                 setUser: jest.fn(),
+                updateTokens: jest.fn(),
                 logout: mockLogout,
                 setHasHydrated: jest.fn(),
             });
 
-            AuthService.handleAuthError();
+            await AuthService.handleAuthError();
 
             expect(OpenAPI.TOKEN).toBeUndefined();
             expect(mockLogout).toHaveBeenCalled();
         });
 
-        it('should save current path and redirect to login', () => {
+        it('should save current path and redirect to login', async () => {
             const mockLogout = jest.fn();
             mockAuthStore.getState.mockReturnValue({
                 token: 'token',
+                refreshToken: null,
                 isAuthenticated: true,
                 user: null,
                 _hasHydrated: true,
                 setUser: jest.fn(),
+                updateTokens: jest.fn(),
                 logout: mockLogout,
                 setHasHydrated: jest.fn(),
             });
 
             window.location.pathname = '/dashboard/create-event';
 
-            AuthService.handleAuthError();
+            await AuthService.handleAuthError();
 
             expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
                 'redirectAfterLogin',
@@ -272,10 +292,12 @@ describe('AuthService', () => {
         it('should return true when user is authenticated', async () => {
             mockAuthStore.getState.mockReturnValue({
                 token: 'valid-token',
+                refreshToken: 'valid-refresh-token',
                 isAuthenticated: true,
                 user: null,
                 _hasHydrated: true,
                 setUser: jest.fn(),
+                updateTokens: jest.fn(),
                 logout: jest.fn(),
                 setHasHydrated: jest.fn(),
             });
@@ -287,10 +309,12 @@ describe('AuthService', () => {
         it('should return false when user is not authenticated', async () => {
             mockAuthStore.getState.mockReturnValue({
                 token: null,
+                refreshToken: null,
                 isAuthenticated: false,
                 user: null,
                 _hasHydrated: true,
                 setUser: jest.fn(),
+                updateTokens: jest.fn(),
                 logout: jest.fn(),
                 setHasHydrated: jest.fn(),
             });

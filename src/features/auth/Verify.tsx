@@ -19,7 +19,11 @@ const Verify = () => {
     const { theme, toggleTheme } = useTheme();
 
     const handleSuccess = (data: StandardResponseOfUserView) => {
-        setUser(data.data!, data?.data?.token as string);
+        setUser(
+            data.data!,
+            data?.data?.token as string,
+            data?.data?.refreshToken as string
+        );
         if (data.data?.isOrganizer as boolean) {
             router.push('/dashboard/event/create-event');
         } else {

@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { AuthService } from '../lib/services/AuthService';
+import { HttpInterceptorService } from '../lib/services/HttpInterceptorService';
 
 interface AuthProviderProps {
     children: React.ReactNode;
@@ -16,6 +17,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // Initialize the authentication service
         AuthService.initialize();
 
+        // Initialize HTTP interceptors for automatic token refresh
+        HttpInterceptorService.initialize();
+
         // Set up automatic token synchronization
         AuthService.setupTokenSync();
 
@@ -24,7 +28,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         // Log initialization for debugging
         if (process.env.NODE_ENV === 'development') {
-            console.log('AuthService initialized and token sync enabled');
+            console.log(
+                'AuthService and HttpInterceptorService initialized with token sync enabled'
+            );
         }
     }, []);
 

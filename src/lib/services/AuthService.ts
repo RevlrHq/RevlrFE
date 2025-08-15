@@ -1,4 +1,5 @@
 import { OpenAPI } from '../api/core/OpenAPI';
+import { PasswordlessAuthService } from '../api/services/PasswordlessAuthService';
 import { useAuthStore } from '../../stores/authStore';
 
 /**
@@ -96,38 +97,153 @@ export class AuthService {
      * Handle authentication errors
      * This can be called when API returns 401 to handle token expiration
      */
-    static handleAuthError(): void {
-        // Clear the token and logout user
-        this.clearToken();
-        useAuthStore.getState().logout();
+    static async handleAuthError(): Promise<void> {
+        // Try to refresh the token first
+        const refreshed = await this.refreshToken();
 
-        // Optionally redirect to login page
-        if (typeof window !== 'undefined') {
-            // Save current page for redirect after login
-            const currentPath = window.location.pathname;
-            if (currentPath !== '/auth/login') {
-                localStorage.setItem('redirectAfterLogin', currentPath);
+        if (!refreshed) {
+            // If refresh failed, clear tokens and logout user
+            this.clearToken();
+            useAuthStore.getState().logout();
+
+            // Optionally redirect to login page
+            if (typeof window !== 'undefined') {
+                // Save current page for redirect after login
+                const currentPath = window.location.pathname;
+                if (currentPath !== '/auth/login') {
+                    localStorage.setItem('redirectAfterLogin', currentPath);
+                }
+
+                // Redirect to login
+                window.location.href = '/auth/login';
+            }
+        }
+    }
+
+    /**
+     * Refresh the access token using the refresh token
+     */
+    static async refreshToken(): Promise<boolean> {
+        const { refreshToken, isAuthenticated } = useAuthStore.getState();
+
+        if (!isAuthenticated || !refreshToken) {
+            return false;
+        }
+
+        try {
+            const response =
+                await PasswordlessAuthService.postApiPasswordlessAuthRefresh({
+                    requestBody: { refreshToken },
+                });
+
+            if (response.data && response.data.token) {
+                // Update tokens in the store
+                const newToken = response.data.token;
+                const newRefreshToken =
+                    response.data.refreshToken || refreshToken;
+
+                useAuthStore.getState().updateTokens(newToken, newRefreshToken);
+
+                return true;
             }
 
-            // Redirect to login
-            window.location.href = '/auth/login';
+            return false;
+        } catch (error) {
+            console.error('Token refresh failed:', error);
+            return false;
         }
     }
 
     /**
      * Refresh token if needed
-     * This is a placeholder for token refresh logic
+     * This checks if the current token is close to expiration and refreshes it
      */
     static async refreshTokenIfNeeded(): Promise<boolean> {
-        const { token, isAuthenticated } = useAuthStore.getState();
+        const { token, refreshToken, isAuthenticated } =
+            useAuthStore.getState();
 
-        if (!isAuthenticated || !token) {
+        if (!isAuthenticated || !token || !refreshToken) {
             return false;
         }
 
-        // TODO: Implement token refresh logic if your API supports it
-        // For now, just return true if we have a token
-        return true;
+        try {
+            // Decode the JWT token to check expiration
+            const tokenPayload = this.decodeJWT(token);
+            if (!tokenPayload || !tokenPayload.exp) {
+                return false;
+            }
+
+            // Check if token expires within the next 5 minutes
+            const currentTime = Math.floor(Date.now() / 1000);
+            const timeUntilExpiry = tokenPayload.exp - currentTime;
+            const refreshThreshold = 5 * 60; // 5 minutes in seconds
+
+            if (timeUntilExpiry <= refreshThreshold) {
+                return await this.refreshToken();
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Error checking token expiration:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Revoke the refresh token
+     */
+    static async revokeRefreshToken(): Promise<boolean> {
+        const { refreshToken } = useAuthStore.getState();
+
+        if (!refreshToken) {
+            return true; // No token to revoke
+        }
+
+        try {
+            await PasswordlessAuthService.postApiPasswordlessAuthRevoke({
+                requestBody: { refreshToken },
+            });
+            return true;
+        } catch (error) {
+            console.error('Token revocation failed:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Logout and revoke refresh token
+     */
+    static async logout(): Promise<void> {
+        // Revoke the refresh token on the server
+        await this.revokeRefreshToken();
+
+        // Clear local state
+        this.clearToken();
+        useAuthStore.getState().logout();
+    }
+
+    /**
+     * Decode JWT token payload
+     */
+    private static decodeJWT(token: string): any {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(
+                atob(base64)
+                    .split('')
+                    .map(
+                        (c) =>
+                            '%' +
+                            ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+                    )
+                    .join('')
+            );
+            return JSON.parse(jsonPayload);
+        } catch (error) {
+            console.error('Error decoding JWT:', error);
+            return null;
+        }
     }
 }
 
