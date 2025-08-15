@@ -119,7 +119,7 @@ export function getEnabledProviderConfigs(): Record<
 > {
     return Object.fromEntries(
         Object.entries(MEDIA_PROVIDER_CONFIGS).filter(
-            ([_, config]) => config.enabled
+            ([, config]) => config.enabled
         )
     );
 }

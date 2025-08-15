@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-// import {  EventView } from '@lib/services/models/Event';
-import { EventsService } from '@lib/services/services/EventsService';
-import { StandardResponseOfEventView } from '@lib/services/models/StandardResponseOfEventView';
-import { EventView } from '@lib/services';
+// import {  EventView } from '@lib/api/models/Event';
+import { EventsService } from '@lib/api/services/EventsService';
+import { StandardResponseOfEventView } from '@lib/api/models/StandardResponseOfEventView';
+import { EventView } from '@lib/api';
 
 export const useEventDetails = (eventId: string) => {
     const [event, setEvent] = useState<EventView | null>(null);

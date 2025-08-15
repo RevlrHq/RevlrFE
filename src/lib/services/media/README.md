@@ -1,241 +1,256 @@
-# Media Search Infrastructure
+# Media Download and Processing System
 
-This directory contains the core infrastructure for the Event Media Search Integration feature. It provides a provider-agnostic architecture for searching, caching, and managing media from multiple external providers like Unsplash, Pexels, and Pixabay.
+This document describes the media download and processing system implemented for the Event Media Search Integration feature.
 
-## Architecture Overview
+## Overview
 
-The infrastructure consists of four main components:
+The system provides comprehensive functionality for downloading, optimizing, and processing media from external providers like Unsplash, Pexels, and Pixabay. It includes progress tracking, cancellation support, error handling with retry logic, and attribution compliance.
 
-1. **MediaProvider** - Abstract base class for media provider implementations
-2. **MediaSearchService** - Coordinates multiple providers and handles search operations
-3. **MediaSearchCache** - LRU cache for search results and popular queries
-4. **Configuration** - Environment-based configuration for API keys and settings
+## Core Components
 
-## Quick Start
+### MediaImageProcessor
 
-### 1. Environment Setup
-
-Add the required environment variables to your `.env` file:
-
-```bash
-# Media Provider API Keys
-UNSPLASH_ACCESS_KEY=your_unsplash_access_key
-PEXELS_API_KEY=your_pexels_api_key
-PIXABAY_API_KEY=your_pixabay_api_key
-
-# Optional Configuration
-MEDIA_CACHE_SIZE=1000
-MEDIA_CACHE_EXPIRY_MINUTES=30
-ENABLE_ATTRIBUTION_TRACKING=true
-```
-
-### 2. Basic Usage
+The main class responsible for processing selected media items.
 
 ```typescript
-import { MediaSearchService } from '@/lib/services/media';
+import { MediaImageProcessor } from '@/lib/services/media/MediaImageProcessor';
 
-// Create service instance
-const mediaService = new MediaSearchService();
-
-// Register providers (will be done automatically in actual implementation)
-// mediaService.registerProvider(new UnsplashProvider(config));
-
-// Search for media
-const results = await mediaService.searchMedia({
-    query: 'conference',
-    filters: {
-        orientation: 'landscape',
-        minWidth: 800,
-        minHeight: 600,
+// Process selected media items
+const result = await MediaImageProcessor.processSelectedMedia(
+    selectedItems,
+    (index, progress, status) => {
+        console.log(`Item ${index}: ${progress}% - ${status}`);
     },
-    page: 1,
-    perPage: 20,
+    (index, result) => {
+        console.log(`Item ${index} completed:`, result);
+    },
+    {
+        maxWidth: 1920,
+        maxHeight: 1080,
+        quality: 0.85,
+        format: 'webp',
+        targetSizeKB: 500,
+    }
+);
+
+console.log('Success:', result.success.length);
+console.log('Errors:', result.errors.length);
+```
+
+### AttributionService
+
+Handles licensing compliance and attribution requirements.
+
+```typescript
+import { AttributionService } from '@/lib/services/media/AttributionService';
+
+// Generate attribution text
+const attribution = AttributionService.generateAttributionText(
+    mediaItem,
+    'html'
+);
+
+// Validate license for commercial use
+const validation = AttributionService.validateLicenseForCommercialUse(license);
+
+// Auto-insert attribution into event description
+const updatedEventData = AttributionService.autoInsertAttribution(
+    eventData,
+    images
+);
+```
+
+## Key Features
+
+### 1. Download with Progress Tracking
+
+```typescript
+const blob = await MediaImageProcessor.downloadWithProgress(
+    'https://example.com/image.jpg',
+    (progress) => console.log(`Download: ${progress}%`),
+    cancellationToken
+);
+```
+
+### 2. Image Optimization
+
+- Automatic resizing to optimal dimensions
+- Format conversion (JPEG → WebP for better compression)
+- Quality optimization to meet target file size
+- Progressive compression with multiple quality levels
+
+### 3. Error Handling and Retry Logic
+
+- Automatic retry with exponential backoff (up to 3 attempts)
+- Graceful error handling with detailed error messages
+- Cancellation support for long-running operations
+
+### 4. Attribution Compliance
+
+- Automatic attribution text generation
+- License validation for commercial use
+- Attribution insertion into event descriptions
+- Compliance monitoring and tracking
+
+### 5. Integration with Existing Services
+
+- Seamless integration with ImageUploadService
+- Compatible with existing EventImage model
+- Works with current event creation workflow
+
+## Usage Examples
+
+### Basic Processing
+
+```typescript
+const items = [mediaItem1, mediaItem2, mediaItem3];
+
+const result = await MediaImageProcessor.processSelectedMedia(
+    items,
+    (index, progress) => updateProgressBar(index, progress)
+);
+
+// Handle results
+result.success.forEach((image) => {
+    console.log('Processed:', image.name);
 });
 
-// Get popular media
-const popular = await mediaService.getPopularMedia('business');
-
-// Get search suggestions
-const suggestions = await mediaService.getSuggestions('conf');
+result.errors.forEach((error) => {
+    console.error('Failed:', error.item.title, error.error);
+});
 ```
 
-## Components
-
-### MediaProvider (Abstract Base Class)
-
-Provides the foundation for all media provider implementations:
+### With Cancellation
 
 ```typescript
-abstract class MediaProvider {
-    abstract search(query: MediaSearchQuery): Promise<ProviderResult>;
-    abstract getPopular(category?: string): Promise<ProviderResult>;
-    abstract downloadMedia(item: MediaItem): Promise<Blob>;
+const cancellationToken = MediaImageProcessor.createCancellationToken();
 
-    // Built-in rate limiting and error handling
-    protected checkRateLimit(): boolean;
-    protected handleError(error: unknown): MediaProviderError;
+// Start processing
+const processingPromise = MediaImageProcessor.processSelectedMedia(
+    items,
+    undefined,
+    undefined,
+    {},
+    cancellationToken
+);
+
+// Cancel if needed
+setTimeout(() => {
+    cancellationToken.cancel();
+}, 5000);
+
+try {
+    const result = await processingPromise;
+} catch (error) {
+    if (error.message === 'Processing cancelled') {
+        console.log('User cancelled the operation');
+    }
 }
 ```
 
-**Key Features:**
-
-- Automatic rate limiting
-- Error categorization and handling
-- Health score tracking
-- Request/response logging
-
-### MediaSearchService
-
-Coordinates multiple providers and provides unified search interface:
+### Attribution Validation
 
 ```typescript
-class MediaSearchService {
-    // Provider management
-    registerProvider(provider: MediaProvider): void;
-    getHealthyProviders(): MediaProvider[];
+// Validate attribution compliance for an event
+const validation = AttributionService.validateAttributionCompliance(
+    eventImages,
+    eventData
+);
 
-    // Search operations
-    searchMedia(query: MediaSearchQuery): Promise<MediaSearchResult>;
-    getPopularMedia(category?: string): Promise<MediaSearchResult>;
-    getSuggestions(query: string): Promise<string[]>;
+if (!validation.isValid) {
+    console.error('Attribution errors:', validation.errors);
+}
 
-    // Cache management
-    clearCache(): void;
-    preloadPopularSearches(): Promise<void>;
+if (validation.warnings.length > 0) {
+    console.warn('Attribution warnings:', validation.warnings);
 }
 ```
 
-**Key Features:**
+## Configuration Options
 
-- Multi-provider search coordination
-- Automatic failover and error recovery
-- Result deduplication and sorting
-- Intelligent caching
-
-### MediaSearchCache
-
-LRU cache with expiry for search results:
+### ProcessingOptions
 
 ```typescript
-class MediaSearchCache {
-    set(query: string, result: MediaSearchResult): void;
-    get(query: string): MediaSearchResult | null;
-
-    // Cache management
-    clear(): void;
-    cleanupExpired(): number;
-    getStats(): CacheStats;
-
-    // Preloading
-    preloadPopularSearches(searchFn: Function): Promise<void>;
-    warmCache(queries: string[], searchFn: Function): Promise<void>;
+interface ProcessingOptions {
+    maxWidth?: number; // Default: 1920
+    maxHeight?: number; // Default: 1080
+    quality?: number; // Default: 0.85
+    format?: 'webp' | 'jpeg' | 'png'; // Default: 'webp'
+    targetSizeKB?: number; // Default: 500
 }
 ```
 
-**Key Features:**
+### Error Handling
 
-- LRU eviction policy
-- Automatic expiry handling
-- Usage statistics tracking
-- Popular query preloading
+The system provides detailed error information:
 
-## Configuration
+```typescript
+interface ProcessingError {
+    item: MediaItem; // The item that failed
+    error: string; // Human-readable error message
+    stage: 'download' | 'processing' | 'upload' | 'validation';
+}
+```
 
-### Environment Variables
+## Performance Considerations
 
-| Variable                      | Description                    | Default |
-| ----------------------------- | ------------------------------ | ------- |
-| `UNSPLASH_ACCESS_KEY`         | Unsplash API access key        | -       |
-| `PEXELS_API_KEY`              | Pexels API key                 | -       |
-| `PIXABAY_API_KEY`             | Pixabay API key                | -       |
-| `MEDIA_CACHE_SIZE`            | Maximum cache entries          | 1000    |
-| `MEDIA_CACHE_EXPIRY_MINUTES`  | Cache expiry time              | 30      |
-| `ENABLE_ATTRIBUTION_TRACKING` | Track attribution requirements | true    |
-| `MAX_SELECTED_IMAGES`         | Maximum images per selection   | 10      |
+1. **Parallel Processing**: Items are processed sequentially to avoid overwhelming the system
+2. **Memory Management**: Large images are processed in chunks to prevent memory issues
+3. **Caching**: Downloaded images are temporarily cached during processing
+4. **Optimization**: Images are optimized for web use with WebP format when supported
 
-### Provider Configuration
+## Security Features
 
-Each provider has its own configuration including:
-
-- API endpoints and authentication
-- Rate limiting settings
-- Health monitoring parameters
-- Error handling policies
-
-## Error Handling
-
-The infrastructure provides comprehensive error handling:
-
-### Error Types
-
-- `RATE_LIMIT_EXCEEDED` - Provider rate limit reached
-- `API_KEY_INVALID` - Authentication failure
-- `NETWORK_ERROR` - Network connectivity issues
-- `PROVIDER_UNAVAILABLE` - Provider service down
-- `SEARCH_FAILED` - Generic search failure
-
-### Recovery Actions
-
-- **Disable Temporarily** - Disable provider for specified duration
-- **Retry with Backoff** - Exponential backoff retry
-- **Show Error** - Display error to user
-
-### Graceful Degradation
-
-- Automatic provider fallback
-- Partial results when some providers fail
-- User-friendly error messages
-
-## Performance Features
-
-### Caching Strategy
-
-- LRU eviction with configurable size limits
-- Time-based expiry for fresh results
-- Popular query preloading
-- Cache hit rate monitoring
-
-### Rate Limiting
-
-- Per-provider rate limit tracking
-- Automatic request throttling
-- Health score-based provider selection
-
-### Result Optimization
-
-- Duplicate removal across providers
-- Relevance-based sorting
-- Progressive loading support
+1. **Content Validation**: All downloaded content is validated before processing
+2. **License Compliance**: Automatic license validation for commercial use
+3. **Attribution Tracking**: Comprehensive tracking for compliance monitoring
+4. **Error Logging**: Detailed error logging without exposing sensitive information
 
 ## Testing
 
-The infrastructure includes comprehensive tests:
+The system includes comprehensive tests covering:
+
+- Download functionality with progress tracking
+- Image optimization and validation
+- Error handling and retry logic
+- Attribution generation and compliance
+- Cancellation support
+
+Run tests with:
 
 ```bash
-# Run media infrastructure tests
-npm test -- --testPathPattern=MediaSearchInfrastructure.test.ts
+npm test -- --testPathPattern="MediaImageProcessor|AttributionService"
 ```
 
-Test coverage includes:
+## Integration Points
 
-- Unit tests for all core classes
-- Integration tests for service coordination
-- Error handling and recovery scenarios
-- Cache behavior and performance
+### With useMediaSearch Hook
 
-## Next Steps
+The MediaImageProcessor is already integrated with the `useMediaSearch` hook:
 
-This infrastructure provides the foundation for:
+```typescript
+const { downloadSelected } = useMediaSearch();
 
-1. **Provider Implementations** - Concrete implementations for Unsplash, Pexels, Pixabay
-2. **UI Components** - React components for search interface
-3. **Integration** - Integration with existing ImageUpload component
-4. **Analytics** - Usage tracking and performance monitoring
+// This internally uses MediaImageProcessor.processSelectedMedia
+const processedImages = await downloadSelected();
+```
 
-## API Reference
+### With Event Creation
 
-For detailed API documentation, see the TypeScript interfaces in:
+Processed images are compatible with the existing event creation system:
 
-- `@/types/media-search.ts` - Core type definitions
-- `@/lib/config/media-providers.ts` - Configuration options
-- Individual class files for implementation details
+```typescript
+// Processed images can be directly added to event data
+const eventData = {
+    ...existingEventData,
+    images: [...existingImages, ...processedImages],
+};
+```
+
+## Future Enhancements
+
+1. **Video Processing**: Support for video media from providers
+2. **Batch Operations**: Improved batch processing for large selections
+3. **Advanced Optimization**: AI-powered image optimization
+4. **Real-time Preview**: Live preview during processing
+5. **Cloud Processing**: Offload processing to cloud services for better performance

@@ -300,12 +300,57 @@ export const InlineLoading: React.FC<InlineLoadingProps> = ({
     );
 };
 
-export default {
+// Events grid skeleton
+export const EventsGridSkeleton: React.FC = () => {
+    return (
+        <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div
+                    key={i}
+                    className='flex flex-row gap-4 rounded-lg bg-white p-6 shadow-sm'
+                >
+                    <Skeleton width='w-48' height='h-48' rounded />
+                    <div className='flex flex-1 flex-col justify-between'>
+                        <div className='space-y-4'>
+                            <Skeleton width='w-3/4' height='h-6' />
+                            <div className='space-y-2'>
+                                <Skeleton width='w-1/2' height='h-4' />
+                                <Skeleton width='w-1/3' height='h-4' />
+                            </div>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                            <Skeleton width='w-20' height='h-4' />
+                            <Skeleton width='w-16' height='h-6' rounded />
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+const LoadingStatesDefault = {
     Skeleton,
     FormFieldSkeleton,
     CardSkeleton,
     EventFormSkeleton,
     TicketManagementSkeleton,
+    EventsGridSkeleton,
+    LoadingSpinner,
+    LoadingButton,
+    LoadingOverlay,
+    InlineLoading,
+};
+
+export default LoadingStatesDefault;
+
+export const LoadingStates = {
+    Skeleton,
+    FormFieldSkeleton,
+    CardSkeleton,
+    EventFormSkeleton,
+    TicketManagementSkeleton,
+    EventsGrid: EventsGridSkeleton,
     LoadingSpinner,
     LoadingButton,
     LoadingOverlay,

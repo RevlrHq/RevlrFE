@@ -1,14 +1,14 @@
 import { EventCreationService } from '../../lib/services/EventCreationService';
-import { EventsService } from '../../lib/services/services/EventsService';
+import { EventsService } from '../../lib/api/services/EventsService';
 import type {
     EventCreationData,
     EventTicket,
 } from '../../types/event-creation';
-import type { StandardResponseOfEventView } from '../../lib/services/models/StandardResponseOfEventView';
-import type { EventView } from '../../lib/services/models/EventView';
+import type { StandardResponseOfEventView } from '../../lib/api/models/StandardResponseOfEventView';
+import type { EventView } from '../../lib/api/models/EventView';
 
 // Mock the EventsService
-jest.mock('../../lib/services/services/EventsService');
+jest.mock('../../lib/api/services/EventsService');
 const mockEventsService = EventsService as jest.Mocked<typeof EventsService>;
 
 describe('EventCreationService', () => {

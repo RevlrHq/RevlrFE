@@ -191,7 +191,21 @@ export class MediaSelectionValidator {
             }
         }
 
-        // Quality warnings
+        // Check minimum dimensions
+        if (this.limits.minDimensions) {
+            const { width: minWidth, height: minHeight } =
+                this.limits.minDimensions;
+            const undersizedItems = selection.filter(
+                (item) => item.width < minWidth || item.height < minHeight
+            );
+            if (undersizedItems.length > 0) {
+                errors.push(
+                    `${undersizedItems.length} image(s) are below minimum dimensions (${minWidth}×${minHeight})`
+                );
+            }
+        }
+
+        // Quality warnings - only warn, don't invalidate
         const lowQualityItems = selection.filter(
             (item) => item.width < 1200 || item.height < 630
         );

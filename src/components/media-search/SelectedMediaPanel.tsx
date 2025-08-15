@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { useTheme } from '@/lib/ThemeContext';
 import { MediaItem } from '@/types/media-search';
 import {
     X,
@@ -12,11 +11,9 @@ import {
     List,
     ArrowUp,
     ArrowDown,
-    Check,
     AlertTriangle,
     Image as ImageIcon,
     Video,
-    Info,
 } from 'lucide-react';
 
 interface SelectedMediaPanelProps {
@@ -44,7 +41,6 @@ export const SelectedMediaPanel: React.FC<SelectedMediaPanelProps> = ({
     downloadProgress = 0,
     className = '',
 }) => {
-    const { theme } = useTheme();
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);

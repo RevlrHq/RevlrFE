@@ -6,7 +6,7 @@ import {
     getEventLocation,
     getEventImage,
 } from '@lib/utils/eventUtils';
-import { EventView } from '@lib/services';
+import { EventView } from '@lib/api';
 // import { Event as EventView } from '@lib/services/models/Event';
 
 interface EventCardProps {

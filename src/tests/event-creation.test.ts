@@ -4,7 +4,7 @@ import { EventValidationUtils } from '../lib/utils/eventValidation';
 import type { EventCreationData, EventTicket } from '../types/event-creation';
 
 // Mock the EventsService to avoid actual API calls
-jest.mock('../lib/services/services/EventsService', () => ({
+jest.mock('../lib/api/services/EventsService', () => ({
     EventsService: {
         postApiEventsDraft: jest.fn(),
         getApiEvents1: jest.fn(),
@@ -28,7 +28,16 @@ describe('Event Creation Infrastructure', () => {
             eventDescription: 'Test Description',
             eventCategory: 'Conference',
             locationType: 'in-person',
-            images: ['image1.jpg'],
+            images: [
+                {
+                    id: 'img1',
+                    url: 'https://example.com/image1.jpg',
+                    name: 'image1.jpg',
+                    size: 1024,
+                    mimeType: 'image/jpeg',
+                    order: 0,
+                },
+            ],
             isDraft: true,
         };
 
@@ -41,7 +50,7 @@ describe('Event Creation Infrastructure', () => {
 
         it('should handle API errors gracefully', async () => {
             const { EventsService } = await import(
-                '../lib/services/services/EventsService'
+                '../lib/api/services/EventsService'
             );
             EventsService.postApiEventsDraft.mockRejectedValue(
                 new Error('Network error')
@@ -59,7 +68,16 @@ describe('Event Creation Infrastructure', () => {
             eventDescription: 'Test Description',
             eventCategory: 'Conference',
             locationType: 'in-person',
-            images: ['image1.jpg'],
+            images: [
+                {
+                    id: 'img1',
+                    url: 'https://example.com/image1.jpg',
+                    name: 'image1.jpg',
+                    size: 1024,
+                    mimeType: 'image/jpeg',
+                    order: 0,
+                },
+            ],
             isDraft: true,
         };
 

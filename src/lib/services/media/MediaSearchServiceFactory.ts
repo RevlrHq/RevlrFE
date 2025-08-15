@@ -1,6 +1,8 @@
 import { MediaSearchService } from './MediaSearchService';
-import { UnsplashProvider } from './providers/UnsplashProvider';
-import { PexelsProvider } from './providers/PexelsProvider';
+import {
+    MediaProviderFactory,
+    ProviderConfiguration,
+} from './MediaProviderFactory';
 import { MediaProviderConfig } from '@/types/media-search';
 
 /**
@@ -12,14 +14,14 @@ export class MediaSearchServiceFactory {
     /**
      * Create a new MediaSearchService instance with configured providers
      */
-    static create(
+    static async create(
         options: {
             cacheSize?: number;
             cacheExpiryMinutes?: number;
             enabledProviders?: string[];
             providerConfigs?: Record<string, MediaProviderConfig>;
         } = {}
-    ): MediaSearchService {
+    ): Promise<MediaSearchService> {
         const {
             cacheSize = 1000,
             cacheExpiryMinutes = 30,
@@ -29,67 +31,134 @@ export class MediaSearchServiceFactory {
 
         const service = new MediaSearchService(cacheSize, cacheExpiryMinutes);
 
-        // Default configurations for development/testing
-        const defaultConfigs: Record<string, MediaProviderConfig> = {
-            unsplash: {
-                apiKey:
-                    process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY || 
-                    process.env.UNSPLASH_ACCESS_KEY || 
-                    'demo-key',
-                secretKey: process.env.UNSPLASH_SECRET_KEY,
-                baseUrl: 'https://api.unsplash.com',
-                rateLimit: { requests: 50, window: 3600 },
-                enabled: true,
-                oauth: process.env.UNSPLASH_SECRET_KEY ? {
-                    clientId: process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY || process.env.UNSPLASH_ACCESS_KEY || '',
-                    clientSecret: process.env.UNSPLASH_SECRET_KEY || '',
-                    redirectUri: process.env.NEXT_PUBLIC_UNSPLASH_REDIRECT_URI || `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/auth/unsplash/callback`,
-                    scopes: ['public', 'read_user', 'write_likes', 'read_collections'],
-                } : undefined,
-            },
-            pexels: {
-                apiKey: process.env.NEXT_PUBLIC_PEXELS_API_KEY || 'demo-key',
-                baseUrl: 'https://api.pexels.com/v1',
-                rateLimit: { requests: 200, window: 3600 },
-                enabled: true,
-            },
-        };
+        // Get the MediaProviderFactory instance
+        const providerFactory = service.getProviderFactory();
 
-        // Register enabled providers
-        enabledProviders.forEach((providerId) => {
-            const config =
-                providerConfigs[providerId] || defaultConfigs[providerId];
+        // Build provider configuration from environment and options
+        const providerConfiguration: ProviderConfiguration = {};
 
-            if (!config) {
+        // Configure Unsplash if enabled
+        if (enabledProviders.includes('unsplash')) {
+            const unsplashConfig = providerConfigs['unsplash'];
+            const apiKey =
+                unsplashConfig?.apiKey ||
+                process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY ||
+                process.env.UNSPLASH_ACCESS_KEY;
+
+            if (apiKey && apiKey !== 'demo-key') {
+                providerConfiguration.unsplash = {
+                    apiKey,
+                    secretKey:
+                        unsplashConfig?.secretKey ||
+                        process.env.NEXT_PUBLIC_UNSPLASH_SECRET_KEY ||
+                        process.env.UNSPLASH_SECRET_KEY,
+                    enabled: true,
+                    rateLimit: unsplashConfig?.rateLimit || {
+                        requests: 50,
+                        window: 3600,
+                    },
+                    oauth: (() => {
+                        const clientSecret =
+                            process.env.NEXT_PUBLIC_UNSPLASH_SECRET_KEY ||
+                            process.env.UNSPLASH_SECRET_KEY;
+                        return clientSecret
+                            ? {
+                                  clientId: apiKey,
+                                  clientSecret,
+                                  redirectUri:
+                                      process.env
+                                          .NEXT_PUBLIC_UNSPLASH_REDIRECT_URI ||
+                                      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/auth/unsplash/callback`,
+                                  scopes: [
+                                      'public',
+                                      'read_user',
+                                      'write_likes',
+                                      'read_collections',
+                                  ],
+                              }
+                            : undefined;
+                    })(),
+                };
+            } else {
                 console.warn(
-                    `No configuration found for provider: ${providerId}`
+                    'Unsplash API key not found or is demo key - provider will be disabled'
                 );
-                return;
             }
+        }
 
-            try {
-                let provider;
-                switch (providerId) {
-                    case 'unsplash':
-                        provider = new UnsplashProvider(config);
-                        break;
-                    case 'pexels':
-                        provider = new PexelsProvider(config);
-                        break;
-                    default:
-                        console.warn(`Unknown provider: ${providerId}`);
-                        return;
+        // Configure Pexels if enabled
+        if (enabledProviders.includes('pexels')) {
+            const pexelsConfig = providerConfigs['pexels'];
+            const apiKey =
+                pexelsConfig?.apiKey || process.env.NEXT_PUBLIC_PEXELS_API_KEY;
+
+            if (apiKey && apiKey !== 'demo-key') {
+                providerConfiguration.pexels = {
+                    apiKey,
+                    enabled: true,
+                    rateLimit: pexelsConfig?.rateLimit || {
+                        requests: 200,
+                        window: 3600,
+                    },
+                };
+            } else {
+                console.warn(
+                    'Pexels API key not found or is demo key - provider will be disabled'
+                );
+            }
+        }
+
+        // Configure Pixabay if enabled
+        if (enabledProviders.includes('pixabay')) {
+            const pixabayConfig = providerConfigs['pixabay'];
+            const apiKey =
+                pixabayConfig?.apiKey ||
+                process.env.NEXT_PUBLIC_PIXABAY_API_KEY;
+
+            if (apiKey && apiKey !== 'demo-key') {
+                providerConfiguration.pixabay = {
+                    apiKey,
+                    enabled: true,
+                    rateLimit: pixabayConfig?.rateLimit || {
+                        requests: 100,
+                        window: 3600,
+                    },
+                };
+            } else {
+                console.warn(
+                    'Pixabay API key not found or is demo key - provider will be disabled'
+                );
+            }
+        }
+
+        // Initialize the provider factory with the configuration
+        try {
+            const result = await providerFactory.initialize(
+                providerConfiguration
+            );
+
+            if (!result.success) {
+                console.warn(
+                    'Failed to initialize any providers:',
+                    result.failedProviders
+                );
+                if (result.warnings.length > 0) {
+                    console.warn('Initialization warnings:', result.warnings);
                 }
-
-                service.registerProvider(provider);
-                console.log(`Registered ${providerId} provider`);
-            } catch (error) {
-                console.warn(
-                    `Failed to register ${providerId} provider:`,
-                    error
+            } else {
+                console.log(
+                    `Successfully initialized providers: ${result.initializedProviders.join(', ')}`
                 );
+                if (result.failedProviders.length > 0) {
+                    console.warn(
+                        'Some providers failed to initialize:',
+                        result.failedProviders
+                    );
+                }
             }
-        });
+        } catch (error) {
+            console.error('Failed to initialize MediaProviderFactory:', error);
+        }
 
         return service;
     }
@@ -97,11 +166,11 @@ export class MediaSearchServiceFactory {
     /**
      * Get or create a singleton instance
      */
-    static getInstance(
+    static async getInstance(
         options?: Parameters<typeof MediaSearchServiceFactory.create>[0]
-    ): MediaSearchService {
+    ): Promise<MediaSearchService> {
         if (!this.instance) {
-            this.instance = this.create(options);
+            this.instance = await this.create(options);
         }
         return this.instance;
     }
@@ -230,9 +299,8 @@ export class MediaSearchServiceFactory {
             downloadMedia: jest.fn().mockResolvedValue(new Blob()),
         };
 
-        // Register mock providers
-        service.registerProvider(mockUnsplashProvider as any);
-        service.registerProvider(mockPexelsProvider as any);
+        // Note: Mock providers would be registered through the MediaProviderFactory
+        // For testing purposes, we'll create a basic service without provider initialization
 
         return service;
     }

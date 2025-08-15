@@ -1,8 +1,8 @@
-import { EventsService } from './services/EventsService';
-import type { EventCreationRequest } from './models/EventCreationRequest';
-import type { EventTicketCreationRequest } from './models/EventTicketCreationRequest';
-import type { EventView } from './models/EventView';
-import type { StandardResponseOfEventView } from './models/StandardResponseOfEventView';
+import { EventsService } from '../api/services/EventsService';
+import type { EventCreationRequest } from '../api/models/EventCreationRequest';
+import type { EventTicketCreationRequest } from '../api/models/EventTicketCreationRequest';
+import type { EventView } from '../api/models/EventView';
+import type { StandardResponseOfEventView } from '../api/models/StandardResponseOfEventView';
 import type {
     EventCreationData,
     EventTicket,
@@ -10,6 +10,7 @@ import type {
     EventCreationError,
 } from '../../types/event-creation';
 import { monitoring } from './MonitoringService';
+import { AuthService } from './AuthService';
 
 export class EventCreationService {
     /**
@@ -361,6 +362,8 @@ export class EventCreationService {
         if (error?.status === 401) {
             errorType = 'authentication';
             message = 'Authentication required. Please log in again.';
+            // Handle authentication error
+            AuthService.handleAuthError();
         } else if (error?.status === 400) {
             errorType = 'validation';
             message =

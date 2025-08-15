@@ -1,4 +1,4 @@
-import { UserView } from '@lib/services';
+import { UserView } from '@lib/api';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -16,15 +16,35 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
     persist(
-        (set, get) => ({
+        (set) => ({
             user: null,
             token: null,
             isAuthenticated: false,
             _hasHydrated: false,
-            setUser: (user: UserView, token: string) =>
-                set({ user, token, isAuthenticated: true }),
-            logout: () =>
-                set({ user: null, token: null, isAuthenticated: false }),
+            setUser: (user: UserView, token: string) => {
+                set({ user, token, isAuthenticated: true });
+
+                // Sync token with AuthService if available
+                if (typeof window !== 'undefined') {
+                    import('../lib/services/AuthService')
+                        .then(({ AuthService }) => {
+                            AuthService.setToken(token);
+                        })
+                        .catch(console.warn);
+                }
+            },
+            logout: () => {
+                set({ user: null, token: null, isAuthenticated: false });
+
+                // Clear token from AuthService if available
+                if (typeof window !== 'undefined') {
+                    import('../lib/services/AuthService')
+                        .then(({ AuthService }) => {
+                            AuthService.clearToken();
+                        })
+                        .catch(console.warn);
+                }
+            },
             setHasHydrated: (hasHydrated: boolean) =>
                 set({ _hasHydrated: hasHydrated }),
         }),

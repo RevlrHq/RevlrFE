@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { EventsService } from '../lib/services/services/EventsService';
-import { EventRegistrationRequest } from '../lib/services/models/EventRegistrationRequest';
-import { AttendeeInfo } from '../lib/services/models/AttendeeInfo';
-import { NewUserRegistrationInfo } from '../lib/services/models/NewUserRegistrationInfo';
+import { EventsService } from '../lib/api/services/EventsService';
+import { EventRegistrationRequest } from '../lib/api/models/EventRegistrationRequest';
+import { AttendeeInfo } from '../lib/api/models/AttendeeInfo';
+import { NewUserRegistrationInfo } from '../lib/api/models/NewUserRegistrationInfo';
 import { useAuthStore } from '../stores/authStore';
 import { useToast } from './use-toast';
 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTheme } from '../../lib/ThemeContext';
+import { useAuthStore } from '../../stores/authStore';
 import Link from 'next/link';
 import {
     Calendar,
@@ -17,6 +18,7 @@ import {
     TrendingUp,
     Share2,
     QrCode,
+    User,
 } from 'lucide-react';
 
 interface UserEvent {
@@ -53,6 +55,7 @@ interface UserStats {
 
 const UserDashboard = () => {
     const { theme } = useTheme();
+    const { user } = useAuthStore();
 
     // Mock user data - replace with actual API calls
     const [userStats] = useState<UserStats>({
@@ -198,19 +201,34 @@ const UserDashboard = () => {
                 } border-b px-6 py-4`}
             >
                 <div className='flex items-center justify-between'>
-                    <div>
-                        <h1 className='font-inter text-2xl font-bold'>
-                            Welcome back!
-                        </h1>
-                        <p
-                            className={`font-inter text-sm ${
-                                theme === 'dark'
-                                    ? 'text-gray-400'
-                                    : 'text-gray-600'
-                            }`}
-                        >
-                            Discover amazing events and manage your tickets.
-                        </p>
+                    <div className='flex items-center gap-4'>
+                        <div className='flex items-center gap-3'>
+                            <div className='flex size-12 items-center justify-center rounded-full bg-revlr-primary-blue text-white'>
+                                <User className='size-6' />
+                            </div>
+                            <div>
+                                <h1 className='font-inter text-2xl font-bold'>
+                                    {user?.firstName && user?.lastName
+                                        ? `Welcome back, ${user.firstName} ${user.lastName}!`
+                                        : user?.firstName
+                                          ? `Welcome back, ${user.firstName}!`
+                                          : 'Welcome back!'}
+                                </h1>
+                                <p
+                                    className={`font-inter text-sm ${
+                                        theme === 'dark'
+                                            ? 'text-gray-400'
+                                            : 'text-gray-600'
+                                    }`}
+                                >
+                                    {user?.email && (
+                                        <span>{user.email} • </span>
+                                    )}
+                                    Discover amazing events and manage your
+                                    tickets.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     <div className='flex items-center gap-3'>

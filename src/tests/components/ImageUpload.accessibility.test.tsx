@@ -17,7 +17,7 @@ jest.mock('../../icons', () => ({
 
 // Mock the MediaSearchModal component
 jest.mock('../../components/MediaSearchModal', () => ({
-    MediaSearchModal: ({ isOpen }: any) => {
+    MediaSearchModal: ({ isOpen }: { isOpen: boolean }) => {
         if (!isOpen) return null;
         return (
             <div
@@ -252,7 +252,7 @@ describe('ImageUpload Accessibility', () => {
     });
 
     it('should support screen reader announcements', () => {
-        const { container } = render(
+        render(
             <ImageUpload
                 images={[]}
                 onImagesChange={mockOnImagesChange}

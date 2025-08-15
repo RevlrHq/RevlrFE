@@ -24,7 +24,15 @@ jest.mock('../../icons', () => ({
 
 // Mock the MediaSearchModal component
 jest.mock('../../components/MediaSearchModal', () => ({
-    MediaSearchModal: ({ isOpen, onClose, onSelectMedia }: any) => {
+    MediaSearchModal: ({
+        isOpen,
+        onClose,
+        onSelectMedia,
+    }: {
+        isOpen: boolean;
+        onClose: () => void;
+        onSelectMedia: (media: EventImage[]) => void;
+    }) => {
         if (!isOpen) return null;
         return (
             <div data-testid='media-search-modal'>
@@ -554,7 +562,7 @@ describe('ImageUpload Component', () => {
         });
 
         it('should pass event category to media search modal', () => {
-            const { rerender } = render(
+            render(
                 <ImageUpload
                     images={[]}
                     onImagesChange={mockOnImagesChange}

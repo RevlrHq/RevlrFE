@@ -5,6 +5,7 @@ import { MediaSearchSidebar } from '@src/components/media-search/MediaSearchSide
 import { ProviderStatusIndicator } from '@src/components/media-search/ProviderStatusIndicator';
 import { ThemeProvider } from '@src/lib/ThemeContext';
 import type { MediaFilters, ProviderStatus } from '@src/types/media-search';
+import { MediaProviderErrorType } from '@src/types/media-search';
 import { EventCategory } from '@src/lib/constants/eventCategories';
 
 // Mock providers for testing
@@ -30,7 +31,7 @@ const mockProviders: ProviderStatus[] = [
         rateLimit: { requests: 100, window: 3600, remaining: 0 },
         healthScore: 0,
         lastError: {
-            type: 'provider_unavailable' as any,
+            type: MediaProviderErrorType.PROVIDER_UNAVAILABLE,
             providerId: 'pixabay',
             message: 'Service temporarily unavailable',
         },

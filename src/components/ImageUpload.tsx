@@ -5,14 +5,7 @@ import { useTheme } from '@src/lib/ThemeContext';
 import { ImageUploadService } from '@src/lib/services/ImageUploadService';
 import type { EventImage, ImageUploadOptions } from '@src/types/event-creation';
 import { CameraIcon, AddIcon } from '@src/icons';
-import {
-    X,
-    AlertCircle,
-    Move,
-    Eye,
-    Search,
-    Image as ImageIcon,
-} from 'lucide-react';
+import { X, AlertCircle, Move, Eye, Search } from 'lucide-react';
 import { MediaSearchModal } from './MediaSearchModal';
 
 interface ImageUploadProps {

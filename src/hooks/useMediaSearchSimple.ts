@@ -67,8 +67,8 @@ export interface UseSimpleMediaSearchReturn {
 
 // Mock search function for demonstration
 const mockSearch = async (
-    query: string,
-    filters?: SimpleMediaFilters
+    query: string
+    // filters?: SimpleMediaFilters
 ): Promise<SimpleMediaItem[]> => {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 500));

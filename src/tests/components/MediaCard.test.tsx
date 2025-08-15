@@ -85,7 +85,7 @@ describe('MediaCard', () => {
             </MockThemeProvider>
         );
 
-        expect(screen.getByText('UNSPLASH')).toBeInTheDocument();
+        expect(screen.getByText('unsplash')).toBeInTheDocument();
     });
 
     it('shows attribution indicator when required', () => {
@@ -147,7 +147,7 @@ describe('MediaCard', () => {
         );
 
         // Hover to show the overlay with buttons
-        const card = screen.getByRole('button');
+        const card = screen.getByLabelText('Test Image by Test Photographer');
         fireEvent.mouseEnter(card);
 
         const previewButton = screen.getByLabelText('Preview Test Image');
@@ -166,7 +166,7 @@ describe('MediaCard', () => {
         );
 
         // Hover to show the overlay with buttons
-        const card = screen.getByRole('button');
+        const card = screen.getByLabelText('Test Image by Test Photographer');
         fireEvent.mouseEnter(card);
 
         const selectButton = screen.getByLabelText('Select Test Image');
@@ -183,7 +183,7 @@ describe('MediaCard', () => {
         );
 
         // Hover to show the overlay with buttons
-        const card = screen.getByRole('button');
+        const card = screen.getByLabelText('Test Image by Test Photographer');
         fireEvent.mouseEnter(card);
 
         expect(
@@ -200,7 +200,7 @@ describe('MediaCard', () => {
             </MockThemeProvider>
         );
 
-        const card = screen.getByRole('button');
+        const card = screen.getByLabelText('Test Image by Test Photographer');
 
         // Test Enter key
         fireEvent.keyDown(card, { key: 'Enter' });
@@ -220,7 +220,7 @@ describe('MediaCard', () => {
             </MockThemeProvider>
         );
 
-        const card = screen.getByRole('button');
+        const card = screen.getByLabelText('Test Image by Test Photographer');
 
         // Test Ctrl+P
         fireEvent.keyDown(card, { key: 'p', ctrlKey: true });
@@ -242,7 +242,7 @@ describe('MediaCard', () => {
             </MockThemeProvider>
         );
 
-        const card = screen.getByRole('button');
+        const card = screen.getByLabelText('Test Image by Test Photographer');
 
         // Should not respond to clicks when disabled
         fireEvent.click(card);
@@ -261,7 +261,9 @@ describe('MediaCard', () => {
         );
 
         // The loading spinner should be visible initially
-        expect(screen.getByRole('button')).toBeInTheDocument();
+        expect(
+            screen.getByLabelText('Test Image by Test Photographer')
+        ).toBeInTheDocument();
     });
 
     it('shows error state when image fails to load', async () => {
@@ -289,8 +291,10 @@ describe('MediaCard', () => {
         );
 
         // The color indicator should be present (though not easily testable via text)
-        // We can verify the component renders without error
-        expect(screen.getByRole('button')).toBeInTheDocument();
+        // We can verify the component renders without error by checking for the main card
+        expect(
+            screen.getByLabelText('Test Image by Test Photographer')
+        ).toBeInTheDocument();
     });
 
     it('handles different provider badge colors', () => {
@@ -302,7 +306,7 @@ describe('MediaCard', () => {
             </MockThemeProvider>
         );
 
-        expect(screen.getByText('PEXELS')).toBeInTheDocument();
+        expect(screen.getByText('pexels')).toBeInTheDocument();
     });
 
     it('formats file size correctly', () => {

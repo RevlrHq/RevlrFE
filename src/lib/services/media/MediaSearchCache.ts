@@ -295,4 +295,188 @@ export class MediaSearchCache {
 
         await Promise.allSettled(warmupPromises);
     }
+
+    /**
+     * Preload category-based searches
+     */
+    async preloadCategorySearches(
+        categoryQueries: Record<string, string[]>,
+        searchFunction: (
+            query: string,
+            category?: string
+        ) => Promise<MediaSearchResult>
+    ): Promise<void> {
+        const preloadPromises: Promise<void>[] = [];
+
+        Object.entries(categoryQueries).forEach(([category, queries]) => {
+            queries.forEach((query) => {
+                preloadPromises.push(
+                    (async () => {
+                        try {
+                            const cacheKey = `${query}_category_${category}`;
+                            if (!this.has(cacheKey)) {
+                                const result = await searchFunction(
+                                    query,
+                                    category
+                                );
+                                this.set(cacheKey, result);
+                            }
+                        } catch (error) {
+                            console.warn(
+                                `Failed to preload category search "${query}" for ${category}:`,
+                                error
+                            );
+                        }
+                    })()
+                );
+            });
+        });
+
+        await Promise.allSettled(preloadPromises);
+    }
+
+    /**
+     * Preload time-based searches
+     */
+    async preloadTimeBasedSearches(
+        timeQueries: Record<string, string[]>,
+        searchFunction: (query: string) => Promise<MediaSearchResult>
+    ): Promise<void> {
+        const currentHour = new Date().getHours();
+        const relevantTimeSlots = [
+            currentHour.toString(),
+            ((currentHour + 1) % 24).toString(),
+            ((currentHour + 2) % 24).toString(),
+        ];
+
+        const preloadPromises: Promise<void>[] = [];
+
+        relevantTimeSlots.forEach((timeSlot) => {
+            const queries = timeQueries[timeSlot] || [];
+            queries.forEach((query) => {
+                preloadPromises.push(
+                    (async () => {
+                        try {
+                            const cacheKey = `${query}_time_${timeSlot}`;
+                            if (!this.has(cacheKey)) {
+                                const result = await searchFunction(query);
+                                this.set(cacheKey, result);
+                            }
+                        } catch (error) {
+                            console.warn(
+                                `Failed to preload time-based search "${query}" for ${timeSlot}:`,
+                                error
+                            );
+                        }
+                    })()
+                );
+            });
+        });
+
+        await Promise.allSettled(preloadPromises);
+    }
+
+    /**
+     * Preload user-specific searches
+     */
+    async preloadUserSearches(
+        userQueries: Record<string, string[]>,
+        searchFunction: (
+            query: string,
+            userId?: string
+        ) => Promise<MediaSearchResult>
+    ): Promise<void> {
+        const preloadPromises: Promise<void>[] = [];
+
+        Object.entries(userQueries).forEach(([userId, queries]) => {
+            queries.slice(0, 5).forEach((query) => {
+                // Limit to top 5 per user
+                preloadPromises.push(
+                    (async () => {
+                        try {
+                            const cacheKey = `${query}_user_${userId}`;
+                            if (!this.has(cacheKey)) {
+                                const result = await searchFunction(
+                                    query,
+                                    userId
+                                );
+                                this.set(cacheKey, result);
+                            }
+                        } catch (error) {
+                            console.warn(
+                                `Failed to preload user search "${query}" for ${userId}:`,
+                                error
+                            );
+                        }
+                    })()
+                );
+            });
+        });
+
+        await Promise.allSettled(preloadPromises);
+    }
+
+    /**
+     * Get cache hit rate for analytics
+     */
+    getHitRate(): number {
+        const entries = Array.from(this.cache.values());
+        const totalAccesses = entries.reduce(
+            (sum, entry) => sum + entry.accessCount,
+            0
+        );
+        const totalEntries = entries.length;
+
+        return totalEntries > 0
+            ? totalAccesses / (totalAccesses + totalEntries)
+            : 0;
+    }
+
+    /**
+     * Get cache performance metrics
+     */
+    getPerformanceMetrics(): {
+        hitRate: number;
+        averageAccessCount: number;
+        mostAccessedQueries: Array<{ query: string; accessCount: number }>;
+        cacheEfficiency: number;
+        memoryUsage: number;
+    } {
+        const entries = Array.from(this.cache.values());
+        const totalAccesses = entries.reduce(
+            (sum, entry) => sum + entry.accessCount,
+            0
+        );
+        const averageAccessCount =
+            entries.length > 0 ? totalAccesses / entries.length : 0;
+
+        const mostAccessedQueries = entries
+            .filter((entry) => entry.accessCount > 0)
+            .sort((a, b) => b.accessCount - a.accessCount)
+            .slice(0, 10)
+            .map((entry) => ({
+                query: entry.query,
+                accessCount: entry.accessCount,
+            }));
+
+        // Calculate cache efficiency (entries with multiple accesses / total entries)
+        const multiAccessEntries = entries.filter(
+            (entry) => entry.accessCount > 1
+        ).length;
+        const cacheEfficiency =
+            entries.length > 0 ? multiAccessEntries / entries.length : 0;
+
+        // Estimate memory usage (rough calculation)
+        const memoryUsage = entries.reduce((sum, entry) => {
+            return sum + JSON.stringify(entry).length * 2; // Rough estimate in bytes
+        }, 0);
+
+        return {
+            hitRate: this.getHitRate(),
+            averageAccessCount: Math.round(averageAccessCount * 100) / 100,
+            mostAccessedQueries,
+            cacheEfficiency: Math.round(cacheEfficiency * 100) / 100,
+            memoryUsage,
+        };
+    }
 }

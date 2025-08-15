@@ -1,12 +1,111 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useUnsplashAuth, useUnsplashOAuthAvailable } from '@/hooks/useUnsplashAuth';
+import {
+    useUnsplashAuth,
+    useUnsplashOAuthAvailable,
+} from '@/hooks/useUnsplashAuth';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Camera, Heart, User, LogOut, ExternalLink } from 'lucide-react';
+import {
+    Loader2,
+    Camera,
+    Heart,
+    User,
+    LogOut,
+    ExternalLink,
+} from 'lucide-react';
+
+/**
+ * Component for displaying available scopes
+ */
+function ScopesDisplay({
+    getAvailableScopes,
+}: {
+    getAvailableScopes: () => Promise<string[]>;
+}) {
+    const [scopes, setScopes] = useState<string[]>([]);
+
+    useEffect(() => {
+        const loadScopes = async () => {
+            try {
+                const availableScopes = await getAvailableScopes();
+                setScopes(availableScopes);
+            } catch (error) {
+                console.error('Failed to load scopes:', error);
+                setScopes([]);
+            }
+        };
+
+        loadScopes();
+    }, [getAvailableScopes]);
+
+    return (
+        <div className='mb-3 flex flex-wrap gap-1'>
+            {scopes.map((scope) => (
+                <span
+                    key={scope}
+                    className='inline-flex items-center rounded-full border bg-gray-50 px-2 py-1 text-xs text-gray-700'
+                >
+                    {scope === 'read_user' && <User className='mr-1 h-3 w-3' />}
+                    {scope === 'write_likes' && (
+                        <Heart className='mr-1 h-3 w-3' />
+                    )}
+                    {scope}
+                </span>
+            ))}
+        </div>
+    );
+}
+
+/**
+ * Component for displaying authentication status with async scope checks
+ */
+function AuthStatusDisplay({
+    hasScope,
+    authState,
+}: {
+    hasScope: (scope: string) => Promise<boolean>;
+    authState: { user?: { name: string } };
+}) {
+    const [canLikePhotos, setCanLikePhotos] = useState(false);
+    const [canAccessCollections, setCanAccessCollections] = useState(false);
+
+    useEffect(() => {
+        const checkScopes = async () => {
+            try {
+                const [likesScope, collectionsScope] = await Promise.all([
+                    hasScope('write_likes'),
+                    hasScope('read_collections'),
+                ]);
+                setCanLikePhotos(likesScope);
+                setCanAccessCollections(collectionsScope);
+            } catch (error) {
+                console.error('Failed to check scopes:', error);
+                setCanLikePhotos(false);
+                setCanAccessCollections(false);
+            }
+        };
+
+        checkScopes();
+    }, [hasScope]);
+
+    return (
+        <AlertDescription>
+            Connected to Unsplash as <strong>{authState.user?.name}</strong>
+            {canLikePhotos && ' • Can like photos'}
+            {canAccessCollections && ' • Can access collections'}
+        </AlertDescription>
+    );
+}
 
 interface UnsplashAuthButtonProps {
     variant?: 'default' | 'outline' | 'ghost';
@@ -34,7 +133,6 @@ export function UnsplashAuthButton({
         login,
         logout,
         handleCallback,
-        hasScope,
         getAvailableScopes,
     } = useUnsplashAuth();
 
@@ -46,8 +144,12 @@ export function UnsplashAuthButton({
         const state = searchParams.get('unsplash_state');
 
         if (unsplashCallback === 'true') {
-            handleCallback(code || undefined, error || undefined, state || undefined);
-            
+            handleCallback(
+                code || undefined,
+                error || undefined,
+                state || undefined
+            );
+
             // Clean up URL parameters
             const url = new URL(window.location.href);
             url.searchParams.delete('unsplash_callback');
@@ -63,8 +165,8 @@ export function UnsplashAuthButton({
         return null;
     }
 
-    const handleLogin = () => {
-        login(['public', 'read_user', 'write_likes', 'read_collections']);
+    const handleLogin = async () => {
+        await login();
     };
 
     const handleLogout = async () => {
@@ -73,8 +175,13 @@ export function UnsplashAuthButton({
 
     if (isLoading) {
         return (
-            <Button variant={variant} size={size} disabled className={className}>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <Button
+                variant={variant}
+                size={size}
+                disabled
+                className={className}
+            >
+                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
                 Connecting...
             </Button>
         );
@@ -82,7 +189,7 @@ export function UnsplashAuthButton({
 
     if (error) {
         return (
-            <Alert className="max-w-md">
+            <Alert className='max-w-md'>
                 <AlertDescription>
                     <strong>Authentication Error:</strong> {error}
                 </AlertDescription>
@@ -93,55 +200,58 @@ export function UnsplashAuthButton({
     if (isAuthenticated && authState.user) {
         if (showUserInfo) {
             return (
-                <Card className="max-w-md">
-                    <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
+                <Card className='max-w-md'>
+                    <CardHeader className='pb-3'>
+                        <div className='flex items-center justify-between'>
+                            <div className='flex items-center space-x-3'>
                                 {authState.user.avatarUrl && (
                                     <img
                                         src={authState.user.avatarUrl}
                                         alt={authState.user.name}
-                                        className="w-10 h-10 rounded-full"
+                                        className='h-10 w-10 rounded-full'
                                     />
                                 )}
                                 <div>
-                                    <CardTitle className="text-sm font-medium">
+                                    <CardTitle className='text-sm font-medium'>
                                         {authState.user.name}
                                     </CardTitle>
-                                    <CardDescription className="text-xs">
+                                    <CardDescription className='text-xs'>
                                         @{authState.user.username}
                                     </CardDescription>
                                 </div>
                             </div>
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800">
-                                <Camera className="w-3 h-3 mr-1" />
+                            <span className='inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-800'>
+                                <Camera className='mr-1 h-3 w-3' />
                                 Unsplash
                             </span>
                         </div>
                     </CardHeader>
-                    <CardContent className="pt-0">
-                        <div className="flex flex-wrap gap-1 mb-3">
-                            {getAvailableScopes().map((scope) => (
-                                <span key={scope} className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-50 text-gray-700 border">
-                                    {scope === 'read_user' && <User className="w-3 h-3 mr-1" />}
-                                    {scope === 'write_likes' && <Heart className="w-3 h-3 mr-1" />}
-                                    {scope}
-                                </span>
-                            ))}
-                        </div>
-                        <div className="flex space-x-2">
+                    <CardContent className='pt-0'>
+                        <ScopesDisplay
+                            getAvailableScopes={getAvailableScopes}
+                        />
+                        <div className='flex space-x-2'>
                             {authState.user.profileUrl && (
                                 <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => window.open(authState.user?.profileUrl, '_blank')}
+                                    variant='outline'
+                                    size='sm'
+                                    onClick={() =>
+                                        window.open(
+                                            authState.user?.profileUrl,
+                                            '_blank'
+                                        )
+                                    }
                                 >
-                                    <ExternalLink className="w-3 h-3 mr-1" />
+                                    <ExternalLink className='mr-1 h-3 w-3' />
                                     Profile
                                 </Button>
                             )}
-                            <Button variant="outline" size="sm" onClick={handleLogout}>
-                                <LogOut className="w-3 h-3 mr-1" />
+                            <Button
+                                variant='outline'
+                                size='sm'
+                                onClick={handleLogout}
+                            >
+                                <LogOut className='mr-1 h-3 w-3' />
                                 Disconnect
                             </Button>
                         </div>
@@ -151,13 +261,13 @@ export function UnsplashAuthButton({
         }
 
         return (
-            <div className="flex items-center space-x-2">
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800">
-                    <Camera className="w-3 h-3 mr-1" />
+            <div className='flex items-center space-x-2'>
+                <span className='inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-800'>
+                    <Camera className='mr-1 h-3 w-3' />
                     Connected to Unsplash
                 </span>
-                <Button variant="outline" size="sm" onClick={handleLogout}>
-                    <LogOut className="w-3 h-3 mr-1" />
+                <Button variant='outline' size='sm' onClick={handleLogout}>
+                    <LogOut className='mr-1 h-3 w-3' />
                     Disconnect
                 </Button>
             </div>
@@ -171,7 +281,7 @@ export function UnsplashAuthButton({
             onClick={handleLogin}
             className={className}
         >
-            <Camera className="mr-2 h-4 w-4" />
+            <Camera className='mr-2 h-4 w-4' />
             Connect to Unsplash
         </Button>
     );
@@ -191,7 +301,11 @@ export function useUnsplashCallback() {
         const state = searchParams.get('unsplash_state');
 
         if (unsplashCallback === 'true') {
-            handleCallback(code || undefined, error || undefined, state || undefined);
+            handleCallback(
+                code || undefined,
+                error || undefined,
+                state || undefined
+            );
         }
     }, [searchParams, handleCallback]);
 }
@@ -207,7 +321,8 @@ export function UnsplashAuthStatus() {
         return (
             <Alert>
                 <AlertDescription>
-                    Unsplash OAuth is not configured. Please check your environment variables.
+                    Unsplash OAuth is not configured. Please check your
+                    environment variables.
                 </AlertDescription>
             </Alert>
         );
@@ -225,12 +340,8 @@ export function UnsplashAuthStatus() {
 
     return (
         <Alert>
-            <Camera className="h-4 w-4" />
-            <AlertDescription>
-                Connected to Unsplash as <strong>{authState.user?.name}</strong>
-                {hasScope('write_likes') && ' • Can like photos'}
-                {hasScope('read_collections') && ' • Can access collections'}
-            </AlertDescription>
+            <Camera className='h-4 w-4' />
+            <AuthStatusDisplay hasScope={hasScope} authState={authState} />
         </Alert>
     );
 }

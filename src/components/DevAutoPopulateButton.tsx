@@ -2,11 +2,7 @@
 
 import { useState } from 'react';
 import { useTheme } from '@src/lib/ThemeContext';
-import type {
-    EventCreationData,
-    EventTicket,
-    EventImage,
-} from '@src/types/event-creation';
+import type { EventCreationData, EventTicket } from '@src/types/event-creation';
 
 interface DevAutoPopulateButtonProps {
     onPopulateEvent: (eventData: EventCreationData) => void;
@@ -393,7 +389,7 @@ const DevAutoPopulateButton = ({
                 feeOptions[Math.floor(Math.random() * feeOptions.length)];
 
             // Generate price based on ticket type
-            let basePrice = isVIP ? 150 : 50;
+            const basePrice = isVIP ? 150 : 50;
             const priceVariation = Math.floor(Math.random() * 100) + 1; // 1-100
             const price = basePrice + priceVariation;
 

@@ -34,7 +34,12 @@ import {
 import { MobileFormLayout } from '@src/components/MobileFormLayout';
 import { AnnouncementRegion } from '@src/components/AnnouncementRegion';
 import DevAutoPopulateButton from '@src/components/DevAutoPopulateButton';
-import type { EventImage, EventCreationStep } from '@src/types/event-creation';
+import type {
+    EventImage,
+    EventCreationStep,
+    EventTicket,
+    EventCreationData,
+} from '@src/types/event-creation';
 import EventModal from './components/EventModal';
 
 const CreateEvent = () => {
@@ -296,12 +301,14 @@ const CreateEvent = () => {
     };
 
     // Auto-populate handlers for development
-    const handleAutoPopulateEvent = (sampleEventData: any) => {
+    const handleAutoPopulateEvent = (
+        sampleEventData: Partial<EventCreationData>
+    ) => {
         updateEventData(sampleEventData);
         announce('Form auto-populated with sample data');
     };
 
-    const handleAutoPopulateTickets = async (sampleTickets: any[]) => {
+    const handleAutoPopulateTickets = async (sampleTickets: EventTicket[]) => {
         // Clear existing tickets first
         for (const ticket of tickets) {
             if (ticket.id) {
@@ -311,7 +318,7 @@ const CreateEvent = () => {
 
         // Add sample tickets
         for (const ticket of sampleTickets) {
-            const { id, ...ticketWithoutId } = ticket;
+            const { ...ticketWithoutId } = ticket;
             await addTicket(ticketWithoutId);
         }
     };

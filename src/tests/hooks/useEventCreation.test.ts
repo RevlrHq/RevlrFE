@@ -14,9 +14,13 @@ jest.mock('../../lib/services/EventCreationService');
 jest.mock('../../lib/services/DraftBackupService');
 jest.mock('../../lib/services/MonitoringService', () => ({
     monitoring: {
-        getInstance: jest.fn(() => ({ sessionId: 'test-session' })),
         recordError: jest.fn(),
         recordUserBehavior: jest.fn(),
+    },
+    MonitoringService: {
+        getInstance: jest.fn(() => ({
+            exportData: jest.fn(() => ({ sessionId: 'test-session' })),
+        })),
     },
 }));
 
@@ -284,12 +288,12 @@ describe('useEventCreation Hook', () => {
                 });
             });
 
-            let response: EventCreationResponse;
+            let response: EventCreationResponse | undefined;
             await act(async () => {
                 response = await result.current.saveDraft();
             });
 
-            expect(response.success).toBe(true);
+            expect(response!.success).toBe(true);
             expect(mockEventCreationService.saveDraft).toHaveBeenCalledWith(
                 expect.objectContaining({
                     eventName: 'Test Event',
@@ -312,12 +316,12 @@ describe('useEventCreation Hook', () => {
                 result.current.updateEventData({ eventName: 'Test Event' });
             });
 
-            let response: EventCreationResponse;
+            let response: EventCreationResponse | undefined;
             await act(async () => {
                 response = await result.current.saveDraft();
             });
 
-            expect(response.success).toBe(false);
+            expect(response!.success).toBe(false);
             expect(result.current.errors.general).toBe('Network error');
             // When the service returns success: false, it doesn't trigger backup
             // The backup is only triggered on network errors (exceptions)
@@ -425,12 +429,12 @@ describe('useEventCreation Hook', () => {
                 });
             });
 
-            let response: EventCreationResponse;
+            let response: EventCreationResponse | undefined;
             await act(async () => {
                 response = await result.current.publishEvent();
             });
 
-            expect(response.success).toBe(true);
+            expect(response!.success).toBe(true);
             expect(mockEventCreationService.publishEvent).toHaveBeenCalledWith(
                 'test-event-id'
             );
@@ -449,13 +453,13 @@ describe('useEventCreation Hook', () => {
                 });
             });
 
-            let response: EventCreationResponse;
+            let response: EventCreationResponse | undefined;
             await act(async () => {
                 response = await result.current.publishEvent();
             });
 
-            expect(response.success).toBe(false);
-            expect(response.message).toContain('Validation failed');
+            expect(response!.success).toBe(false);
+            expect(response!.message).toContain('Validation failed');
             expect(
                 mockEventCreationService.publishEvent
             ).not.toHaveBeenCalled();

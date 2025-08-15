@@ -9,6 +9,10 @@ import {
 } from '@/types/media-search';
 import { MediaProvider } from './MediaProvider';
 import { MediaSearchCache } from './MediaSearchCache';
+import { MediaProviderFactory } from './MediaProviderFactory';
+import { ErrorHandlingService, ErrorContext } from './ErrorHandlingService';
+import { ErrorLoggingService } from './ErrorLoggingService';
+import { ErrorNotificationService } from './ErrorNotificationService';
 
 export interface ErrorRecoveryAction {
     action: 'disable_temporarily' | 'retry_with_backoff' | 'show_error';
@@ -18,34 +22,66 @@ export interface ErrorRecoveryAction {
 }
 
 export class MediaSearchService {
-    private providers: Map<string, MediaProvider> = new Map();
     private cache: MediaSearchCache;
+    private providerFactory: MediaProviderFactory;
+    private errorHandler: ErrorHandlingService;
+    private logger: ErrorLoggingService;
+    private notificationService: ErrorNotificationService;
     private disabledProviders: Map<string, { until: number; reason: string }> =
         new Map();
 
-    constructor(cacheSize: number = 1000, cacheExpiryMinutes: number = 30) {
+    constructor(
+        cacheSize: number = 1000,
+        cacheExpiryMinutes: number = 30,
+        enableErrorHandling: boolean = true
+    ) {
         this.cache = new MediaSearchCache(cacheSize, cacheExpiryMinutes);
+        this.providerFactory = MediaProviderFactory.getInstance();
+
+        if (enableErrorHandling) {
+            this.errorHandler = new ErrorHandlingService();
+            this.logger = new ErrorLoggingService();
+            this.notificationService = new ErrorNotificationService();
+        }
     }
 
     /**
-     * Register a media provider
+     * Check if the service is ready for searches
      */
-    registerProvider(provider: MediaProvider): void {
-        this.providers.set(provider.id, provider);
+    isReady(): boolean {
+        return (
+            this.providerFactory.isFactoryInitialized() &&
+            this.getHealthyProviders().length > 0
+        );
     }
 
     /**
-     * Unregister a media provider
+     * Get readiness error message if service is not ready
      */
-    unregisterProvider(providerId: string): boolean {
-        return this.providers.delete(providerId);
+    getReadinessError(): string | null {
+        if (!this.providerFactory.isFactoryInitialized()) {
+            return 'Media provider factory is not initialized';
+        }
+
+        if (this.getHealthyProviders().length === 0) {
+            const errors = this.providerFactory.getInitializationErrors();
+            if (errors.length > 0) {
+                return `No healthy providers available. Errors: ${errors.map((e) => `${e.providerId}: ${e.error}`).join(', ')}`;
+            }
+            return 'No healthy providers available for search';
+        }
+
+        return null;
     }
 
     /**
      * Get all registered providers
      */
     getAvailableProviders(): MediaProvider[] {
-        return Array.from(this.providers.values());
+        if (!this.providerFactory.isFactoryInitialized()) {
+            return [];
+        }
+        return this.providerFactory.getAllProviders();
     }
 
     /**
@@ -54,8 +90,8 @@ export class MediaSearchService {
     getHealthyProviders(): MediaProvider[] {
         const now = Date.now();
 
-        return Array.from(this.providers.values()).filter((provider) => {
-            // Check if provider is temporarily disabled
+        return this.providerFactory.getHealthyProviders().filter((provider) => {
+            // Check if provider is temporarily disabled by service
             const disabled = this.disabledProviders.get(provider.id);
             if (disabled && disabled.until > now) {
                 return false;
@@ -66,7 +102,7 @@ export class MediaSearchService {
                 this.disabledProviders.delete(provider.id);
             }
 
-            return provider.isHealthy();
+            return true;
         });
     }
 
@@ -74,7 +110,7 @@ export class MediaSearchService {
      * Get provider status
      */
     getProviderStatus(providerId: string): ProviderStatus | null {
-        const provider = this.providers.get(providerId);
+        const provider = this.providerFactory.getProvider(providerId);
         if (!provider) {
             return null;
         }
@@ -99,6 +135,12 @@ export class MediaSearchService {
      * Search for media across all healthy providers
      */
     async searchMedia(query: MediaSearchQuery): Promise<MediaSearchResult> {
+        // Check if service is ready
+        if (!this.isReady()) {
+            const error = this.getReadinessError();
+            throw new Error(error || 'Media search service is not ready');
+        }
+
         // Check cache first
         const cachedResult = this.cache.get(
             query.query,
@@ -113,7 +155,10 @@ export class MediaSearchService {
         const providersToSearch = this.getProvidersForQuery(query);
 
         if (providersToSearch.length === 0) {
-            throw new Error('No healthy providers available for search');
+            const error = this.getReadinessError();
+            throw new Error(
+                error || 'No healthy providers available for search'
+            );
         }
 
         // Search providers in parallel
@@ -131,6 +176,12 @@ export class MediaSearchService {
      * Get popular media from providers
      */
     async getPopularMedia(category?: string): Promise<MediaSearchResult> {
+        // Check if service is ready
+        if (!this.isReady()) {
+            const error = this.getReadinessError();
+            throw new Error(error || 'Media search service is not ready');
+        }
+
         const cacheKey = `popular_${category || 'all'}`;
         const cachedResult = this.cache.get(cacheKey);
 
@@ -141,7 +192,8 @@ export class MediaSearchService {
         const healthyProviders = this.getHealthyProviders();
 
         if (healthyProviders.length === 0) {
-            throw new Error('No healthy providers available');
+            const error = this.getReadinessError();
+            throw new Error(error || 'No healthy providers available');
         }
 
         const providerPromises = healthyProviders.map(async (provider) => {
@@ -328,19 +380,37 @@ export class MediaSearchService {
     }
 
     /**
-     * Sort items by relevance
+     * Sort items by relevance using provider health scores
      */
     private sortItemsByRelevance(items: MediaItem[]): MediaItem[] {
+        const providerHealthScores =
+            this.providerFactory.getProvidersByHealthScore();
+        const healthScoreMap = new Map(
+            providerHealthScores.map(({ provider, score }) => [
+                provider.id,
+                score,
+            ])
+        );
+
         return items.sort((a, b) => {
             // Prioritize higher resolution images
             const aPixels = a.width * a.height;
             const bPixels = b.width * b.height;
 
-            if (aPixels !== bPixels) {
+            if (Math.abs(aPixels - bPixels) > 100000) {
+                // Significant resolution difference
                 return bPixels - aPixels;
             }
 
-            // Then by provider preference (could be configurable)
+            // Then by provider health score
+            const aHealthScore = healthScoreMap.get(a.providerId) || 0;
+            const bHealthScore = healthScoreMap.get(b.providerId) || 0;
+
+            if (aHealthScore !== bHealthScore) {
+                return bHealthScore - aHealthScore;
+            }
+
+            // Finally by provider preference (fallback)
             const providerPriority = { unsplash: 3, pexels: 2, pixabay: 1 };
             const aPriority =
                 providerPriority[
@@ -461,14 +531,33 @@ export class MediaSearchService {
         healthyProviders: number;
         disabledProviders: number;
         cacheStats: any;
+        providerMetrics: any[];
+        failoverRecommendations: any;
     } {
         this.cleanupDisabledProviders();
 
         return {
-            totalProviders: this.providers.size,
+            totalProviders: this.providerFactory.getAllProviders().length,
             healthyProviders: this.getHealthyProviders().length,
             disabledProviders: this.disabledProviders.size,
             cacheStats: this.cache.getStats(),
+            providerMetrics: this.providerFactory.getAllProviderHealthMetrics(),
+            failoverRecommendations:
+                this.providerFactory.getFailoverRecommendations(),
         };
+    }
+
+    /**
+     * Get provider factory instance
+     */
+    getProviderFactory(): MediaProviderFactory {
+        return this.providerFactory;
+    }
+
+    /**
+     * Perform health check on all providers
+     */
+    async performHealthCheck() {
+        return this.providerFactory.performHealthCheck();
     }
 }

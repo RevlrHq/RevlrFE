@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useTheme } from '@/lib/ThemeContext';
 import { MediaItem } from '@/types/media-search';
-import { Eye, Plus, Check, Download, Info, Heart } from 'lucide-react';
+import { Eye, Plus, Check, Info } from 'lucide-react';
 
 interface MediaCardProps {
     item: MediaItem;
@@ -22,7 +22,6 @@ export const MediaCard: React.FC<MediaCardProps> = ({
     onSelect,
     onPreview,
     disabled = false,
-    index = 0,
     className = '',
     'aria-label': ariaLabel,
 }) => {
@@ -145,7 +144,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
                 `${item.title} by ${item.photographer?.name || 'Unknown'}`
             }
             onKeyDown={handleKeyDown}
-            onClick={disabled ? undefined : onSelect}
+            onClick={disabled ? undefined : onPreview}
         >
             {/* Image Container */}
             <div className='relative size-full'>

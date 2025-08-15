@@ -50,10 +50,7 @@ export const EnhancedMediaSearchModal: React.FC<
 
     // Media search hook
     const { state, actions } = useMediaSearch({
-        eventCategory,
         maxSelectedItems: maxImages - existingImages.length,
-        enableAutoSuggestions: true,
-        preloadPopular: true,
     });
 
     // Search history hook
@@ -80,7 +77,7 @@ export const EnhancedMediaSearchModal: React.FC<
     // Handle query change
     const handleQueryChange = useCallback(
         (query: string) => {
-            if (state.setQuery) {
+            if ('setQuery' in state && typeof state.setQuery === 'function') {
                 state.setQuery(query);
             }
         },
@@ -482,7 +479,6 @@ export const EnhancedMediaSearchModal: React.FC<
                                             onPreview={() =>
                                                 actions.previewItem(item)
                                             }
-                                            theme={theme}
                                             disabled={isProcessing}
                                         />
                                     );
@@ -641,7 +637,6 @@ export const EnhancedMediaSearchModal: React.FC<
                                 selected.providerId ===
                                     state.previewItem!.providerId
                         )}
-                        theme={theme}
                         disabled={isProcessing}
                     />
                 )}
@@ -656,7 +651,6 @@ interface MediaCardProps {
     isSelected: boolean;
     onSelect: () => void;
     onPreview: () => void;
-    theme: 'light' | 'dark';
     disabled?: boolean;
 }
 
@@ -665,7 +659,6 @@ const MediaCard: React.FC<MediaCardProps> = ({
     isSelected,
     onSelect,
     onPreview,
-    theme,
     disabled = false,
 }) => {
     return (
@@ -761,7 +754,6 @@ interface MediaPreviewModalProps {
     onClose: () => void;
     onSelect: () => void;
     isSelected: boolean;
-    theme: 'light' | 'dark';
     disabled?: boolean;
 }
 
@@ -770,7 +762,6 @@ const MediaPreviewModal: React.FC<MediaPreviewModalProps> = ({
     onClose,
     onSelect,
     isSelected,
-    // theme, // Not currently used in this simple implementation
     disabled = false,
 }) => {
     return (

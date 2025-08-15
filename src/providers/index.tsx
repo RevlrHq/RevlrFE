@@ -3,15 +3,21 @@ import { CSPostHogProvider } from './PostHugProvider';
 import { SignalRProvider } from './SignalRProvider';
 import { ThemeProvider } from '../lib/ThemeContext';
 import { VendorAuthProvider } from './VendorAuthProvider';
+import { MediaProviderInitializationProvider } from './MediaProviderInitializationProvider';
+import { AuthProvider } from './AuthProvider';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     return (
         <ThemeProvider>
-            <CSPostHogProvider>
-                <VendorAuthProvider>
-                    <SignalRProvider>{children}</SignalRProvider>
-                </VendorAuthProvider>
-            </CSPostHogProvider>
+            <AuthProvider>
+                <CSPostHogProvider>
+                    <VendorAuthProvider>
+                        <MediaProviderInitializationProvider>
+                            <SignalRProvider>{children}</SignalRProvider>
+                        </MediaProviderInitializationProvider>
+                    </VendorAuthProvider>
+                </CSPostHogProvider>
+            </AuthProvider>
         </ThemeProvider>
     );
 }

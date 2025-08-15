@@ -3,18 +3,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '@src/lib/ThemeContext';
 import { useMediaSearch } from '@src/hooks/useMediaSearch';
-import type { MediaItem, MediaFilters } from '@src/types/media-search';
+import { useMediaSearchAnalytics } from '@src/hooks/useMediaSearchAnalytics';
+import type { MediaItem } from '@src/types/media-search';
 import type { EventImage } from '@src/types/event-creation';
-import {
-    X,
-    Search,
-    Filter,
-    Eye,
-    Plus,
-    Check,
-    Download,
-    AlertCircle,
-} from 'lucide-react';
+import { X, Search, Filter, Download, BarChart3 } from 'lucide-react';
+import PerformanceDashboard from './media-search/PerformanceDashboard';
+import MediaSearchErrorDisplay from './media-search/MediaSearchErrorDisplay';
+import ProviderStatusPanel from './media-search/ProviderStatusPanel';
+import MediaSearchFallback from './media-search/MediaSearchFallback';
+import { MediaCard } from './media-search/MediaCard';
+import { MediaPreviewModal } from './media-search/MediaPreviewModal';
 
 interface MediaSearchModalProps {
     isOpen: boolean;
@@ -40,12 +38,19 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
     const [showFilters, setShowFilters] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [processingProgress, setProcessingProgress] = useState(0);
+    const [showPerformanceDashboard, setShowPerformanceDashboard] =
+        useState(false);
+    const [modalOpenTime] = useState(Date.now());
+
+    // Initialize analytics
+    const analytics = useMediaSearchAnalytics({
+        eventCategory,
+        enablePerformanceTracking: true,
+        enableABTesting: true,
+    });
 
     const { state, actions } = useMediaSearch({
-        eventCategory: eventCategory as any,
         maxSelectedItems: maxImages - existingImages.length,
-        enableAutoSuggestions: true,
-        preloadPopular: true,
     });
 
     // Handle search input changes
@@ -53,7 +58,7 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
         (e: React.ChangeEvent<HTMLInputElement>) => {
             const query = e.target.value;
             setSearchQuery(query);
-            if (state.setQuery) {
+            if ('setQuery' in state && typeof state.setQuery === 'function') {
                 state.setQuery(query);
             }
         },
@@ -65,10 +70,40 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
         (e: React.FormEvent) => {
             e.preventDefault();
             if (searchQuery.trim()) {
-                actions.search(searchQuery.trim());
+                const searchStartTime = Date.now();
+
+                // Track search initiation
+                analytics.trackSearch(
+                    searchQuery.trim(),
+                    state.filters,
+                    state.activeProviders
+                );
+
+                actions
+                    .search(searchQuery.trim())
+                    .then(() => {
+                        const searchEndTime = Date.now();
+                        const responseTime = searchEndTime - searchStartTime;
+
+                        // Track successful search
+                        analytics.trackSearchResults(
+                            searchQuery.trim(),
+                            state.results?.items.length || 0,
+                            responseTime,
+                            state.activeProviders || []
+                        );
+                    })
+                    .catch((error) => {
+                        // Track search error
+                        analytics.trackSearchError(
+                            searchQuery.trim(),
+                            error.message || 'Unknown error',
+                            state.activeProviders || []
+                        );
+                    });
             }
         },
-        [searchQuery, actions]
+        [searchQuery, actions, analytics, state.filters, state.activeProviders]
     );
 
     // Handle suggestion selection
@@ -76,16 +111,46 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
         (suggestion: string) => {
             setSearchQuery(suggestion);
             actions.applySuggestion(suggestion);
+
+            // Track suggestion usage
+            analytics.trackInteraction(
+                'search_suggestions',
+                'suggestion_clicked',
+                {
+                    suggestion,
+                    eventCategory,
+                }
+            );
         },
-        [actions]
+        [actions, analytics, eventCategory]
     );
 
     // Handle media selection
     const handleMediaSelect = useCallback(
         (item: MediaItem) => {
+            const wasSelected = state.selectedItems.some(
+                (selected) =>
+                    selected.id === item.id &&
+                    selected.providerId === item.providerId
+            );
+
             actions.toggleItemSelection(item);
+
+            // Track selection/deselection
+            const position =
+                state.results?.items.findIndex(
+                    (resultItem) =>
+                        resultItem.id === item.id &&
+                        resultItem.providerId === item.providerId
+                ) ?? -1;
+
+            if (wasSelected) {
+                analytics.trackMediaDeselection(item, searchQuery);
+            } else {
+                analytics.trackMediaSelection(item, searchQuery, position);
+            }
         },
-        [actions]
+        [actions, analytics, searchQuery, state.selectedItems, state.results]
     );
 
     // Handle using selected media
@@ -95,18 +160,36 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
         setIsProcessing(true);
         setProcessingProgress(0);
 
+        const downloadStartTime = Date.now();
+
         try {
+            // Track download initiation
+            analytics.trackMediaDownload(state.selectedItems, searchQuery);
+
             // Mock processing - in real implementation, this would download and process images
             const processedImages: EventImage[] = [];
 
             for (let i = 0; i < state.selectedItems.length; i++) {
                 const item = state.selectedItems[i];
+                const itemStartTime = Date.now();
+
                 setProcessingProgress(
                     ((i + 1) / state.selectedItems.length) * 100
                 );
 
                 // Simulate processing delay
                 await new Promise((resolve) => setTimeout(resolve, 500));
+
+                const itemEndTime = Date.now();
+                const processingTime = itemEndTime - itemStartTime;
+
+                // Track individual item processing performance
+                analytics.trackPerformanceMetric(
+                    'image_processing_time',
+                    processingTime,
+                    'ms',
+                    { mediaId: item.id, providerId: item.providerId }
+                );
 
                 // Create EventImage from MediaItem
                 const eventImage: EventImage = {
@@ -118,7 +201,7 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
                     mimeType: 'image/jpeg', // Default, would be determined during actual processing
                     order: existingImages.length + i,
                     // Extended properties for external media
-                    source: 'external' as any,
+                    source: 'external' as const,
                     providerId: item.providerId,
                     originalId: item.id,
                     attribution: item.attribution,
@@ -131,16 +214,49 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
                 processedImages.push(eventImage);
             }
 
+            const downloadEndTime = Date.now();
+            const totalDownloadTime = downloadEndTime - downloadStartTime;
+
+            // Track overall download performance
+            analytics.trackPerformanceMetric(
+                'download_speed',
+                state.selectedItems.length / (totalDownloadTime / 1000),
+                'items_per_second',
+                { itemCount: state.selectedItems.length }
+            );
+
+            // Track conversion for A/B testing
+            analytics.trackConversion(
+                'media_search_layout',
+                'media_downloaded',
+                {
+                    itemCount: state.selectedItems.length,
+                    totalTime: totalDownloadTime,
+                }
+            );
+
             onSelectMedia(processedImages);
             onClose();
         } catch (error) {
             console.error('Failed to process selected media:', error);
-            // Handle error - show toast or error message
+
+            // Track error
+            analytics.trackInteraction('media_download', 'download_error', {
+                error: error instanceof Error ? error.message : 'Unknown error',
+                itemCount: state.selectedItems.length,
+            });
         } finally {
             setIsProcessing(false);
             setProcessingProgress(0);
         }
-    }, [state.selectedItems, existingImages.length, onSelectMedia, onClose]);
+    }, [
+        state.selectedItems,
+        existingImages.length,
+        onSelectMedia,
+        onClose,
+        analytics,
+        searchQuery,
+    ]);
 
     // Handle keyboard navigation
     useEffect(() => {
@@ -165,18 +281,29 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [isOpen, isProcessing, onClose, handleUseSelectedMedia]);
 
-    // Prevent body scroll when modal is open
+    // Track modal open/close and prevent body scroll
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
+
+            // Track modal open
+            analytics.trackModalOpen();
+
+            // Track page load performance
+            const loadTime = Date.now() - modalOpenTime;
+            analytics.trackPageLoad(loadTime);
         } else {
             document.body.style.overflow = 'unset';
+
+            // Track modal close with session duration
+            const sessionDuration = Date.now() - modalOpenTime;
+            analytics.trackModalClose(sessionDuration);
         }
 
         return () => {
             document.body.style.overflow = 'unset';
         };
-    }, [isOpen]);
+    }, [isOpen, analytics, modalOpenTime]);
 
     if (!isOpen) return null;
 
@@ -265,21 +392,50 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
                                 disabled={isProcessing}
                                 aria-label='Search for images'
                             />
-                            <button
-                                type='button'
-                                onClick={() => setShowFilters(!showFilters)}
-                                className={`absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 transition-colors ${
-                                    showFilters
-                                        ? 'bg-revlr-primary-blue text-white'
-                                        : theme === 'dark'
-                                          ? 'text-gray-400 hover:bg-revlr-dark-card hover:text-white'
-                                          : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
-                                }`}
-                                disabled={isProcessing}
-                                aria-label='Toggle filters'
-                            >
-                                <Filter className='size-4' />
-                            </button>
+                            <div className='absolute right-3 top-1/2 flex -translate-y-1/2 space-x-1'>
+                                <button
+                                    type='button'
+                                    onClick={() => {
+                                        setShowFilters(!showFilters);
+                                        if (!showFilters) {
+                                            analytics.trackInteraction(
+                                                'media_search_layout',
+                                                'filters_opened'
+                                            );
+                                        }
+                                    }}
+                                    className={`rounded-lg p-1 transition-colors ${
+                                        showFilters
+                                            ? 'bg-revlr-primary-blue text-white'
+                                            : theme === 'dark'
+                                              ? 'text-gray-400 hover:bg-revlr-dark-card hover:text-white'
+                                              : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                                    }`}
+                                    disabled={isProcessing}
+                                    aria-label='Toggle filters'
+                                >
+                                    <Filter className='size-4' />
+                                </button>
+
+                                {process.env.NODE_ENV === 'development' && (
+                                    <button
+                                        type='button'
+                                        onClick={() =>
+                                            setShowPerformanceDashboard(true)
+                                        }
+                                        className={`rounded-lg p-1 transition-colors ${
+                                            theme === 'dark'
+                                                ? 'text-gray-400 hover:bg-revlr-dark-card hover:text-white'
+                                                : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                                        }`}
+                                        disabled={isProcessing}
+                                        aria-label='Show performance dashboard'
+                                        title='Performance Dashboard (Dev Only)'
+                                    >
+                                        <BarChart3 className='size-4' />
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                         {/* Search Suggestions */}
@@ -338,19 +494,108 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
                         )}
 
                         {state.error && (
-                            <div className='flex h-64 items-center justify-center'>
-                                <div className='text-center'>
-                                    <AlertCircle className='mx-auto mb-4 size-8 text-red-500' />
-                                    <p
-                                        className={`font-inter text-sm ${
-                                            theme === 'dark'
-                                                ? 'text-gray-400'
-                                                : 'text-gray-600'
-                                        }`}
-                                    >
-                                        {state.error}
-                                    </p>
-                                </div>
+                            <div className='space-y-4'>
+                                <MediaSearchErrorDisplay
+                                    error={state.error}
+                                    providerErrors={state.providerErrors}
+                                    isInitializing={state.isInitializing}
+                                    isInitialized={state.isInitialized}
+                                    initializationError={
+                                        state.initializationError
+                                    }
+                                    availableProviders={
+                                        state.activeProviders.length
+                                    }
+                                    totalProviders={
+                                        state.availableProviders.length
+                                    }
+                                    onRetry={() => {
+                                        if (actions.retryInitialization) {
+                                            actions.retryInitialization();
+                                        } else if (searchQuery.trim()) {
+                                            actions.search(searchQuery.trim());
+                                        }
+                                    }}
+                                />
+
+                                {/* Show fallback options if no providers are available */}
+                                {state.activeProviders.length === 0 && (
+                                    <MediaSearchFallback
+                                        reason={
+                                            state.initializationError
+                                                ? 'initialization_failed'
+                                                : state.error.includes(
+                                                        'network'
+                                                    )
+                                                  ? 'network_error'
+                                                  : state.error.includes(
+                                                          'rate limit'
+                                                      )
+                                                    ? 'rate_limited'
+                                                    : state.error.includes(
+                                                            'configuration'
+                                                        )
+                                                      ? 'configuration_error'
+                                                      : 'no_providers'
+                                        }
+                                        availableProviders={
+                                            state.activeProviders.length
+                                        }
+                                        totalProviders={
+                                            state.availableProviders.length
+                                        }
+                                        onRetry={() => {
+                                            if (actions.retryInitialization) {
+                                                actions.retryInitialization();
+                                            }
+                                        }}
+                                        onUpload={() => {
+                                            // This would trigger the image upload component
+                                            console.log(
+                                                'Upload fallback triggered'
+                                            );
+                                        }}
+                                        onBrowseLocal={() => {
+                                            // This would open a file browser
+                                            const input =
+                                                document.createElement('input');
+                                            input.type = 'file';
+                                            input.accept = 'image/*';
+                                            input.multiple = true;
+                                            input.onchange = (e) => {
+                                                const files = (
+                                                    e.target as HTMLInputElement
+                                                ).files;
+                                                if (files) {
+                                                    console.log(
+                                                        'Local files selected:',
+                                                        files
+                                                    );
+                                                    // Handle file selection
+                                                }
+                                            };
+                                            input.click();
+                                        }}
+                                        onUsePlaceholder={() => {
+                                            // This would add placeholder images
+                                            const placeholderImages: EventImage[] =
+                                                [
+                                                    {
+                                                        id: 'placeholder-1',
+                                                        url: '/assets/images/event-image.png',
+                                                        cdnUrl: '/assets/images/event-image.png',
+                                                        name: 'Placeholder Image',
+                                                        size: 0,
+                                                        mimeType: 'image/png',
+                                                        order: 0,
+                                                        source: 'external' as const,
+                                                    },
+                                                ];
+                                            onSelectMedia(placeholderImages);
+                                            onClose();
+                                        }}
+                                    />
+                                )}
                             </div>
                         )}
 
@@ -372,10 +617,22 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
                                             onSelect={() =>
                                                 handleMediaSelect(item)
                                             }
-                                            onPreview={() =>
-                                                actions.previewItem(item)
-                                            }
-                                            theme={theme}
+                                            onPreview={() => {
+                                                const position =
+                                                    state.results?.items.findIndex(
+                                                        (resultItem) =>
+                                                            resultItem.id ===
+                                                                item.id &&
+                                                            resultItem.providerId ===
+                                                                item.providerId
+                                                    ) ?? -1;
+                                                analytics.trackMediaPreview(
+                                                    item,
+                                                    searchQuery,
+                                                    position
+                                                );
+                                                actions.previewItem(item);
+                                            }}
                                             disabled={isProcessing}
                                         />
                                     );
@@ -520,6 +777,94 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
                             </div>
                         </div>
                     )}
+
+                    {/* Provider Status Sidebar - Show when no items selected or as additional info */}
+                    {(state.selectedItems.length === 0 ||
+                        state.availableProviders.length > 0) && (
+                        <div
+                            className={`w-80 overflow-y-auto border-l ${
+                                theme === 'dark'
+                                    ? 'border-revlr-dark-border bg-revlr-dark-card'
+                                    : 'border-gray-200 bg-gray-50'
+                            }`}
+                        >
+                            <div className='space-y-4 p-6'>
+                                {/* Provider Status Panel */}
+                                <ProviderStatusPanel
+                                    providers={state.availableProviders}
+                                    activeProviders={state.activeProviders}
+                                    onToggleProvider={actions.toggleProvider}
+                                    onRetryProvider={(providerId) => {
+                                        // Retry specific provider
+                                        console.log(
+                                            'Retrying provider:',
+                                            providerId
+                                        );
+                                        if (actions.retryInitialization) {
+                                            actions.retryInitialization();
+                                        }
+                                    }}
+                                    compact={state.selectedItems.length > 0}
+                                    showInactive={true}
+                                />
+
+                                {/* Search Tips */}
+                                {!state.results &&
+                                    !state.error &&
+                                    !state.isLoading && (
+                                        <div
+                                            className={`rounded-lg p-4 ${theme === 'dark' ? 'bg-gray-700/50' : 'bg-gray-100'}`}
+                                        >
+                                            <h4
+                                                className={`mb-2 text-sm font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}
+                                            >
+                                                Search Tips
+                                            </h4>
+                                            <ul
+                                                className={`space-y-1 text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
+                                            >
+                                                <li>
+                                                    • Use specific keywords for
+                                                    better results
+                                                </li>
+                                                <li>
+                                                    • Try different search terms
+                                                    if no results
+                                                </li>
+                                                <li>
+                                                    • Use filters to narrow down
+                                                    results
+                                                </li>
+                                                <li>
+                                                    • Check provider status if
+                                                    search fails
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                {/* Attribution Info */}
+                                {state.selectedItems.length > 0 && (
+                                    <div
+                                        className={`rounded-lg p-4 ${theme === 'dark' ? 'bg-gray-700/50' : 'bg-gray-100'}`}
+                                    >
+                                        <h4
+                                            className={`mb-2 text-sm font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}
+                                        >
+                                            Attribution Required
+                                        </h4>
+                                        <p
+                                            className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
+                                        >
+                                            Some selected images may require
+                                            attribution. Check individual image
+                                            licenses for requirements.
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Preview Modal */}
@@ -534,244 +879,18 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
                                 selected.providerId ===
                                     state.previewItem!.providerId
                         )}
-                        theme={theme}
                         disabled={isProcessing}
+                        maxSelections={maxImages}
+                        currentSelectionCount={state.selectedItems.length}
                     />
                 )}
             </div>
-        </div>
-    );
-};
 
-// Media Card Component
-interface MediaCardProps {
-    item: MediaItem;
-    isSelected: boolean;
-    onSelect: () => void;
-    onPreview: () => void;
-    theme: 'light' | 'dark';
-    disabled?: boolean;
-}
-
-const MediaCard: React.FC<MediaCardProps> = ({
-    item,
-    isSelected,
-    onSelect,
-    onPreview,
-    theme,
-    disabled = false,
-}) => {
-    return (
-        <div
-            className={`group relative aspect-square overflow-hidden rounded-xl border-2 transition-all duration-200 ${
-                isSelected
-                    ? 'border-revlr-primary-blue ring-2 ring-revlr-primary-blue/20'
-                    : 'border-transparent hover:border-revlr-primary-blue/50'
-            } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
-        >
-            <img
-                src={item.thumbnailUrl}
-                alt={item.title}
-                className='size-full object-cover transition-transform duration-200 group-hover:scale-105'
-                loading='lazy'
+            {/* Performance Dashboard */}
+            <PerformanceDashboard
+                isVisible={showPerformanceDashboard}
+                onClose={() => setShowPerformanceDashboard(false)}
             />
-
-            {/* Overlay with actions */}
-            <div className='absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100'>
-                <div className='absolute bottom-2 left-2 right-2'>
-                    <p className='truncate font-inter text-xs text-white'>
-                        {item.title}
-                    </p>
-                    <p className='font-inter text-xs text-gray-300'>
-                        by {item.photographer?.name || 'Unknown'}
-                    </p>
-                </div>
-
-                <div className='absolute right-2 top-2 flex space-x-1'>
-                    <button
-                        onClick={onPreview}
-                        disabled={disabled}
-                        className='rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70 disabled:cursor-not-allowed disabled:opacity-50'
-                        aria-label={`Preview ${item.title}`}
-                    >
-                        <Eye className='size-4' />
-                    </button>
-                    <button
-                        onClick={onSelect}
-                        disabled={disabled}
-                        className={`rounded-full p-2 text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
-                            isSelected
-                                ? 'bg-revlr-primary-blue hover:bg-revlr-primary-blue/80'
-                                : 'bg-black/50 hover:bg-revlr-primary-blue'
-                        }`}
-                        aria-label={
-                            isSelected
-                                ? `Deselect ${item.title}`
-                                : `Select ${item.title}`
-                        }
-                    >
-                        {isSelected ? (
-                            <Check className='size-4' />
-                        ) : (
-                            <Plus className='size-4' />
-                        )}
-                    </button>
-                </div>
-            </div>
-
-            {/* Provider badge */}
-            <div className='absolute left-2 top-2'>
-                <span
-                    className={`rounded px-2 py-1 text-xs font-medium text-white ${
-                        item.providerId === 'unsplash'
-                            ? 'bg-black/70'
-                            : item.providerId === 'pexels'
-                              ? 'bg-green-600/70'
-                              : 'bg-blue-600/70'
-                    }`}
-                >
-                    {item.providerId}
-                </span>
-            </div>
-
-            {/* Attribution indicator */}
-            {item.attribution.required && (
-                <div className='absolute bottom-2 right-2'>
-                    <div className='rounded bg-orange-500/70 px-1.5 py-0.5'>
-                        <span className='text-xs font-medium text-white'>
-                            ©
-                        </span>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-};
-
-// Media Preview Modal Component
-interface MediaPreviewModalProps {
-    item: MediaItem;
-    onClose: () => void;
-    onSelect: () => void;
-    isSelected: boolean;
-    theme: 'light' | 'dark';
-    disabled?: boolean;
-}
-
-const MediaPreviewModal: React.FC<MediaPreviewModalProps> = ({
-    item,
-    onClose,
-    onSelect,
-    isSelected,
-    theme,
-    disabled = false,
-}) => {
-    return (
-        <div className='z-60 fixed inset-0 flex items-center justify-center bg-black/90 p-4'>
-            <div className='relative max-h-full w-full max-w-6xl'>
-                {/* Close button */}
-                <button
-                    onClick={onClose}
-                    disabled={disabled}
-                    className='absolute -right-4 -top-4 z-10 rounded-full bg-white p-2 text-gray-900 shadow-lg transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50'
-                    aria-label='Close preview'
-                >
-                    <X className='size-5' />
-                </button>
-
-                <div className='flex h-full max-h-[90vh] overflow-hidden rounded-xl bg-white'>
-                    {/* Image preview */}
-                    <div className='flex flex-1 items-center justify-center bg-gray-100'>
-                        <img
-                            src={item.previewUrl}
-                            alt={item.title}
-                            className='max-h-full max-w-full object-contain'
-                        />
-                    </div>
-
-                    {/* Metadata sidebar */}
-                    <div className='w-80 overflow-y-auto bg-white p-6'>
-                        <div className='space-y-4'>
-                            <div>
-                                <h3 className='font-inter text-lg font-semibold text-gray-900'>
-                                    {item.title}
-                                </h3>
-                                {item.photographer && (
-                                    <p className='font-inter text-sm text-gray-600'>
-                                        by {item.photographer.name}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className='space-y-2'>
-                                <div className='flex justify-between'>
-                                    <span className='font-inter text-sm text-gray-600'>
-                                        Dimensions:
-                                    </span>
-                                    <span className='font-inter text-sm text-gray-900'>
-                                        {item.width} × {item.height}
-                                    </span>
-                                </div>
-                                {item.fileSize && (
-                                    <div className='flex justify-between'>
-                                        <span className='font-inter text-sm text-gray-600'>
-                                            Size:
-                                        </span>
-                                        <span className='font-inter text-sm text-gray-900'>
-                                            {(
-                                                item.fileSize /
-                                                (1024 * 1024)
-                                            ).toFixed(1)}{' '}
-                                            MB
-                                        </span>
-                                    </div>
-                                )}
-                                <div className='flex justify-between'>
-                                    <span className='font-inter text-sm text-gray-600'>
-                                        Provider:
-                                    </span>
-                                    <span className='font-inter text-sm capitalize text-gray-900'>
-                                        {item.providerId}
-                                    </span>
-                                </div>
-                            </div>
-
-                            {item.attribution.required && (
-                                <div className='rounded-lg border border-orange-200 bg-orange-50 p-3'>
-                                    <p className='font-inter text-sm text-orange-800'>
-                                        <strong>Attribution Required:</strong>{' '}
-                                        This image requires attribution when
-                                        used.
-                                    </p>
-                                </div>
-                            )}
-
-                            <div className='space-y-3 pt-4'>
-                                <button
-                                    onClick={onSelect}
-                                    disabled={disabled}
-                                    className={`w-full rounded-xl px-4 py-3 font-inter font-semibold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-50 ${
-                                        isSelected
-                                            ? 'bg-green-600 hover:bg-green-700'
-                                            : 'bg-gradient-to-r from-revlr-primary-blue to-revlr-accent-purple hover:opacity-90'
-                                    }`}
-                                >
-                                    {isSelected
-                                        ? 'Selected'
-                                        : 'Select This Image'}
-                                </button>
-                                <button
-                                    onClick={onClose}
-                                    disabled={disabled}
-                                    className='w-full rounded-xl border border-gray-300 px-4 py-3 font-inter font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50'
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     );
 };

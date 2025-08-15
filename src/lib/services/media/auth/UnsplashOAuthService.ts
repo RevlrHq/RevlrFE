@@ -1,4 +1,7 @@
-import { MediaProviderError, MediaProviderErrorType } from '@/types/media-search';
+import {
+    MediaProviderError,
+    MediaProviderErrorType,
+} from '@/types/media-search';
 
 export interface UnsplashOAuthConfig {
     clientId: string;
@@ -85,7 +88,7 @@ export class UnsplashOAuthService {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
+                    Accept: 'application/json',
                 },
                 body: JSON.stringify({
                     client_id: this.config.clientId,
@@ -106,7 +109,7 @@ export class UnsplashOAuthService {
             }
 
             const tokenData: UnsplashTokenResponse = await response.json();
-            
+
             // Update auth state
             this.authState = {
                 isAuthenticated: true,
@@ -116,7 +119,7 @@ export class UnsplashOAuthService {
 
             // Fetch user profile
             await this.fetchUserProfile();
-            
+
             // Save to storage
             this.saveAuthState();
 
@@ -143,13 +146,15 @@ export class UnsplashOAuthService {
         try {
             const response = await fetch(`${this.apiUrl}/me`, {
                 headers: {
-                    'Authorization': `Bearer ${this.authState.accessToken}`,
-                    'Accept': 'application/json',
+                    Authorization: `Bearer ${this.authState.accessToken}`,
+                    Accept: 'application/json',
                 },
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                throw new Error(
+                    `HTTP ${response.status}: ${response.statusText}`
+                );
             }
 
             const user: UnsplashUser = await response.json();
@@ -217,11 +222,11 @@ export class UnsplashOAuthService {
     getAuthorizationHeader(): Record<string, string> {
         if (this.authState.accessToken) {
             return {
-                'Authorization': `Bearer ${this.authState.accessToken}`,
+                Authorization: `Bearer ${this.authState.accessToken}`,
             };
         }
         return {
-            'Authorization': `Client-ID ${this.config.clientId}`,
+            Authorization: `Client-ID ${this.config.clientId}`,
         };
     }
 
@@ -282,7 +287,10 @@ export class UnsplashOAuthService {
      */
     private saveAuthState(): void {
         try {
-            localStorage.setItem(this.storageKey, JSON.stringify(this.authState));
+            localStorage.setItem(
+                this.storageKey,
+                JSON.stringify(this.authState)
+            );
         } catch (error) {
             console.warn('Failed to save auth state to storage:', error);
         }
@@ -303,7 +311,10 @@ export class UnsplashOAuthService {
     /**
      * Create a standardized error
      */
-    private createError(type: MediaProviderErrorType, message: string): MediaProviderError {
+    private createError(
+        type: MediaProviderErrorType,
+        message: string
+    ): MediaProviderError {
         return {
             type,
             providerId: 'unsplash',
@@ -335,7 +346,9 @@ export class UnsplashOAuthService {
     /**
      * Check if authentication is required for a specific action
      */
-    isAuthRequiredForAction(action: 'search' | 'download' | 'like' | 'collect' | 'upload'): boolean {
+    isAuthRequiredForAction(
+        action: 'search' | 'download' | 'like' | 'collect' | 'upload'
+    ): boolean {
         switch (action) {
             case 'search':
             case 'download':

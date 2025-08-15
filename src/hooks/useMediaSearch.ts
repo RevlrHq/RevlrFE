@@ -1,20 +1,14 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
-import { useDebounce, useDebouncedValue } from './useDebounce';
+import { useDebouncedValue } from './useDebounce';
 import { MediaSearchService } from '@/lib/services/media/MediaSearchService';
-import { UnsplashProvider } from '@/lib/services/media/providers/UnsplashProvider';
-import { PexelsProvider } from '@/lib/services/media/providers/PexelsProvider';
+import { MediaSearchServiceFactory } from '@/lib/services/media/MediaSearchServiceFactory';
 import {
     MediaSearchQuery,
     MediaSearchResult,
     MediaItem,
     MediaFilters,
     ProviderStatus,
-    MediaProviderConfig,
 } from '@/types/media-search';
-import {
-    EventCategory,
-    CATEGORY_DESCRIPTIONS,
-} from '@/lib/constants/eventCategories';
 import {
     MediaSelectionValidator,
     SelectionValidationResult,
@@ -40,6 +34,12 @@ export interface MediaSearchState {
     availableProviders: ProviderStatus[];
     activeProviders: string[];
     providerErrors: Record<string, string>;
+
+    // Initialization state
+    isInitializing: boolean;
+    isInitialized: boolean;
+    initializationError: string | null;
+    initializationWarnings: string[];
 
     // Suggestions
     suggestions: string[];
@@ -75,6 +75,15 @@ export interface MediaSearchActions {
     // Providers
     toggleProvider: (providerId: string) => void;
 
+    // Initialization
+    retryInitialization: () => Promise<void>;
+    getInitializationStatus: () => {
+        isInitializing: boolean;
+        isInitialized: boolean;
+        error: string | null;
+        warnings: string[];
+    };
+
     // Suggestions
     getSuggestions: (query: string) => Promise<void>;
     applySuggestion: (suggestion: string) => void;
@@ -91,11 +100,8 @@ export interface MediaSearchActions {
 export interface UseMediaSearchOptions {
     initialQuery?: string;
     initialFilters?: MediaFilters;
-    eventCategory?: EventCategory;
     maxSelectedItems?: number;
     debounceDelay?: number;
-    enableAutoSuggestions?: boolean;
-    preloadPopular?: boolean;
     selectionLimits?: SelectionLimits;
     onDownloadComplete?: (items: MediaItem[]) => void;
     onDownloadError?: (error: Error) => void;
@@ -104,300 +110,8 @@ export interface UseMediaSearchOptions {
 export interface UseMediaSearchReturn {
     state: MediaSearchState;
     actions: MediaSearchActions;
-    service: MediaSearchService;
+    service: MediaSearchService | null;
 }
-
-// Category to search terms mapping for intelligent suggestions
-const CATEGORY_SEARCH_TERMS: Record<EventCategory, string[]> = {
-    [EventCategory.BusinessProfessional]: [
-        'business meeting',
-        'conference',
-        'presentation',
-        'office',
-        'corporate',
-        'handshake',
-        'team',
-        'professional',
-        'networking',
-        'boardroom',
-    ],
-    [EventCategory.TechnologyInnovation]: [
-        'technology',
-        'innovation',
-        'startup',
-        'coding',
-        'computer',
-        'digital',
-        'software',
-        'tech conference',
-        'programming',
-        'data',
-    ],
-    [EventCategory.ArtsCulture]: [
-        'art',
-        'culture',
-        'gallery',
-        'painting',
-        'sculpture',
-        'creative',
-        'exhibition',
-        'museum',
-        'artistic',
-        'cultural event',
-    ],
-    [EventCategory.MusicEntertainment]: [
-        'music',
-        'concert',
-        'entertainment',
-        'stage',
-        'performance',
-        'band',
-        'festival',
-        'dancing',
-        'party',
-        'celebration',
-    ],
-    [EventCategory.SportsFitness]: [
-        'sports',
-        'fitness',
-        'gym',
-        'exercise',
-        'athletic',
-        'competition',
-        'training',
-        'health',
-        'active',
-        'workout',
-    ],
-    [EventCategory.FoodDrink]: [
-        'food',
-        'restaurant',
-        'cooking',
-        'dining',
-        'culinary',
-        'chef',
-        'kitchen',
-        'meal',
-        'drink',
-        'beverage',
-    ],
-    [EventCategory.HealthWellness]: [
-        'health',
-        'wellness',
-        'medical',
-        'healthcare',
-        'therapy',
-        'meditation',
-        'yoga',
-        'mindfulness',
-        'wellbeing',
-        'healing',
-    ],
-    [EventCategory.EducationLearning]: [
-        'education',
-        'learning',
-        'school',
-        'university',
-        'classroom',
-        'teaching',
-        'student',
-        'academic',
-        'workshop',
-        'training',
-    ],
-    [EventCategory.CommunitySocial]: [
-        'community',
-        'social',
-        'gathering',
-        'people',
-        'group',
-        'networking',
-        'meetup',
-        'friends',
-        'social event',
-        'connection',
-    ],
-    [EventCategory.FashionBeauty]: [
-        'fashion',
-        'beauty',
-        'style',
-        'clothing',
-        'makeup',
-        'model',
-        'runway',
-        'designer',
-        'glamour',
-        'cosmetics',
-    ],
-    [EventCategory.TravelAdventure]: [
-        'travel',
-        'adventure',
-        'vacation',
-        'tourism',
-        'journey',
-        'exploration',
-        'destination',
-        'outdoor',
-        'nature',
-        'landscape',
-    ],
-    [EventCategory.FamilyKids]: [
-        'family',
-        'children',
-        'kids',
-        'parents',
-        'playground',
-        'toys',
-        'education',
-        'fun',
-        'activities',
-        'childcare',
-    ],
-    [EventCategory.ReligionSpirituality]: [
-        'religion',
-        'spiritual',
-        'church',
-        'faith',
-        'prayer',
-        'meditation',
-        'worship',
-        'ceremony',
-        'sacred',
-        'peace',
-    ],
-    [EventCategory.CharityCauses]: [
-        'charity',
-        'volunteer',
-        'donation',
-        'fundraising',
-        'community service',
-        'helping',
-        'support',
-        'cause',
-        'nonprofit',
-        'giving',
-    ],
-    [EventCategory.GovernmentPolitics]: [
-        'government',
-        'politics',
-        'election',
-        'voting',
-        'civic',
-        'public service',
-        'policy',
-        'democracy',
-        'political',
-        'campaign',
-    ],
-    [EventCategory.ScienceResearch]: [
-        'science',
-        'research',
-        'laboratory',
-        'experiment',
-        'discovery',
-        'innovation',
-        'academic',
-        'study',
-        'analysis',
-        'scientific',
-    ],
-    [EventCategory.Automotive]: [
-        'automotive',
-        'car',
-        'vehicle',
-        'driving',
-        'transportation',
-        'auto show',
-        'racing',
-        'mechanic',
-        'garage',
-        'automobile',
-    ],
-    [EventCategory.RealEstate]: [
-        'real estate',
-        'property',
-        'house',
-        'home',
-        'building',
-        'architecture',
-        'construction',
-        'investment',
-        'residential',
-        'commercial',
-    ],
-    [EventCategory.FinanceInvestment]: [
-        'finance',
-        'investment',
-        'money',
-        'banking',
-        'financial',
-        'economy',
-        'trading',
-        'business',
-        'wealth',
-        'market',
-    ],
-    [EventCategory.MarketingSales]: [
-        'marketing',
-        'sales',
-        'advertising',
-        'promotion',
-        'branding',
-        'campaign',
-        'customer',
-        'business',
-        'commerce',
-        'retail',
-    ],
-    [EventCategory.GamingEsports]: [
-        'gaming',
-        'esports',
-        'video games',
-        'competition',
-        'tournament',
-        'gamer',
-        'console',
-        'streaming',
-        'online',
-        'digital entertainment',
-    ],
-    [EventCategory.Photography]: [
-        'photography',
-        'camera',
-        'photo',
-        'portrait',
-        'landscape',
-        'studio',
-        'photographer',
-        'image',
-        'picture',
-        'visual',
-    ],
-    [EventCategory.FilmMedia]: [
-        'film',
-        'movie',
-        'cinema',
-        'video',
-        'media',
-        'production',
-        'director',
-        'actor',
-        'entertainment',
-        'screening',
-    ],
-    [EventCategory.Other]: [
-        'event',
-        'gathering',
-        'meeting',
-        'celebration',
-        'occasion',
-        'activity',
-        'experience',
-        'social',
-        'community',
-        'special',
-    ],
-};
 
 export function useMediaSearch(
     options: UseMediaSearchOptions = {}
@@ -405,38 +119,19 @@ export function useMediaSearch(
     const {
         initialQuery = '',
         initialFilters = {},
-        eventCategory,
         maxSelectedItems = 10,
         debounceDelay = 500,
-        enableAutoSuggestions = true,
-        preloadPopular = true,
         selectionLimits = DEFAULT_EVENT_LIMITS,
         onDownloadComplete,
         onDownloadError,
     } = options;
 
-    // Initialize service and validator
+    // Service and validator refs
     const serviceRef = useRef<MediaSearchService | null>(null);
     const validatorRef = useRef<MediaSelectionValidator | null>(null);
+    const [isServiceReady, setIsServiceReady] = useState(false);
 
-    if (!serviceRef.current) {
-        try {
-            // Use factory to create service with proper provider configuration
-            const {
-                MediaSearchServiceFactory,
-            } = require('@/lib/services/media/MediaSearchServiceFactory');
-            serviceRef.current = MediaSearchServiceFactory.create({
-                cacheSize: 1000,
-                cacheExpiryMinutes: 30,
-                enabledProviders: ['unsplash', 'pexels'],
-            });
-        } catch (error) {
-            console.warn('Failed to initialize media search service:', error);
-            // Fallback to basic service without providers
-            serviceRef.current = new MediaSearchService();
-        }
-    }
-
+    // Initialize validator
     if (!validatorRef.current) {
         validatorRef.current = new MediaSelectionValidator({
             ...selectionLimits,
@@ -444,7 +139,6 @@ export function useMediaSearch(
         });
     }
 
-    const service = serviceRef.current;
     const validator = validatorRef.current;
 
     // State management
@@ -461,6 +155,10 @@ export function useMediaSearch(
         availableProviders: [],
         activeProviders: [],
         providerErrors: {},
+        isInitializing: true,
+        isInitialized: false,
+        initializationError: null,
+        initializationWarnings: [],
         suggestions: [],
         showSuggestions: false,
         selectionValidation: { isValid: true, errors: [], warnings: [] },
@@ -468,13 +166,26 @@ export function useMediaSearch(
         downloadProgress: 0,
     });
 
-    // Debounced search query
-    const debouncedQuery = useDebouncedValue(state.query, debounceDelay);
-
-    // Initialize providers and load popular content
+    // Initialize service
     useEffect(() => {
         const initializeService = async () => {
             try {
+                setState((prev) => ({
+                    ...prev,
+                    isInitializing: true,
+                    error: null,
+                }));
+
+                const service = await MediaSearchServiceFactory.create({
+                    cacheSize: 1000,
+                    cacheExpiryMinutes: 30,
+                    enabledProviders: ['unsplash', 'pexels', 'pixabay'],
+                });
+
+                serviceRef.current = service;
+                setIsServiceReady(true);
+
+                // Get provider status
                 const providers = service.getAvailableProviders();
                 const providerStatuses = providers.map((provider) =>
                     provider.getStatus()
@@ -482,21 +193,13 @@ export function useMediaSearch(
 
                 setState((prev) => ({
                     ...prev,
+                    isInitializing: false,
+                    isInitialized: true,
                     availableProviders: providerStatuses,
                     activeProviders: providerStatuses
                         .filter((status) => status.isAvailable)
                         .map((status) => status.id),
                 }));
-
-                // Preload popular searches if enabled
-                if (preloadPopular) {
-                    await service.preloadPopularSearches();
-                }
-
-                // Load popular content for the event category
-                if (eventCategory) {
-                    await loadPopularContent(eventCategory);
-                }
             } catch (error) {
                 console.error(
                     'Failed to initialize media search service:',
@@ -504,38 +207,84 @@ export function useMediaSearch(
                 );
                 setState((prev) => ({
                     ...prev,
+                    isInitializing: false,
+                    isInitialized: false,
+                    initializationError:
+                        error instanceof Error
+                            ? error.message
+                            : 'Failed to initialize',
                     error: 'Failed to initialize media search service',
                 }));
             }
         };
 
         initializeService();
-    }, [service, eventCategory, preloadPopular]);
+    }, []);
+
+    // Debounced search query
+    const debouncedQuery = useDebouncedValue(state.query, debounceDelay);
 
     // Auto-search when debounced query changes
     useEffect(() => {
-        if (debouncedQuery.trim() && debouncedQuery !== initialQuery) {
-            search(debouncedQuery, state.filters);
-        }
-    }, [debouncedQuery]);
+        if (debouncedQuery.trim() && isServiceReady && serviceRef.current) {
+            // Call search directly without dependency to avoid circular reference
+            const performSearch = async () => {
+                if (!serviceRef.current) return;
 
-    // Auto-suggestions when query changes
-    useEffect(() => {
-        if (enableAutoSuggestions && state.query.trim().length > 2) {
-            getSuggestions(state.query);
-        } else {
-            setState((prev) => ({
-                ...prev,
-                suggestions: [],
-                showSuggestions: false,
-            }));
+                setState((prev) => ({
+                    ...prev,
+                    isLoading: true,
+                    error: null,
+                    currentPage: 1,
+                    showSuggestions: false,
+                }));
+
+                try {
+                    const searchQuery: MediaSearchQuery = {
+                        query: debouncedQuery.trim(),
+                        filters: state.filters,
+                        providers:
+                            state.activeProviders.length > 0
+                                ? state.activeProviders
+                                : undefined,
+                        page: 1,
+                        perPage: 30,
+                        sortBy: 'relevance',
+                        sortOrder: 'desc',
+                    };
+
+                    const result =
+                        await serviceRef.current.searchMedia(searchQuery);
+
+                    setState((prev) => ({
+                        ...prev,
+                        results: result,
+                        hasMore: result.hasMore,
+                        isLoading: false,
+                        providerErrors: {},
+                    }));
+                } catch (error) {
+                    const errorMessage =
+                        error instanceof Error
+                            ? error.message
+                            : 'Search failed';
+                    setState((prev) => ({
+                        ...prev,
+                        error: errorMessage,
+                        isLoading: false,
+                        results: null,
+                    }));
+                }
+            };
+
+            performSearch();
         }
-    }, [state.query, enableAutoSuggestions]);
+    }, [debouncedQuery, isServiceReady, state.filters, state.activeProviders]);
 
     // Search function
     const search = useCallback(
         async (query: string, filters: MediaFilters = {}) => {
-            if (!query.trim()) {
+            if (!query.trim() || !serviceRef.current) {
                 setState((prev) => ({ ...prev, results: null, error: null }));
                 return;
             }
@@ -558,9 +307,12 @@ export function useMediaSearch(
                             : undefined,
                     page: 1,
                     perPage: 30,
+                    sortBy: 'relevance',
+                    sortOrder: 'desc',
                 };
 
-                const result = await service.searchMedia(searchQuery);
+                const result =
+                    await serviceRef.current.searchMedia(searchQuery);
 
                 setState((prev) => ({
                     ...prev,
@@ -580,12 +332,17 @@ export function useMediaSearch(
                 }));
             }
         },
-        [service, state.activeProviders]
+        [state.activeProviders]
     );
 
     // Load more results
     const loadMore = useCallback(async () => {
-        if (!state.results || !state.hasMore || state.isLoading) {
+        if (
+            !state.results ||
+            !state.hasMore ||
+            state.isLoading ||
+            !serviceRef.current
+        ) {
             return;
         }
 
@@ -603,7 +360,7 @@ export function useMediaSearch(
                 perPage: 30,
             };
 
-            const result = await service.searchMedia(searchQuery);
+            const result = await serviceRef.current.searchMedia(searchQuery);
 
             setState((prev) => ({
                 ...prev,
@@ -629,7 +386,6 @@ export function useMediaSearch(
             }));
         }
     }, [
-        service,
         state.query,
         state.filters,
         state.activeProviders,
@@ -669,14 +425,12 @@ export function useMediaSearch(
     const selectItem = useCallback(
         (item: MediaItem) => {
             setState((prev) => {
-                // Validate the addition
                 const validation = validator.validateAddition(
                     prev.selectedItems,
                     item
                 );
 
                 if (!validation.isValid) {
-                    // Don't add if validation fails
                     return {
                         ...prev,
                         selectionValidation: validation,
@@ -756,7 +510,6 @@ export function useMediaSearch(
         }));
     }, []);
 
-    // Reorder items
     const reorderItems = useCallback((items: MediaItem[]) => {
         setState((prev) => ({
             ...prev,
@@ -809,97 +562,20 @@ export function useMediaSearch(
     }, []);
 
     // Suggestions
-    const getSuggestions = useCallback(
-        async (query: string) => {
-            try {
-                const suggestions = await service.getSuggestions(query);
-
-                // Add category-specific suggestions if event category is provided
-                const categoryTerms = eventCategory
-                    ? CATEGORY_SEARCH_TERMS[eventCategory] || []
-                    : [];
-                const categoryMatches = categoryTerms.filter((term) =>
-                    term.toLowerCase().includes(query.toLowerCase())
-                );
-
-                const allSuggestions = Array.from(
-                    new Set([...suggestions, ...categoryMatches])
-                );
-
-                setState((prev) => ({
-                    ...prev,
-                    suggestions: allSuggestions.slice(0, 8), // Limit to 8 suggestions
-                    showSuggestions: allSuggestions.length > 0,
-                }));
-            } catch (error) {
-                console.error('Failed to get suggestions:', error);
-            }
-        },
-        [service, eventCategory]
-    );
-
-    // Download selected items
-    const downloadSelected = useCallback(async () => {
-        if (state.selectedItems.length === 0) {
-            return;
-        }
-
-        setState((prev) => ({
-            ...prev,
-            isDownloading: true,
-            downloadProgress: 0,
-        }));
+    const getSuggestions = useCallback(async (query: string) => {
+        if (!serviceRef.current) return;
 
         try {
-            // Import the image processor
-            const { MediaImageProcessor } = await import(
-                '@/lib/services/media/MediaImageProcessor'
-            );
-
-            const processedImages =
-                await MediaImageProcessor.processSelectedMedia(
-                    state.selectedItems,
-                    (index, progress) => {
-                        const overallProgress =
-                            (index / state.selectedItems.length) * 100 +
-                            progress / state.selectedItems.length;
-                        setState((prev) => ({
-                            ...prev,
-                            downloadProgress: Math.min(overallProgress, 100),
-                        }));
-                    }
-                );
-
+            const suggestions = await serviceRef.current.getSuggestions(query);
             setState((prev) => ({
                 ...prev,
-                isDownloading: false,
-                downloadProgress: 100,
+                suggestions: suggestions.slice(0, 8),
+                showSuggestions: suggestions.length > 0,
             }));
-
-            // Call completion callback
-            onDownloadComplete?.(processedImages);
-
-            // Reset download progress after a delay
-            setTimeout(() => {
-                setState((prev) => ({
-                    ...prev,
-                    downloadProgress: 0,
-                }));
-            }, 2000);
         } catch (error) {
-            setState((prev) => ({
-                ...prev,
-                isDownloading: false,
-                downloadProgress: 0,
-            }));
-
-            const downloadError =
-                error instanceof Error ? error : new Error('Download failed');
-            onDownloadError?.(downloadError);
-
-            console.error('Failed to download selected media:', error);
+            console.error('Failed to get suggestions:', error);
         }
-    }, [state.selectedItems, onDownloadComplete, onDownloadError]);
+    }, []);
 
     const applySuggestion = useCallback((suggestion: string) => {
         setState((prev) => ({
@@ -914,43 +590,166 @@ export function useMediaSearch(
     }, []);
 
     // Popular content
-    const loadPopularContent = useCallback(
-        async (category?: EventCategory | string) => {
-            setState((prev) => ({ ...prev, isLoading: true, error: null }));
+    const loadPopularContent = useCallback(async (category?: string) => {
+        if (!serviceRef.current) return;
 
-            try {
-                const categoryString =
-                    typeof category === 'string'
-                        ? category
-                        : category
-                          ? CATEGORY_DESCRIPTIONS[category]
-                          : undefined;
+        setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-                const result = await service.getPopularMedia(categoryString);
+        try {
+            const result = await serviceRef.current.getPopularMedia(category);
 
-                setState((prev) => ({
-                    ...prev,
-                    results: result,
-                    hasMore: result.hasMore,
-                    isLoading: false,
-                    query: '', // Clear query when showing popular content
-                }));
-            } catch (error) {
-                const errorMessage =
-                    error instanceof Error
-                        ? error.message
-                        : 'Failed to load popular content';
-                setState((prev) => ({
-                    ...prev,
-                    error: errorMessage,
-                    isLoading: false,
-                }));
-            }
-        },
-        [service]
+            setState((prev) => ({
+                ...prev,
+                results: result,
+                hasMore: result.hasMore,
+                isLoading: false,
+                query: '',
+            }));
+        } catch (error) {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to load popular content';
+            setState((prev) => ({
+                ...prev,
+                error: errorMessage,
+                isLoading: false,
+            }));
+        }
+    }, []);
+
+    // Download selected items
+    const downloadSelected = useCallback(async () => {
+        if (state.selectedItems.length === 0) {
+            return;
+        }
+
+        setState((prev) => ({
+            ...prev,
+            isDownloading: true,
+            downloadProgress: 0,
+        }));
+
+        try {
+            // Simple download implementation using fetch
+            const downloadPromises = state.selectedItems.map(
+                async (item, index) => {
+                    try {
+                        const response = await fetch(item.downloadUrl);
+                        if (!response.ok) {
+                            throw new Error(
+                                `Failed to download: ${response.statusText}`
+                            );
+                        }
+                        const blob = await response.blob();
+                        const progress =
+                            ((index + 1) / state.selectedItems.length) * 100;
+                        setState((prev) => ({
+                            ...prev,
+                            downloadProgress: progress,
+                        }));
+                        return { ...item, blob };
+                    } catch (error) {
+                        console.error(
+                            `Failed to download item ${item.id}:`,
+                            error
+                        );
+                        return item;
+                    }
+                }
+            );
+
+            const downloadedItems = await Promise.all(downloadPromises);
+
+            setState((prev) => ({
+                ...prev,
+                isDownloading: false,
+                downloadProgress: 100,
+            }));
+
+            onDownloadComplete?.(downloadedItems);
+
+            setTimeout(() => {
+                setState((prev) => ({ ...prev, downloadProgress: 0 }));
+            }, 2000);
+        } catch (error) {
+            setState((prev) => ({
+                ...prev,
+                isDownloading: false,
+                downloadProgress: 0,
+            }));
+
+            const downloadError =
+                error instanceof Error ? error : new Error('Download failed');
+            onDownloadError?.(downloadError);
+        }
+    }, [state.selectedItems, onDownloadComplete, onDownloadError]);
+
+    // Retry initialization
+    const retryInitialization = useCallback(async () => {
+        setState((prev) => ({
+            ...prev,
+            isInitializing: true,
+            initializationError: null,
+            error: null,
+        }));
+
+        try {
+            const service = await MediaSearchServiceFactory.create({
+                cacheSize: 1000,
+                cacheExpiryMinutes: 30,
+                enabledProviders: ['unsplash', 'pexels', 'pixabay'],
+            });
+
+            serviceRef.current = service;
+            setIsServiceReady(true);
+
+            const providers = service.getAvailableProviders();
+            const providerStatuses = providers.map((provider) =>
+                provider.getStatus()
+            );
+
+            setState((prev) => ({
+                ...prev,
+                isInitializing: false,
+                isInitialized: true,
+                availableProviders: providerStatuses,
+                activeProviders: providerStatuses
+                    .filter((status) => status.isAvailable)
+                    .map((status) => status.id),
+                error: null,
+            }));
+        } catch (error) {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Initialization failed';
+            setState((prev) => ({
+                ...prev,
+                isInitializing: false,
+                isInitialized: false,
+                initializationError: errorMessage,
+                error: errorMessage,
+            }));
+        }
+    }, []);
+
+    const getInitializationStatus = useCallback(
+        () => ({
+            isInitializing: state.isInitializing,
+            isInitialized: state.isInitialized,
+            error: state.initializationError,
+            warnings: state.initializationWarnings,
+        }),
+        [
+            state.isInitializing,
+            state.isInitialized,
+            state.initializationError,
+            state.initializationWarnings,
+        ]
     );
 
-    // Update query (for controlled input)
+    // Update query
     const setQuery = useCallback((query: string) => {
         setState((prev) => ({ ...prev, query }));
     }, []);
@@ -971,6 +770,8 @@ export function useMediaSearch(
             applyFilters,
             clearFilters,
             toggleProvider,
+            retryInitialization,
+            getInitializationStatus,
             getSuggestions,
             applySuggestion,
             hideSuggestions,
@@ -992,6 +793,8 @@ export function useMediaSearch(
             applyFilters,
             clearFilters,
             toggleProvider,
+            retryInitialization,
+            getInitializationStatus,
             getSuggestions,
             applySuggestion,
             hideSuggestions,
@@ -1015,29 +818,6 @@ export function useMediaSearch(
             setQuery: (query: string) => void;
         },
         actions,
-        service,
+        service: serviceRef.current,
     };
-}
-
-// Helper hook for category-based suggestions
-export function useCategorySearchTerms(category?: EventCategory): string[] {
-    return useMemo(() => {
-        if (!category) return [];
-        return CATEGORY_SEARCH_TERMS[category] || [];
-    }, [category]);
-}
-
-// Helper hook for provider health monitoring
-export function useProviderHealth(service: MediaSearchService) {
-    const [health, setHealth] = useState(service.getServiceHealth());
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setHealth(service.getServiceHealth());
-        }, 30000); // Update every 30 seconds
-
-        return () => clearInterval(interval);
-    }, [service]);
-
-    return health;
 }

@@ -241,8 +241,8 @@ describe('MediaSelectionValidator', () => {
 
         it('warns about low quality items', () => {
             const items = [
-                createMockMediaItem({ width: 800, height: 400 }),
-                createMockMediaItem({ width: 1000, height: 500 }),
+                createMockMediaItem({ id: '1', width: 800, height: 400 }),
+                createMockMediaItem({ id: '2', width: 1000, height: 500 }),
             ];
 
             const result = validator.validateSelection(items);

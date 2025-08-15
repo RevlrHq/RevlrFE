@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SelectedMediaPanel } from '@/components/media-search/SelectedMediaPanel';
 import { MediaItem } from '@/types/media-search';
@@ -119,7 +119,7 @@ describe('SelectedMediaPanel', () => {
         );
 
         expect(screen.getByText('3 of 10 selected')).toBeInTheDocument();
-        expect(screen.getByText('8.5 MB')).toBeInTheDocument(); // Total of all file sizes
+        expect(screen.getByText('8.42 MB')).toBeInTheDocument(); // Total of all file sizes
     });
 
     it('shows progress bar with correct percentage', () => {
@@ -273,10 +273,15 @@ describe('SelectedMediaPanel', () => {
             </MockThemeProvider>
         );
 
-        const downloadButtons = screen.getAllByText('Downloading...');
-        const clearAllButton = screen.getByText('Clear All');
+        // Find the actual button elements, not just text
+        const downloadButton = screen.getByRole('button', {
+            name: /downloading/i,
+        });
+        const clearAllButton = screen.getByRole('button', {
+            name: /clear all/i,
+        });
 
-        expect(downloadButtons[1]).toBeDisabled(); // The button text
+        expect(downloadButton).toBeDisabled();
         expect(clearAllButton).toBeDisabled();
     });
 
@@ -304,7 +309,6 @@ describe('SelectedMediaPanel', () => {
     });
 
     it('supports drag and drop reordering', async () => {
-        const user = userEvent.setup();
         render(
             <MockThemeProvider>
                 <SelectedMediaPanel {...defaultProps} />

@@ -191,6 +191,9 @@ importers:
             autoprefixer:
                 specifier: ^10.4.20
                 version: 10.4.20(postcss@8.4.49)
+            axe-core:
+                specifier: ^4.8.3
+                version: 4.10.2
             eslint:
                 specifier: ^9
                 version: 9.16.0(jiti@2.4.2)
@@ -221,6 +224,9 @@ importers:
             jest:
                 specifier: ^29.7.0
                 version: 29.7.0(@types/node@20.17.9)(ts-node@10.9.2(@types/node@20.17.9)(typescript@5.7.2))
+            jest-axe:
+                specifier: ^8.0.0
+                version: 8.0.0
             jest-environment-jsdom:
                 specifier: ^29.7.0
                 version: 29.7.0
@@ -2677,6 +2683,13 @@ packages:
             }
         engines: { node: '>=4' }
 
+    axe-core@4.7.2:
+        resolution:
+            {
+                integrity: sha512-zIURGIS1E1Q4pcrMjp+nnEh+16G56eG/MUllJH8yEvw7asDo7Ac9uhC9KIH5jzpITueEZolfYglnCGIuSBz39g==,
+            }
+        engines: { node: '>=4' }
+
     axios@1.7.9:
         resolution:
             {
@@ -4671,6 +4684,13 @@ packages:
                 integrity: sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==,
             }
 
+    jest-axe@8.0.0:
+        resolution:
+            {
+                integrity: sha512-4kNcNn7J0jPO4jANEYZOHeQ/tSBvkXS+MxTbX1CKbXGd0+ZbRGDn/v/8IYWI/MmYX15iLVyYRnRev9X3ksePWA==,
+            }
+        engines: { node: '>= 14.0.0' }
+
     jest-changed-files@29.7.0:
         resolution:
             {
@@ -4771,6 +4791,13 @@ packages:
         resolution:
             {
                 integrity: sha512-kYA8IJcSYtST2BY9I+SMC32nDpBT3J2NvWJx8+JCuCdl/CR1I4EKUJROiP8XtCcxqgTTBGJNdbB1A8XRKbTetw==,
+            }
+        engines: { node: ^14.15.0 || ^16.10.0 || >=18.0.0 }
+
+    jest-matcher-utils@29.2.2:
+        resolution:
+            {
+                integrity: sha512-4DkJ1sDPT+UX2MR7Y3od6KtvRi9Im1ZGLGgdLFLm4lPexbTaCgJW5NN3IOXlQHF7NSHY/VHhflQ+WoKtD/vyCw==,
             }
         engines: { node: ^14.15.0 || ^16.10.0 || >=18.0.0 }
 
@@ -8979,6 +9006,8 @@ snapshots:
 
     axe-core@4.10.2: {}
 
+    axe-core@4.7.2: {}
+
     axios@1.7.9:
         dependencies:
             follow-redirects: 1.15.9
@@ -10281,6 +10310,13 @@ snapshots:
         optionalDependencies:
             '@pkgjs/parseargs': 0.11.0
 
+    jest-axe@8.0.0:
+        dependencies:
+            axe-core: 4.7.2
+            chalk: 4.1.2
+            jest-matcher-utils: 29.2.2
+            lodash.merge: 4.6.2
+
     jest-changed-files@29.7.0:
         dependencies:
             execa: 5.1.1
@@ -10426,6 +10462,13 @@ snapshots:
 
     jest-leak-detector@29.7.0:
         dependencies:
+            jest-get-type: 29.6.3
+            pretty-format: 29.7.0
+
+    jest-matcher-utils@29.2.2:
+        dependencies:
+            chalk: 4.1.2
+            jest-diff: 29.7.0
             jest-get-type: 29.6.3
             pretty-format: 29.7.0
 

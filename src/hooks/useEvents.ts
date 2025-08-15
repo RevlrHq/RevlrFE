@@ -3,7 +3,7 @@ import {
     EventsService,
     EventView2,
     PagedCollectionOfEventView,
-} from '../lib/services';
+} from '../lib/api';
 
 export interface EventFilters {
     // Pagination

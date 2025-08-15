@@ -1,12 +1,6 @@
 'use client';
 
-import {
-    createContext,
-    useContext,
-    useState,
-    useEffect,
-    ReactNode,
-} from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 import { useAuthStore } from '@src/stores/authStore';
 import { VendorAuthUtils } from '@lib/utils/vendorAuth';
 // import { DraftBackupService } from '@lib/services/DraftBackupService';

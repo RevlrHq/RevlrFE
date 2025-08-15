@@ -10,7 +10,10 @@ import {
     MediaProviderErrorType,
     MediaProviderAuthState,
 } from '@/types/media-search';
-import { UnsplashOAuthService, UnsplashOAuthConfig } from '../auth/UnsplashOAuthService';
+import {
+    UnsplashOAuthService,
+    UnsplashOAuthConfig,
+} from '../auth/UnsplashOAuthService';
 
 // Unsplash API response types
 interface UnsplashPhoto {
@@ -131,7 +134,7 @@ export class UnsplashProvider extends MediaProvider {
     constructor(config: MediaProviderConfig) {
         super(config);
         this.rateLimit = config.rateLimit;
-        
+
         // Initialize OAuth service if configuration is provided
         if (config.oauth) {
             this.oauthService = new UnsplashOAuthService({
@@ -516,7 +519,7 @@ export class UnsplashProvider extends MediaProvider {
             return this.oauthService.getAuthorizationHeader();
         }
         return {
-            'Authorization': `Client-ID ${this.config.apiKey}`,
+            Authorization: `Client-ID ${this.config.apiKey}`,
         };
     }
 
@@ -547,13 +550,15 @@ export class UnsplashProvider extends MediaProvider {
             isAuthenticated: authState.isAuthenticated,
             accessToken: authState.accessToken,
             scopes: authState.scopes,
-            user: authState.user ? {
-                id: authState.user.id,
-                username: authState.user.username,
-                name: authState.user.name,
-                profileUrl: authState.user.links.html,
-                avatarUrl: authState.user.profile_image.medium,
-            } : undefined,
+            user: authState.user
+                ? {
+                      id: authState.user.id,
+                      username: authState.user.username,
+                      name: authState.user.name,
+                      profileUrl: authState.user.links.html,
+                      avatarUrl: authState.user.profile_image.medium,
+                  }
+                : undefined,
         };
     }
 
@@ -608,7 +613,9 @@ export class UnsplashProvider extends MediaProvider {
     /**
      * Like a photo (requires write_likes scope)
      */
-    async likePhoto(photoId: string): Promise<{ success: boolean; error?: string }> {
+    async likePhoto(
+        photoId: string
+    ): Promise<{ success: boolean; error?: string }> {
         if (!this.oauthService?.isAuthenticated()) {
             return {
                 success: false,
@@ -634,7 +641,10 @@ export class UnsplashProvider extends MediaProvider {
         } catch (error) {
             return {
                 success: false,
-                error: error instanceof Error ? error.message : 'Failed to like photo',
+                error:
+                    error instanceof Error
+                        ? error.message
+                        : 'Failed to like photo',
             };
         }
     }
@@ -642,7 +652,9 @@ export class UnsplashProvider extends MediaProvider {
     /**
      * Unlike a photo (requires write_likes scope)
      */
-    async unlikePhoto(photoId: string): Promise<{ success: boolean; error?: string }> {
+    async unlikePhoto(
+        photoId: string
+    ): Promise<{ success: boolean; error?: string }> {
         if (!this.oauthService?.isAuthenticated()) {
             return {
                 success: false,
@@ -668,7 +680,10 @@ export class UnsplashProvider extends MediaProvider {
         } catch (error) {
             return {
                 success: false,
-                error: error instanceof Error ? error.message : 'Failed to unlike photo',
+                error:
+                    error instanceof Error
+                        ? error.message
+                        : 'Failed to unlike photo',
             };
         }
     }
@@ -704,7 +719,9 @@ export class UnsplashProvider extends MediaProvider {
                 headers: this.getAuthHeaders(),
             });
 
-            const items = response.map((photo) => this.transformUnsplashPhoto(photo));
+            const items = response.map((photo) =>
+                this.transformUnsplashPhoto(photo)
+            );
 
             return {
                 providerId: this.id,
@@ -756,7 +773,9 @@ export class UnsplashProvider extends MediaProvider {
                 headers: this.getAuthHeaders(),
             });
 
-            const items = response.map((photo) => this.transformUnsplashPhoto(photo));
+            const items = response.map((photo) =>
+                this.transformUnsplashPhoto(photo)
+            );
 
             return {
                 providerId: this.id,

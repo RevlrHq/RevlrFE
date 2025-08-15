@@ -1,4 +1,4 @@
-import { UserView } from '@lib/services';
+import { UserView } from '@lib/api';
 
 /**
  * Vendor authentication and authorization utilities

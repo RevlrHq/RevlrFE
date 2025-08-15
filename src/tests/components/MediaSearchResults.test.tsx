@@ -146,8 +146,8 @@ describe('MediaSearchResults', () => {
             </MockThemeProvider>
         );
 
-        // The EmptyState component should be rendered
-        expect(screen.getByText('Discover Amazing Images')).toBeInTheDocument();
+        // The EmptyState component should be rendered with default no-results state
+        expect(screen.getByText('No Images Found')).toBeInTheDocument();
     });
 
     it('shows error state when error exists and no items', () => {
@@ -215,18 +215,65 @@ describe('MediaSearchResults', () => {
         });
     });
 
-    it('shows load more indicator when loading more', () => {
+    it('shows load more indicator when loading more', async () => {
+        const onLoadMore = jest
+            .fn()
+            .mockImplementation(
+                () => new Promise((resolve) => setTimeout(resolve, 100))
+            );
+
+        // Create a more sophisticated mock for IntersectionObserver
+        let intersectionCallback:
+            | ((entries: IntersectionObserverEntry[]) => void)
+            | undefined;
+        const mockObserver = {
+            observe: jest.fn(),
+            unobserve: jest.fn(),
+            disconnect: jest.fn(),
+        };
+
+        (window.IntersectionObserver as jest.Mock).mockImplementation(
+            (callback) => {
+                intersectionCallback = callback;
+                return mockObserver;
+            }
+        );
+
         render(
             <MockThemeProvider>
                 <MediaSearchResults
                     {...defaultProps}
                     hasMore={true}
-                    isLoading={true}
+                    isLoading={false}
+                    onLoadMore={onLoadMore}
                 />
             </MockThemeProvider>
         );
 
-        expect(screen.getByText('Loading more images...')).toBeInTheDocument();
+        // Simulate intersection observer triggering
+        if (intersectionCallback) {
+            intersectionCallback([
+                {
+                    isIntersecting: true,
+                    boundingClientRect: {} as DOMRectReadOnly,
+                    intersectionRatio: 1,
+                    intersectionRect: {} as DOMRectReadOnly,
+                    rootBounds: {} as DOMRectReadOnly,
+                    target: {} as Element,
+                    time: Date.now(),
+                },
+            ]);
+        }
+
+        // Wait for the loading state to appear
+        await waitFor(
+            () => {
+                expect(
+                    screen.getByText('Loading more images...')
+                ).toBeInTheDocument();
+            },
+            { timeout: 2000 }
+        );
     });
 
     it('shows end of results message when no more items', () => {

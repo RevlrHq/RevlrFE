@@ -12,16 +12,16 @@ export async function GET(request: NextRequest) {
 
     // Build the redirect URL with the callback parameters
     const redirectUrl = new URL('/dashboard', request.url);
-    
+
     // Add query parameters for the client to handle
     if (code) {
         redirectUrl.searchParams.set('unsplash_code', code);
     }
-    
+
     if (error) {
         redirectUrl.searchParams.set('unsplash_error', error);
     }
-    
+
     if (state) {
         redirectUrl.searchParams.set('unsplash_state', state);
     }

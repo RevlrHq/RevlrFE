@@ -4,6 +4,8 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useTheme } from '@/lib/ThemeContext';
 import { MediaItem } from '@/types/media-search';
 import { EventCreationData } from '@/types/event-creation';
+import { LicenseInfoDisplay } from './LicenseInfoDisplay';
+import { AttributionPreview } from './AttributionPreview';
 import {
     X,
     ZoomIn,
@@ -363,7 +365,10 @@ export const MediaPreviewModal: React.FC<MediaPreviewModalProps> = ({
                                 />
                             )}
                             {activeTab === 'attribution' && (
-                                <AttributionPanel item={item} />
+                                <AttributionPanel
+                                    item={item}
+                                    eventData={eventData}
+                                />
                             )}
                         </div>
 
@@ -804,137 +809,36 @@ const EventContextPreview: React.FC<EventContextPreviewProps> = ({
 // Attribution Panel Component
 interface AttributionPanelProps {
     item: MediaItem;
+    eventData?: EventCreationData;
 }
 
-const AttributionPanel: React.FC<AttributionPanelProps> = ({ item }) => {
-    const getLicenseInfo = () => {
-        switch (item.license.type) {
-            case 'cc0':
-                return {
-                    name: 'Creative Commons Zero (CC0)',
-                    description:
-                        'No rights reserved. You can use this image for any purpose without attribution.',
-                    color: 'text-green-600 dark:text-green-400',
-                    bgColor: 'bg-green-50 dark:bg-green-900/20',
-                    borderColor: 'border-green-200 dark:border-green-800',
-                };
-            case 'unsplash':
-                return {
-                    name: 'Unsplash License',
-                    description:
-                        'Free to use for commercial and non-commercial purposes. Attribution appreciated but not required.',
-                    color: 'text-blue-600 dark:text-blue-400',
-                    bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-                    borderColor: 'border-blue-200 dark:border-blue-800',
-                };
-            case 'pexels':
-                return {
-                    name: 'Pexels License',
-                    description:
-                        'Free to use for commercial and non-commercial purposes. Attribution not required but appreciated.',
-                    color: 'text-green-600 dark:text-green-400',
-                    bgColor: 'bg-green-50 dark:bg-green-900/20',
-                    borderColor: 'border-green-200 dark:border-green-800',
-                };
-            case 'pixabay-standard':
-                return {
-                    name: 'Pixabay License',
-                    description:
-                        'Free for commercial use. Attribution not required but appreciated.',
-                    color: 'text-blue-600 dark:text-blue-400',
-                    bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-                    borderColor: 'border-blue-200 dark:border-blue-800',
-                };
-            default:
-                return {
-                    name: item.license.name,
-                    description:
-                        'Please review the license terms before using this image.',
-                    color: 'text-gray-600 dark:text-gray-400',
-                    bgColor: 'bg-gray-50 dark:bg-gray-900/20',
-                    borderColor: 'border-gray-200 dark:border-gray-800',
-                };
-        }
-    };
-
-    const licenseInfo = getLicenseInfo();
-
+const AttributionPanel: React.FC<AttributionPanelProps> = ({
+    item,
+    eventData,
+}) => {
     return (
         <div className='space-y-6'>
-            {/* License information */}
-            <div>
-                <h3 className='mb-3 text-sm font-medium text-gray-900 dark:text-white'>
-                    License Information
-                </h3>
+            {/* License Information Display */}
+            <LicenseInfoDisplay
+                license={item.license}
+                attribution={item.attribution}
+                showValidation={true}
+            />
 
-                <div
-                    className={`rounded-lg border p-4 ${licenseInfo.bgColor} ${licenseInfo.borderColor}`}
-                >
-                    <div className='flex items-start space-x-3'>
-                        <div className='flex-shrink-0'>
-                            {item.license.commercialUse ? (
-                                <Check
-                                    className={`size-5 ${licenseInfo.color}`}
-                                />
-                            ) : (
-                                <AlertTriangle className='size-5 text-orange-500' />
-                            )}
-                        </div>
-                        <div>
-                            <h4 className={`font-medium ${licenseInfo.color}`}>
-                                {licenseInfo.name}
-                            </h4>
-                            <p className='mt-1 text-sm text-gray-600 dark:text-gray-300'>
-                                {licenseInfo.description}
-                            </p>
-                            {item.license.url && (
-                                <a
-                                    href={item.license.url}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='mt-2 inline-flex items-center space-x-1 text-sm text-revlr-primary-blue hover:underline'
-                                >
-                                    <span>View full license</span>
-                                    <ExternalLink className='size-3' />
-                                </a>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {/* Attribution Preview */}
+            <AttributionPreview
+                item={item}
+                eventData={eventData}
+                placement='event-description'
+            />
 
-            {/* Commercial use */}
-            <div className='flex items-center justify-between'>
-                <span className='text-sm text-gray-600 dark:text-gray-400'>
-                    Commercial Use:
-                </span>
-                <div className='flex items-center space-x-2'>
-                    {item.license.commercialUse ? (
-                        <>
-                            <Check className='size-4 text-green-500' />
-                            <span className='text-sm text-green-600 dark:text-green-400'>
-                                Allowed
-                            </span>
-                        </>
-                    ) : (
-                        <>
-                            <X className='size-4 text-red-500' />
-                            <span className='text-sm text-red-600 dark:text-red-400'>
-                                Not allowed
-                            </span>
-                        </>
-                    )}
-                </div>
-            </div>
-
-            {/* Attribution requirements */}
+            {/* Attribution Requirements */}
             <div>
                 <h4 className='mb-3 text-sm font-medium text-gray-900 dark:text-white'>
                     Attribution Requirements
                 </h4>
-
                 {item.attribution.required ? (
-                    <div className='space-y-3'>
+                    <div className='space-y-4'>
                         <div className='rounded-lg border border-orange-200 bg-orange-50 p-3 dark:border-orange-800 dark:bg-orange-900/20'>
                             <p className='text-sm text-orange-800 dark:text-orange-200'>
                                 <strong>Attribution Required:</strong> You must

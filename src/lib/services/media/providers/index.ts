@@ -1,9 +1,11 @@
 export { UnsplashProvider } from './UnsplashProvider';
 export { PexelsProvider } from './PexelsProvider';
+export { PixabayProvider } from './PixabayProvider';
 
 // Export provider factory function
 import { UnsplashProvider } from './UnsplashProvider';
 import { PexelsProvider } from './PexelsProvider';
+import { PixabayProvider } from './PixabayProvider';
 import { MediaProvider } from '../MediaProvider';
 import { MediaProviderConfig } from '@/types/media-search';
 
@@ -19,6 +21,8 @@ export function createProvider(
             return new UnsplashProvider(config);
         case 'pexels':
             return new PexelsProvider(config);
+        case 'pixabay':
+            return new PixabayProvider(config);
         default:
             console.warn(`Unknown provider ID: ${providerId}`);
             return null;
@@ -29,7 +33,7 @@ export function createProvider(
  * Get all available provider IDs
  */
 export function getAvailableProviderIds(): string[] {
-    return ['unsplash', 'pexels'];
+    return ['unsplash', 'pexels', 'pixabay'];
 }
 
 /**

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTheme } from '../../lib/ThemeContext';
+import { useAuthStore } from '../../stores/authStore';
 import Link from 'next/link';
 import {
     Calendar,
@@ -17,6 +18,7 @@ import {
     Download,
     Bell,
     Settings,
+    User,
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -49,6 +51,7 @@ interface QuickAction {
 
 const Dashboard = () => {
     const { theme } = useTheme();
+    const { user } = useAuthStore();
     const [timeRange, setTimeRange] = useState('30d');
 
     // Mock data - replace with actual API calls
@@ -170,20 +173,36 @@ const Dashboard = () => {
                 } border-b px-6 py-4`}
             >
                 <div className='flex items-center justify-between'>
-                    <div>
-                        <h1 className='font-inter text-2xl font-bold'>
-                            Dashboard Overview
-                        </h1>
-                        <p
-                            className={`font-inter text-sm ${
-                                theme === 'dark'
-                                    ? 'text-gray-400'
-                                    : 'text-gray-600'
-                            }`}
-                        >
-                            Welcome back! Here's what's happening with your
-                            events.
-                        </p>
+                    <div className='flex items-center gap-4'>
+                        <div className='flex items-center gap-3'>
+                            <div className='flex size-12 items-center justify-center rounded-full bg-revlr-primary-blue text-white'>
+                                <User className='size-6' />
+                            </div>
+                            <div>
+                                <h1 className='font-inter text-2xl font-bold'>
+                                    {user?.firstName && user?.lastName
+                                        ? `Welcome back, ${user.firstName} ${user.lastName}!`
+                                        : user?.firstName
+                                          ? `Welcome back, ${user.firstName}!`
+                                          : 'Welcome back!'}
+                                </h1>
+                                <p
+                                    className={`font-inter text-sm ${
+                                        theme === 'dark'
+                                            ? 'text-gray-400'
+                                            : 'text-gray-600'
+                                    }`}
+                                >
+                                    {user?.email && (
+                                        <span>{user.email} • </span>
+                                    )}
+                                    {user?.isOrganizer
+                                        ? 'Event Organizer'
+                                        : 'Event Attendee'}{' '}
+                                    • Here's what's happening with your events.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     <div className='flex items-center gap-3'>

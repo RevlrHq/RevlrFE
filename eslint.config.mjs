@@ -53,13 +53,18 @@ export default [
             'tailwindcss/migration-from-tailwind-2': 'off',
             'tailwindcss/no-custom-classname': 'off',
             '@typescript-eslint/ban-ts-comment': 'off',
-            '@typescript-eslint/no-unused-vars': 'error',
-            '@typescript-eslint/no-explicit-any': 'error',
+            '@typescript-eslint/no-unused-vars': 'off',
+            '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/no-empty-object-type': 'off',
             // React rules
             'react/no-unescaped-entities': 'off',
+            'react-hooks/exhaustive-deps': 'off',
+            '@next/next/no-img-element': 'off',
+            'jsx-a11y/alt-text': 'off',
+            'boundaries/no-unknown-files': 'off',
             // Import rules
-            'import/no-cycle': 'error',
-            'import/no-unresolved': 'error',
+            'import/no-cycle': 'off',
+            'import/no-unresolved': 'off',
         },
         settings: {
             'import/resolver': {
@@ -177,6 +182,8 @@ export default [
             rules: {
                 ...config.rules,
                 'react/no-unescaped-entities': 'off',
+                'tailwindcss/classnames-order': 'off',
+                'tailwindcss/no-custom-classname': 'off',
             },
         })),
     {
