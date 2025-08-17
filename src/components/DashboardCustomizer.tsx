@@ -2,8 +2,16 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useDashboardCustomization } from '@/hooks/useDashboardCustomization';
-import { DragDropManager, GridUtils } from '@/lib/utils/drag-drop';
-import { DashboardWidget, DropResult } from '@/types/dashboard-customization';
+import {
+    DragDropManager,
+    GridUtils,
+    DragDropHandlers,
+} from '@/lib/utils/drag-drop';
+import {
+    DashboardWidget,
+    DropResult,
+    DragItem,
+} from '@/types/dashboard-customization';
 import { useTheme } from '@/lib/ThemeContext';
 import {
     Settings,
@@ -71,12 +79,6 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
     const containerRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Initialize drag and drop
-    useEffect(() => {
-        const dragDropManager = DragDropManager.getInstance();
-        dragDropManager.setOnDropCallback(handleDrop);
-    }, [handleDrop]);
-
     const handleDrop = useCallback(
         (result: DropResult) => {
             if (!currentLayout) return;
@@ -108,6 +110,12 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
         },
         [currentLayout, updateWidgetPosition]
     );
+
+    // Initialize drag and drop
+    useEffect(() => {
+        const dragDropManager = DragDropManager.getInstance();
+        dragDropManager.setOnDropCallback(handleDrop);
+    }, [handleDrop]);
 
     const handleCreateLayout = useCallback(() => {
         if (newLayoutName.trim()) {
@@ -623,7 +631,7 @@ interface DashboardWidgetWrapperProps {
     widget: DashboardWidget;
     isCustomizing: boolean;
     onVisibilityToggle: (widgetId: string, isVisible: boolean) => void;
-    dragDropHandlers: Record<string, unknown>;
+    dragDropHandlers: DragDropHandlers;
     children: React.ReactNode;
 }
 
@@ -639,11 +647,12 @@ const DashboardWidgetWrapper: React.FC<DashboardWidgetWrapperProps> = ({
 
     const handleDragStart = (e: React.DragEvent) => {
         setIsDragging(true);
-        dragDropHandlers.onDragStart(e, {
+        const dragItem: DragItem = {
             id: widget.id,
             type: widget.type,
-            position: widget.position,
-        });
+            position: { x: widget.position.x, y: widget.position.y },
+        };
+        dragDropHandlers.onDragStart(e, dragItem);
     };
 
     const handleDragEnd = (e: React.DragEvent) => {

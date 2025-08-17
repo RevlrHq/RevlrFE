@@ -58,7 +58,13 @@ describe('Dashboard Integration', () => {
             data: null,
             loading: true,
             error: null,
+            isRetrying: false,
+            retryCount: 0,
+            hasError: false,
+            canRetry: false,
             refetch: jest.fn(),
+            retry: jest.fn(),
+            clearError: jest.fn(),
         });
 
         render(<Dashboard />);
@@ -109,7 +115,13 @@ describe('Dashboard Integration', () => {
             data: mockData,
             loading: false,
             error: null,
+            isRetrying: false,
+            retryCount: 0,
+            hasError: false,
+            canRetry: false,
             refetch: jest.fn(),
+            retry: jest.fn(),
+            clearError: jest.fn(),
         });
 
         render(<Dashboard />);
@@ -128,8 +140,14 @@ describe('Dashboard Integration', () => {
         mockUseOrganizerDashboard.mockReturnValue({
             data: null,
             loading: false,
-            error: 'Failed to fetch dashboard data',
+            error: new Error('Failed to fetch dashboard data'),
+            isRetrying: false,
+            retryCount: 1,
+            hasError: true,
+            canRetry: true,
             refetch: mockRefetch,
+            retry: jest.fn(),
+            clearError: jest.fn(),
         });
 
         render(<Dashboard />);
@@ -174,7 +192,13 @@ describe('Dashboard Integration', () => {
             data: mockData,
             loading: false,
             error: null,
+            isRetrying: false,
+            retryCount: 0,
+            hasError: false,
+            canRetry: false,
             refetch: jest.fn(),
+            retry: jest.fn(),
+            clearError: jest.fn(),
         });
 
         render(<Dashboard />);
@@ -215,7 +239,13 @@ describe('Dashboard Integration', () => {
             data: mockData,
             loading: false,
             error: null,
+            isRetrying: false,
+            retryCount: 0,
+            hasError: false,
+            canRetry: false,
             refetch: jest.fn(),
+            retry: jest.fn(),
+            clearError: jest.fn(),
         });
 
         render(<Dashboard />);
@@ -267,7 +297,13 @@ describe('Dashboard Integration', () => {
             data: mockData,
             loading: false,
             error: null,
+            isRetrying: false,
+            retryCount: 0,
+            hasError: false,
+            canRetry: false,
             refetch: jest.fn(),
+            retry: jest.fn(),
+            clearError: jest.fn(),
         });
 
         render(<Dashboard />);

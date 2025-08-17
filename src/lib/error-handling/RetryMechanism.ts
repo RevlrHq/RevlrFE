@@ -38,8 +38,10 @@ export class RetryMechanism {
         const finalConfig = { ...this.defaultConfig, ...config };
         const startTime = Date.now();
         let lastError: Error;
+        let currentAttempt = 0;
 
         for (let attempt = 1; attempt <= finalConfig.maxAttempts; attempt++) {
+            currentAttempt = attempt;
             try {
                 const result = await operation();
                 return {
@@ -68,7 +70,7 @@ export class RetryMechanism {
         return {
             success: false,
             error: lastError!,
-            attempts: finalConfig.maxAttempts,
+            attempts: currentAttempt,
             totalTime: Date.now() - startTime,
         };
     }
