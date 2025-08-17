@@ -1,8 +1,5 @@
 import { useRevlrService } from './useChitService';
-import {
-    PasswordlessAuthService,
-    StandardResponseOfUserView,
-} from '@lib/api';
+import { PasswordlessAuthService, StandardResponseOfUserView } from '@lib/api';
 import { useState } from 'react';
 
 interface UseVerifyUserHookReturn {
