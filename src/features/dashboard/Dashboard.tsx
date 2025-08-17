@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useTheme } from '../../lib/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
+import { useOrganizerDashboard } from '../../hooks/useOrganizerDashboard';
+import { EventSummaryView, EventStatus } from '../../lib/api';
 import Link from 'next/link';
 import {
     Calendar,
@@ -19,27 +21,15 @@ import {
     Bell,
     Settings,
     User,
+    AlertCircle,
+    RefreshCw,
 } from 'lucide-react';
-
-interface DashboardStats {
-    totalEvents: number;
-    activeEvents: number;
-    totalRevenue: number;
-    totalAttendees: number;
-    pendingPayouts: number;
-    monthlyGrowth: number;
-}
-
-interface RecentEvent {
-    id: string;
-    title: string;
-    date: string;
-    location: string;
-    attendees: number;
-    revenue: number;
-    status: 'active' | 'upcoming' | 'completed' | 'draft';
-    image?: string;
-}
+import { Skeleton, CardSkeleton } from '../../components/LoadingStates';
+import StatisticsOverview from '../../components/StatisticsOverview';
+import EventPerformanceAnalytics from '../../components/EventPerformanceAnalytics';
+import { DashboardErrorBoundary } from '../../components/error-handling/DashboardErrorBoundary';
+import { ApiErrorFallback } from '../../components/error-handling/ApiErrorFallback';
+import { OfflineIndicator } from '../../components/error-handling/OfflineIndicator';
 
 interface QuickAction {
     title: string;
@@ -54,45 +44,13 @@ const Dashboard = () => {
     const { user } = useAuthStore();
     const [timeRange, setTimeRange] = useState('30d');
 
-    // Mock data - replace with actual API calls
-    const [stats] = useState<DashboardStats>({
-        totalEvents: 24,
-        activeEvents: 8,
-        totalRevenue: 45280,
-        totalAttendees: 1247,
-        pendingPayouts: 12450,
-        monthlyGrowth: 12.5,
-    });
-
-    const [recentEvents] = useState<RecentEvent[]>([
-        {
-            id: '1',
-            title: 'Tech Conference 2024',
-            date: '2024-02-15',
-            location: 'Lagos, Nigeria',
-            attendees: 250,
-            revenue: 12500,
-            status: 'active',
-        },
-        {
-            id: '2',
-            title: 'Music Festival',
-            date: '2024-02-20',
-            location: 'Abuja, Nigeria',
-            attendees: 500,
-            revenue: 25000,
-            status: 'upcoming',
-        },
-        {
-            id: '3',
-            title: 'Business Summit',
-            date: '2024-01-28',
-            location: 'Port Harcourt, Nigeria',
-            attendees: 180,
-            revenue: 9000,
-            status: 'completed',
-        },
-    ]);
+    // Use real API data instead of mock data
+    const {
+        data: dashboardData,
+        loading,
+        error,
+        refetch,
+    } = useOrganizerDashboard();
 
     const quickActions: QuickAction[] = [
         {
@@ -125,19 +83,64 @@ const Dashboard = () => {
         },
     ];
 
-    const getStatusColor = (status: string) => {
+    const getStatusColor = (status: EventStatus) => {
+        // EventStatus is a number type, so we use numeric values
         switch (status) {
-            case 'active':
+            case 1: // Published
                 return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
-            case 'upcoming':
-                return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
-            case 'completed':
-                return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
-            case 'draft':
+            case 0: // Draft
                 return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
+            case 2: // Cancelled
+                return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+            case 3: // Completed
+                return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
             default:
                 return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
         }
+    };
+
+    const getStatusLabel = (status: EventStatus) => {
+        // EventStatus is a number type, so we use numeric values
+        switch (status) {
+            case 1: // Published
+                return 'Published';
+            case 0: // Draft
+                return 'Draft';
+            case 2: // Cancelled
+                return 'Cancelled';
+            case 3: // Completed
+                return 'Completed';
+            default:
+                return 'Unknown';
+        }
+    };
+
+    // Calculate growth percentage for revenue
+    const calculateRevenueGrowth = () => {
+        if (
+            !dashboardData?.revenue?.thisMonthRevenue ||
+            !dashboardData?.revenue?.lastMonthRevenue
+        ) {
+            return 0;
+        }
+        const thisMonth = dashboardData.revenue.thisMonthRevenue;
+        const lastMonth = dashboardData.revenue.lastMonthRevenue;
+        return lastMonth > 0 ? ((thisMonth - lastMonth) / lastMonth) * 100 : 0;
+    };
+
+    // Enhanced error fallback for API errors
+    const renderApiErrorFallback = (title: string) => {
+        if (error) {
+            return (
+                <ApiErrorFallback
+                    error={new Error(error)}
+                    onRetry={refetch}
+                    title={`Failed to load ${title}`}
+                    isLoading={loading}
+                />
+            );
+        }
+        return null;
     };
 
     const formatCurrency = (amount: number) => {
@@ -164,6 +167,11 @@ const Dashboard = () => {
                     : 'bg-gray-50 text-gray-900'
             }`}
         >
+            {/* Offline Indicator */}
+            <OfflineIndicator
+                className='mx-6 mt-4'
+                onRetryConnection={refetch}
+            />
             {/* Header Section */}
             <div
                 className={`${
@@ -245,158 +253,39 @@ const Dashboard = () => {
             </div>
 
             <div className='space-y-6 p-6'>
-                {/* Stats Grid */}
-                <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4'>
-                    <div
-                        className={`rounded-xl border p-6 ${
-                            theme === 'dark'
-                                ? 'border-revlr-dark-border bg-revlr-dark-card'
-                                : 'border-gray-200 bg-white'
-                        }`}
-                    >
-                        <div className='flex items-center justify-between'>
-                            <div>
-                                <p
-                                    className={`font-inter text-sm ${
-                                        theme === 'dark'
-                                            ? 'text-gray-400'
-                                            : 'text-gray-600'
-                                    }`}
-                                >
-                                    Total Events
-                                </p>
-                                <p className='mt-1 font-inter text-2xl font-bold'>
-                                    {stats.totalEvents}
-                                </p>
-                            </div>
-                            <div className='rounded-lg bg-revlr-primary-blue/10 p-3'>
-                                <Calendar className='size-6 text-revlr-primary-blue' />
-                            </div>
-                        </div>
-                        <div className='mt-4 flex items-center text-sm'>
-                            <ArrowUpRight className='mr-1 size-4 text-green-500' />
-                            <span className='font-medium text-green-500'>
-                                +{stats.monthlyGrowth}%
-                            </span>
-                            <span
-                                className={`ml-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
-                            >
-                                vs last month
-                            </span>
-                        </div>
-                    </div>
+                {/* Enhanced Statistics Overview */}
+                <StatisticsOverview
+                    eventStatistics={dashboardData?.statistics}
+                    revenueStatistics={dashboardData?.revenue}
+                    loading={loading}
+                    error={error}
+                />
 
-                    <div
-                        className={`rounded-xl border p-6 ${
-                            theme === 'dark'
-                                ? 'border-revlr-dark-border bg-revlr-dark-card'
-                                : 'border-gray-200 bg-white'
-                        }`}
-                    >
-                        <div className='flex items-center justify-between'>
-                            <div>
-                                <p
-                                    className={`font-inter text-sm ${
-                                        theme === 'dark'
-                                            ? 'text-gray-400'
-                                            : 'text-gray-600'
-                                    }`}
-                                >
-                                    Active Events
-                                </p>
-                                <p className='mt-1 font-inter text-2xl font-bold'>
-                                    {stats.activeEvents}
-                                </p>
-                            </div>
-                            <div className='rounded-lg bg-revlr-accent-green/10 p-3'>
-                                <Eye className='size-6 text-revlr-accent-green' />
-                            </div>
-                        </div>
-                        <div className='mt-4 flex items-center text-sm'>
-                            <Clock className='mr-1 size-4 text-blue-500' />
-                            <span
-                                className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
-                            >
-                                {stats.activeEvents} running now
-                            </span>
-                        </div>
-                    </div>
-
-                    <div
-                        className={`rounded-xl border p-6 ${
-                            theme === 'dark'
-                                ? 'border-revlr-dark-border bg-revlr-dark-card'
-                                : 'border-gray-200 bg-white'
-                        }`}
-                    >
-                        <div className='flex items-center justify-between'>
-                            <div>
-                                <p
-                                    className={`font-inter text-sm ${
-                                        theme === 'dark'
-                                            ? 'text-gray-400'
-                                            : 'text-gray-600'
-                                    }`}
-                                >
-                                    Total Revenue
-                                </p>
-                                <p className='mt-1 font-inter text-2xl font-bold'>
-                                    {formatCurrency(stats.totalRevenue)}
-                                </p>
-                            </div>
-                            <div className='rounded-lg bg-revlr-accent-purple/10 p-3'>
-                                <DollarSign className='size-6 text-revlr-accent-purple' />
-                            </div>
-                        </div>
-                        <div className='mt-4 flex items-center text-sm'>
-                            <ArrowUpRight className='mr-1 size-4 text-green-500' />
-                            <span className='font-medium text-green-500'>
-                                +18.2%
-                            </span>
-                            <span
-                                className={`ml-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
-                            >
-                                vs last month
-                            </span>
-                        </div>
-                    </div>
-
-                    <div
-                        className={`rounded-xl border p-6 ${
-                            theme === 'dark'
-                                ? 'border-revlr-dark-border bg-revlr-dark-card'
-                                : 'border-gray-200 bg-white'
-                        }`}
-                    >
-                        <div className='flex items-center justify-between'>
-                            <div>
-                                <p
-                                    className={`font-inter text-sm ${
-                                        theme === 'dark'
-                                            ? 'text-gray-400'
-                                            : 'text-gray-600'
-                                    }`}
-                                >
-                                    Total Attendees
-                                </p>
-                                <p className='mt-1 font-inter text-2xl font-bold'>
-                                    {stats.totalAttendees.toLocaleString()}
-                                </p>
-                            </div>
-                            <div className='rounded-lg bg-revlr-accent-orange/10 p-3'>
-                                <Users className='size-6 text-revlr-accent-orange' />
-                            </div>
-                        </div>
-                        <div className='mt-4 flex items-center text-sm'>
-                            <Star className='mr-1 size-4 text-yellow-500' />
-                            <span
-                                className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
-                            >
-                                4.8 avg rating
-                            </span>
-                        </div>
-                    </div>
-                </div>
+                {/* Event Performance Analytics */}
+                <EventPerformanceAnalytics
+                    timeRange={{
+                        startDate:
+                            timeRange === '7d'
+                                ? new Date(
+                                      Date.now() - 7 * 24 * 60 * 60 * 1000
+                                  ).toISOString()
+                                : timeRange === '30d'
+                                  ? new Date(
+                                        Date.now() - 30 * 24 * 60 * 60 * 1000
+                                    ).toISOString()
+                                  : timeRange === '90d'
+                                    ? new Date(
+                                          Date.now() - 90 * 24 * 60 * 60 * 1000
+                                      ).toISOString()
+                                    : new Date(
+                                          Date.now() - 365 * 24 * 60 * 60 * 1000
+                                      ).toISOString(),
+                        endDate: new Date().toISOString(),
+                    }}
+                    maxTopEvents={10}
+                    showRecommendations={true}
+                    showAlerts={true}
+                />
 
                 {/* Quick Actions */}
                 <div
@@ -445,94 +334,13 @@ const Dashboard = () => {
                 {/* Recent Events and Pending Payouts */}
                 <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
                     {/* Recent Events */}
-                    <div
-                        className={`rounded-xl border p-6 lg:col-span-2 ${
-                            theme === 'dark'
-                                ? 'border-revlr-dark-border bg-revlr-dark-card'
-                                : 'border-gray-200 bg-white'
-                        }`}
+                    <DashboardErrorBoundary
+                        section='Recent Events'
+                        onRetry={refetch}
+                        fallback={renderApiErrorFallback('recent events')}
                     >
-                        <div className='mb-4 flex items-center justify-between'>
-                            <h2 className='font-inter text-lg font-semibold'>
-                                Recent Events
-                            </h2>
-                            <Link
-                                href='/dashboard/event'
-                                className='font-inter text-sm text-revlr-primary-blue hover:underline'
-                            >
-                                View all
-                            </Link>
-                        </div>
-
-                        <div className='space-y-4'>
-                            {recentEvents.map((event) => (
-                                <div
-                                    key={event.id}
-                                    className={`rounded-lg border p-4 ${
-                                        theme === 'dark'
-                                            ? 'border-revlr-dark-border'
-                                            : 'border-gray-200'
-                                    }`}
-                                >
-                                    <div className='flex items-center justify-between'>
-                                        <div className='flex-1'>
-                                            <div className='mb-2 flex items-center gap-3'>
-                                                <h3 className='font-inter font-semibold'>
-                                                    {event.title}
-                                                </h3>
-                                                <span
-                                                    className={`rounded-full px-2 py-1 text-xs font-medium ${getStatusColor(event.status)}`}
-                                                >
-                                                    {event.status}
-                                                </span>
-                                            </div>
-                                            <div className='flex items-center gap-4 text-sm'>
-                                                <div className='flex items-center gap-1'>
-                                                    <Calendar className='size-4' />
-                                                    <span>
-                                                        {formatDate(event.date)}
-                                                    </span>
-                                                </div>
-                                                <div className='flex items-center gap-1'>
-                                                    <MapPin className='size-4' />
-                                                    <span>
-                                                        {event.location}
-                                                    </span>
-                                                </div>
-                                                <div className='flex items-center gap-1'>
-                                                    <Users className='size-4' />
-                                                    <span>
-                                                        {event.attendees}{' '}
-                                                        attendees
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className='text-right'>
-                                            <p className='font-inter font-semibold'>
-                                                {formatCurrency(event.revenue)}
-                                            </p>
-                                            <p
-                                                className={`font-inter text-sm ${
-                                                    theme === 'dark'
-                                                        ? 'text-gray-400'
-                                                        : 'text-gray-600'
-                                                }`}
-                                            >
-                                                Revenue
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Pending Payouts & Notifications */}
-                    <div className='space-y-6'>
-                        {/* Pending Payouts */}
                         <div
-                            className={`rounded-xl border p-6 ${
+                            className={`rounded-xl border p-6 lg:col-span-2 ${
                                 theme === 'dark'
                                     ? 'border-revlr-dark-border bg-revlr-dark-card'
                                     : 'border-gray-200 bg-white'
@@ -540,37 +348,189 @@ const Dashboard = () => {
                         >
                             <div className='mb-4 flex items-center justify-between'>
                                 <h2 className='font-inter text-lg font-semibold'>
-                                    Pending Payouts
+                                    Recent Events
                                 </h2>
                                 <Link
-                                    href='/dashboard/payment/payout-management'
+                                    href='/dashboard/events'
                                     className='font-inter text-sm text-revlr-primary-blue hover:underline'
                                 >
-                                    Manage
+                                    View all
                                 </Link>
                             </div>
 
-                            <div className='py-6 text-center'>
-                                <div className='mx-auto mb-3 flex size-16 items-center justify-center rounded-full bg-revlr-accent-green/10'>
-                                    <DollarSign className='size-8 text-revlr-accent-green' />
+                            {loading ? (
+                                <div className='space-y-4'>
+                                    {[1, 2, 3].map((i) => (
+                                        <div
+                                            key={i}
+                                            className='flex items-center space-x-4'
+                                        >
+                                            <Skeleton
+                                                width='w-16'
+                                                height='h-16'
+                                                rounded
+                                            />
+                                            <div className='flex-1 space-y-2'>
+                                                <Skeleton
+                                                    width='w-3/4'
+                                                    height='h-4'
+                                                />
+                                                <Skeleton
+                                                    width='w-1/2'
+                                                    height='h-3'
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                                <p className='mb-1 font-inter text-2xl font-bold'>
-                                    {formatCurrency(stats.pendingPayouts)}
-                                </p>
-                                <p
-                                    className={`font-inter text-sm ${
-                                        theme === 'dark'
-                                            ? 'text-gray-400'
-                                            : 'text-gray-600'
-                                    }`}
-                                >
-                                    Available for withdrawal
-                                </p>
-                                <button className='mt-4 w-full rounded-lg bg-revlr-primary-blue px-4 py-2 font-inter font-medium text-white transition-colors hover:bg-blue-700'>
-                                    Request Payout
-                                </button>
-                            </div>
+                            ) : dashboardData?.recentEvents &&
+                              dashboardData.recentEvents.length > 0 ? (
+                                <div className='space-y-4'>
+                                    {dashboardData.recentEvents
+                                        .slice(0, 5)
+                                        .map((event) => (
+                                            <div
+                                                key={event.id}
+                                                className='flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-gray-50 dark:hover:bg-revlr-dark-border'
+                                            >
+                                                <div className='flex items-center space-x-4'>
+                                                    <div className='flex size-12 items-center justify-center rounded-lg bg-revlr-primary-blue/10'>
+                                                        <Calendar className='size-6 text-revlr-primary-blue' />
+                                                    </div>
+                                                    <div>
+                                                        <h3 className='font-inter font-semibold'>
+                                                            {event.title}
+                                                        </h3>
+                                                        <p
+                                                            className={`font-inter text-sm ${
+                                                                theme === 'dark'
+                                                                    ? 'text-gray-400'
+                                                                    : 'text-gray-600'
+                                                            }`}
+                                                        >
+                                                            {formatDate(
+                                                                event.startDate
+                                                            )}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className='flex items-center space-x-2'>
+                                                    <span
+                                                        className={`rounded-full px-2 py-1 text-xs font-medium ${getStatusColor(
+                                                            event.status
+                                                        )}`}
+                                                    >
+                                                        {getStatusLabel(
+                                                            event.status
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                </div>
+                            ) : (
+                                <div className='flex flex-col items-center justify-center py-12'>
+                                    <Calendar className='mb-4 size-12 text-gray-400' />
+                                    <h3 className='mb-2 font-inter text-lg font-semibold'>
+                                        No recent events
+                                    </h3>
+                                    <p
+                                        className={`mb-4 font-inter text-sm ${
+                                            theme === 'dark'
+                                                ? 'text-gray-400'
+                                                : 'text-gray-600'
+                                        }`}
+                                    >
+                                        Create your first event to get started
+                                    </p>
+                                    <Link
+                                        href='/dashboard/event/create-event'
+                                        className='rounded-lg bg-revlr-primary-blue px-4 py-2 font-inter text-sm text-white transition-colors hover:bg-blue-700'
+                                    >
+                                        Create Event
+                                    </Link>
+                                </div>
+                            )}
                         </div>
+                    </DashboardErrorBoundary>
+
+                    {/* Pending Payouts & Notifications */}
+                    <div className='space-y-6'>
+                        {/* Pending Payouts */}
+                        <DashboardErrorBoundary
+                            section='Pending Payouts'
+                            onRetry={refetch}
+                            fallback={renderApiErrorFallback('pending payouts')}
+                        >
+                            <div
+                                className={`rounded-xl border p-6 ${
+                                    theme === 'dark'
+                                        ? 'border-revlr-dark-border bg-revlr-dark-card'
+                                        : 'border-gray-200 bg-white'
+                                }`}
+                            >
+                                <div className='mb-4 flex items-center justify-between'>
+                                    <h2 className='font-inter text-lg font-semibold'>
+                                        Pending Payouts
+                                    </h2>
+                                    <Link
+                                        href='/dashboard/payment/payout-management'
+                                        className='font-inter text-sm text-revlr-primary-blue hover:underline'
+                                    >
+                                        View all
+                                    </Link>
+                                </div>
+
+                                {loading ? (
+                                    <div className='space-y-4'>
+                                        {[1, 2, 3].map((i) => (
+                                            <div
+                                                key={i}
+                                                className='flex items-center justify-between rounded-lg border p-4'
+                                            >
+                                                <div className='flex items-center space-x-3'>
+                                                    <Skeleton
+                                                        width='w-10'
+                                                        height='h-10'
+                                                        rounded
+                                                    />
+                                                    <div className='space-y-2'>
+                                                        <Skeleton
+                                                            width='w-24'
+                                                            height='h-4'
+                                                        />
+                                                        <Skeleton
+                                                            width='w-16'
+                                                            height='h-3'
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <Skeleton
+                                                    width='w-20'
+                                                    height='h-6'
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className='flex flex-col items-center justify-center py-12'>
+                                        <DollarSign className='mb-4 size-12 text-gray-400' />
+                                        <h3 className='mb-2 font-inter text-lg font-semibold'>
+                                            No pending payouts
+                                        </h3>
+                                        <p
+                                            className={`font-inter text-sm ${
+                                                theme === 'dark'
+                                                    ? 'text-gray-400'
+                                                    : 'text-gray-600'
+                                            }`}
+                                        >
+                                            Your payouts will appear here
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </DashboardErrorBoundary>
 
                         {/* Recent Activity */}
                         <div
@@ -583,58 +543,31 @@ const Dashboard = () => {
                             <h2 className='mb-4 font-inter text-lg font-semibold'>
                                 Recent Activity
                             </h2>
-                            <div className='space-y-3'>
-                                <div className='flex items-start gap-3'>
-                                    <div className='mt-2 size-2 rounded-full bg-green-500'></div>
-                                    <div>
-                                        <p className='font-inter text-sm font-medium'>
-                                            New registration
-                                        </p>
-                                        <p
-                                            className={`font-inter text-xs ${
-                                                theme === 'dark'
-                                                    ? 'text-gray-400'
-                                                    : 'text-gray-600'
-                                            }`}
-                                        >
-                                            Tech Conference 2024 • 2 min ago
-                                        </p>
+                            <div className='space-y-4'>
+                                {[1, 2, 3].map((i) => (
+                                    <div
+                                        key={i}
+                                        className='flex items-center space-x-3'
+                                    >
+                                        <div className='flex size-8 items-center justify-center rounded-full bg-revlr-primary-blue/10'>
+                                            <Star className='size-4 text-revlr-primary-blue' />
+                                        </div>
+                                        <div className='flex-1'>
+                                            <p className='font-inter text-sm'>
+                                                Activity item {i}
+                                            </p>
+                                            <p
+                                                className={`font-inter text-xs ${
+                                                    theme === 'dark'
+                                                        ? 'text-gray-400'
+                                                        : 'text-gray-500'
+                                                }`}
+                                            >
+                                                2 hours ago
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className='flex items-start gap-3'>
-                                    <div className='mt-2 size-2 rounded-full bg-blue-500'></div>
-                                    <div>
-                                        <p className='font-inter text-sm font-medium'>
-                                            Payment received
-                                        </p>
-                                        <p
-                                            className={`font-inter text-xs ${
-                                                theme === 'dark'
-                                                    ? 'text-gray-400'
-                                                    : 'text-gray-600'
-                                            }`}
-                                        >
-                                            ₦5,000 • 15 min ago
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className='flex items-start gap-3'>
-                                    <div className='mt-2 size-2 rounded-full bg-yellow-500'></div>
-                                    <div>
-                                        <p className='font-inter text-sm font-medium'>
-                                            Event updated
-                                        </p>
-                                        <p
-                                            className={`font-inter text-xs ${
-                                                theme === 'dark'
-                                                    ? 'text-gray-400'
-                                                    : 'text-gray-600'
-                                            }`}
-                                        >
-                                            Music Festival • 1 hour ago
-                                        </p>
-                                    </div>
-                                </div>
+                                ))}
                             </div>
                         </div>
                     </div>

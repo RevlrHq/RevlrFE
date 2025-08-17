@@ -1,168 +1,166 @@
 'use client';
 
-import React, { lazy, Suspense, ComponentType } from 'react';
-import { EventFormSkeleton } from './LoadingStates';
+import React, { lazy, Suspense } from 'react';
+import { ChartSkeleton } from './charts/ChartSkeleton';
+import { Skeleton } from './ui/skeleton';
 
-// Lazy load heavy components
-export const LazyImageUpload = lazy(() =>
-    import('./ImageUpload').then((module) => ({ default: module.ImageUpload }))
-);
-
-export const LazyTicketManagement = lazy(() =>
-    import('./TicketManagement').then((module) => ({
-        default: module.TicketManagement,
+// Lazy load chart components
+export const LazyRevenueChart = lazy(() =>
+    import('./charts/RevenueChart').then((module) => ({
+        default: module.RevenueChart,
     }))
 );
 
-export const LazyLocationSelector = lazy(() =>
-    import('./LocationSelector').then((module) => ({
-        default: module.LocationSelector,
+export const LazyEventPerformanceChart = lazy(() =>
+    import('./charts/EventPerformanceChart').then((module) => ({
+        default: module.EventPerformanceChart,
     }))
 );
 
-export const LazyOrganizerDetails = lazy(() =>
-    import('./OrganizerDetails').then((module) => ({
-        default: module.OrganizerDetails,
+export const LazyAttendeeAnalyticsChart = lazy(() =>
+    import('./charts/AttendeeAnalyticsChart').then((module) => ({
+        default: module.AttendeeAnalyticsChart,
     }))
 );
 
-export const LazyDateTimeSelector = lazy(() =>
-    import('./DateTimeSelector').then((module) => ({
-        default: module.DateTimeSelector,
+// Lazy load heavy dashboard components
+export const LazyEnhancedEventTable = lazy(() =>
+    import('./EnhancedEventTable').then((module) => ({
+        default: module.default,
     }))
 );
 
-export const LazyPrePublishValidation = lazy(() =>
-    import('./PrePublishValidation').then((module) => ({
-        default: module.PrePublishValidation,
+export const LazyRegistrationManagement = lazy(() =>
+    import('./RegistrationManagement').then((module) => ({
+        default: module.default,
     }))
 );
 
-// Higher-order component for lazy loading with error boundary
-interface LazyWrapperProps {
+export const LazyEventPerformanceAnalytics = lazy(() =>
+    import('./EventPerformanceAnalytics').then((module) => ({
+        default: module.default,
+    }))
+);
+
+export const LazyRevenueReporting = lazy(() =>
+    import('./RevenueReporting').then((module) => ({ default: module.default }))
+);
+
+export const LazyAttendeeAnalytics = lazy(() =>
+    import('./AttendeeAnalytics').then((module) => ({
+        default: module.default,
+    }))
+);
+
+// Wrapper components with suspense and error boundaries
+interface LazyComponentWrapperProps {
+    children: React.ReactNode;
     fallback?: React.ReactNode;
     errorFallback?: React.ReactNode;
-    children: React.ReactNode;
 }
 
-export const LazyWrapper: React.FC<LazyWrapperProps> = ({
-    fallback = <EventFormSkeleton />,
-    errorFallback = (
-        <div className='p-4 text-red-500'>Failed to load component</div>
-    ),
-    children,
-}) => {
-    return (
-        <Suspense fallback={fallback}>
-            <ErrorBoundary fallback={errorFallback}>{children}</ErrorBoundary>
-        </Suspense>
-    );
-};
-
-// Error boundary component
-interface ErrorBoundaryState {
-    hasError: boolean;
-    error?: Error;
-}
-
-class ErrorBoundary extends React.Component<
-    { children: React.ReactNode; fallback: React.ReactNode },
-    ErrorBoundaryState
+class LazyErrorBoundary extends React.Component<
+    { children: React.ReactNode; fallback?: React.ReactNode },
+    { hasError: boolean }
 > {
     constructor(props: {
         children: React.ReactNode;
-        fallback: React.ReactNode;
+        fallback?: React.ReactNode;
     }) {
         super(props);
         this.state = { hasError: false };
     }
 
-    static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-        return { hasError: true, error };
+    static getDerivedStateFromError(): { hasError: boolean } {
+        return { hasError: true };
     }
 
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-        console.error('LazyComponent Error:', error, errorInfo);
-
-        // Report to monitoring service
-        if (typeof window !== 'undefined' && 'gtag' in window) {
-            const gtag = (window as { gtag: (...args: unknown[]) => void })
-                .gtag;
-            gtag('event', 'exception', {
-                description: `LazyComponent Error: ${error.message}`,
-                fatal: false,
-            });
-        }
+        console.error('Lazy component loading error:', error, errorInfo);
     }
 
     render() {
         if (this.state.hasError) {
-            return this.props.fallback;
+            return (
+                this.props.fallback || (
+                    <div className='p-4 text-center'>
+                        <p className='text-gray-500 dark:text-gray-400'>
+                            Failed to load component. Please try refreshing the
+                            page.
+                        </p>
+                    </div>
+                )
+            );
         }
 
         return this.props.children;
     }
 }
 
-// Utility function to create lazy components with consistent loading states
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function createLazyComponent<T extends ComponentType<any>>(
-    importFn: () => Promise<{ default: T }>,
-    fallback?: React.ReactNode
-) {
-    const LazyComponent = lazy(importFn);
+export const LazyComponentWrapper: React.FC<LazyComponentWrapperProps> = ({
+    children,
+    fallback,
+    errorFallback,
+}) => (
+    <LazyErrorBoundary fallback={errorFallback}>
+        <Suspense fallback={fallback || <ChartSkeleton />}>{children}</Suspense>
+    </LazyErrorBoundary>
+);
 
-    const WrappedLazyComponent = (props: React.ComponentProps<T>) => (
-        <LazyWrapper fallback={fallback}>
-            <LazyComponent {...props} />
-        </LazyWrapper>
-    );
-
-    WrappedLazyComponent.displayName = 'WrappedLazyComponent';
-
-    return WrappedLazyComponent;
+// Chart wrapper with lazy loading
+interface LazyChartWrapperProps {
+    children: React.ReactNode;
+    height?: number;
 }
 
-// Preload function for critical components
-export const preloadComponents = {
-    imageUpload: () => import('./ImageUpload'),
-    ticketManagement: () => import('./TicketManagement'),
-    locationSelector: () => import('./LocationSelector'),
-    organizerDetails: () => import('./OrganizerDetails'),
-    dateTimeSelector: () => import('./DateTimeSelector'),
-    prePublishValidation: () => import('./PrePublishValidation'),
-};
-
-// Preload critical components on user interaction
-export const preloadCriticalComponents = () => {
-    // Preload components that are likely to be used next
-    preloadComponents.imageUpload();
-    preloadComponents.ticketManagement();
-};
-
-// Intersection Observer for lazy loading sections
-export const useLazySection = (threshold = 0.1) => {
-    const [isVisible, setIsVisible] = React.useState(false);
-    const [hasLoaded, setHasLoaded] = React.useState(false);
-    const ref = React.useRef<HTMLDivElement>(null);
-
-    React.useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting && !hasLoaded) {
-                    setIsVisible(true);
-                    setHasLoaded(true);
-                }
-            },
-            { threshold }
-        );
-
-        if (ref.current) {
-            observer.observe(ref.current);
+export const LazyChartWrapper: React.FC<LazyChartWrapperProps> = ({
+    children,
+    height = 300,
+}) => (
+    <LazyErrorBoundary
+        fallback={
+            <div className='p-4 text-center'>
+                <p className='text-red-500'>Failed to load chart</p>
+            </div>
         }
+    >
+        <Suspense fallback={<ChartSkeleton height={height} />}>
+            {children}
+        </Suspense>
+    </LazyErrorBoundary>
+);
 
-        return () => observer.disconnect();
-    }, [threshold, hasLoaded]);
-
-    return { ref, isVisible, hasLoaded };
-};
+// Table wrapper with lazy loading
+export const LazyTableWrapper: React.FC<LazyComponentWrapperProps> = ({
+    children,
+    fallback,
+    errorFallback,
+}) => (
+    <LazyErrorBoundary fallback={errorFallback}>
+        <Suspense
+            fallback={
+                fallback || (
+                    <div className='space-y-4'>
+                        {Array.from({ length: 5 }).map((_, index) => (
+                            <div
+                                key={index}
+                                className='flex items-center space-x-4 rounded-lg border p-4'
+                            >
+                                <Skeleton className='h-4 w-4' />
+                                <Skeleton className='h-16 w-16 rounded' />
+                                <div className='flex-1 space-y-2'>
+                                    <Skeleton className='h-4 w-3/4' />
+                                    <Skeleton className='h-3 w-1/2' />
+                                </div>
+                                <Skeleton className='h-6 w-20' />
+                                <Skeleton className='h-8 w-8' />
+                            </div>
+                        ))}
+                    </div>
+                )
+            }
+        >
+            {children}
+        </Suspense>
+    </LazyErrorBoundary>
+);

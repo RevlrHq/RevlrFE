@@ -1,237 +1,331 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface KeyboardNavigationOptions {
-    onNext?: () => void;
-    onPrevious?: () => void;
-    onSave?: () => void;
-    onPublish?: () => void;
-    onEscape?: () => void;
-    onEnter?: () => void;
     enableArrowKeys?: boolean;
-    enableTabNavigation?: boolean;
-    enableShortcuts?: boolean;
+    enableTabTrapping?: boolean;
+    enableEscapeHandling?: boolean;
+    enableEnterActivation?: boolean;
+    enableHomeEndKeys?: boolean;
+    announceChanges?: boolean;
+}
+
+interface NavigationState {
+    currentIndex: number;
+    totalItems: number;
+    isActive: boolean;
+    focusedElement: HTMLElement | null;
 }
 
 export function useKeyboardNavigation({
-    onNext,
-    onPrevious,
-    onSave,
-    onPublish,
-    onEscape,
-    onEnter,
     enableArrowKeys = true,
-    enableTabNavigation = true,
-    enableShortcuts = true,
+    enableTabTrapping = false,
+    enableEscapeHandling = true,
+    enableEnterActivation = true,
+    enableHomeEndKeys = true,
+    announceChanges = true,
 }: KeyboardNavigationOptions = {}) {
-    const containerRef = useRef<HTMLDivElement>(null);
+    const [state, setState] = useState<NavigationState>({
+        currentIndex: -1,
+        totalItems: 0,
+        isActive: false,
+        focusedElement: null,
+    });
 
+    const containerRef = useRef<HTMLElement>(null);
+    const itemsRef = useRef<HTMLElement[]>([]);
+    const announceRef = useRef<HTMLDivElement>(null);
+
+    // Get focusable elements within container
+    const getFocusableElements = useCallback((): HTMLElement[] => {
+        if (!containerRef.current) return [];
+
+        const focusableSelectors = [
+            'button:not([disabled])',
+            '[href]',
+            'input:not([disabled])',
+            'select:not([disabled])',
+            'textarea:not([disabled])',
+            '[tabindex]:not([tabindex="-1"])',
+            '[role="button"]:not([disabled])',
+            '[role="menuitem"]:not([disabled])',
+            '[role="tab"]:not([disabled])',
+            '[role="option"]:not([disabled])',
+        ].join(', ');
+
+        const elements = Array.from(
+            containerRef.current.querySelectorAll(focusableSelectors)
+        ) as HTMLElement[];
+
+        return elements.filter((element) => {
+            const style = window.getComputedStyle(element);
+            return (
+                style.display !== 'none' &&
+                style.visibility !== 'hidden' &&
+                !element.hasAttribute('aria-hidden')
+            );
+        });
+    }, []);
+
+    // Update items list
+    const updateItems = useCallback(() => {
+        const elements = getFocusableElements();
+        itemsRef.current = elements;
+        setState((prev) => ({
+            ...prev,
+            totalItems: elements.length,
+        }));
+    }, [getFocusableElements]);
+
+    // Announce changes to screen readers
+    const announce = useCallback(
+        (message: string) => {
+            if (!announceChanges || !announceRef.current) return;
+
+            announceRef.current.textContent = message;
+            setTimeout(() => {
+                if (announceRef.current) {
+                    announceRef.current.textContent = '';
+                }
+            }, 1000);
+        },
+        [announceChanges]
+    );
+
+    // Focus element at index
+    const focusIndex = useCallback(
+        (index: number) => {
+            const elements = itemsRef.current;
+            if (index < 0 || index >= elements.length) return;
+
+            const element = elements[index];
+            element.focus();
+
+            setState((prev) => ({
+                ...prev,
+                currentIndex: index,
+                focusedElement: element,
+            }));
+
+            // Announce focus change
+            const elementText =
+                element.textContent ||
+                element.getAttribute('aria-label') ||
+                element.tagName.toLowerCase();
+            announce(
+                `Focused on ${elementText}, ${index + 1} of ${elements.length}`
+            );
+        },
+        [announce]
+    );
+
+    // Navigate to next item
+    const navigateNext = useCallback(() => {
+        const nextIndex = state.currentIndex + 1;
+        if (nextIndex < state.totalItems) {
+            focusIndex(nextIndex);
+        } else if (enableArrowKeys) {
+            // Wrap to first item
+            focusIndex(0);
+        }
+    }, [state.currentIndex, state.totalItems, focusIndex, enableArrowKeys]);
+
+    // Navigate to previous item
+    const navigatePrevious = useCallback(() => {
+        const prevIndex = state.currentIndex - 1;
+        if (prevIndex >= 0) {
+            focusIndex(prevIndex);
+        } else if (enableArrowKeys) {
+            // Wrap to last item
+            focusIndex(state.totalItems - 1);
+        }
+    }, [state.currentIndex, state.totalItems, focusIndex, enableArrowKeys]);
+
+    // Navigate to first item
+    const navigateFirst = useCallback(() => {
+        if (state.totalItems > 0) {
+            focusIndex(0);
+        }
+    }, [state.totalItems, focusIndex]);
+
+    // Navigate to last item
+    const navigateLast = useCallback(() => {
+        if (state.totalItems > 0) {
+            focusIndex(state.totalItems - 1);
+        }
+    }, [state.totalItems, focusIndex]);
+
+    // Handle keyboard events
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
-            // Don't handle keyboard events when user is typing in inputs
-            const target = event.target as HTMLElement;
-            const isInputElement =
-                target.tagName === 'INPUT' ||
-                target.tagName === 'TEXTAREA' ||
-                target.contentEditable === 'true' ||
-                target.closest('[contenteditable="true"]');
-
-            // Handle shortcuts even in input elements (with modifiers)
-            if (enableShortcuts && (event.ctrlKey || event.metaKey)) {
-                switch (event.key.toLowerCase()) {
-                    case 's':
-                        event.preventDefault();
-                        onSave?.();
-                        return;
-                    case 'enter':
-                        if (event.shiftKey) {
-                            event.preventDefault();
-                            onPublish?.();
-                            return;
-                        }
-                        break;
-                }
-            }
-
-            // Don't handle other keys when in input elements
-            if (isInputElement && !event.ctrlKey && !event.metaKey) {
-                return;
-            }
+            if (!state.isActive) return;
 
             switch (event.key) {
-                case 'ArrowRight':
                 case 'ArrowDown':
-                    if (enableArrowKeys && onNext) {
+                case 'ArrowRight':
+                    if (enableArrowKeys) {
                         event.preventDefault();
-                        onNext();
+                        navigateNext();
                     }
                     break;
 
-                case 'ArrowLeft':
                 case 'ArrowUp':
-                    if (enableArrowKeys && onPrevious) {
+                case 'ArrowLeft':
+                    if (enableArrowKeys) {
                         event.preventDefault();
-                        onPrevious();
+                        navigatePrevious();
                     }
                     break;
 
-                case 'Escape':
-                    if (onEscape) {
+                case 'Home':
+                    if (enableHomeEndKeys) {
                         event.preventDefault();
-                        onEscape();
+                        navigateFirst();
+                    }
+                    break;
+
+                case 'End':
+                    if (enableHomeEndKeys) {
+                        event.preventDefault();
+                        navigateLast();
                     }
                     break;
 
                 case 'Enter':
-                    if (!isInputElement && onEnter) {
+                case ' ':
+                    if (enableEnterActivation && state.focusedElement) {
                         event.preventDefault();
-                        onEnter();
+                        state.focusedElement.click();
+                    }
+                    break;
+
+                case 'Escape':
+                    if (enableEscapeHandling) {
+                        event.preventDefault();
+                        deactivate();
                     }
                     break;
 
                 case 'Tab':
-                    if (enableTabNavigation) {
-                        // Let default tab behavior work, but we can add custom logic here
-                        // For example, trapping focus within a modal
-                        handleTabNavigation(event);
+                    if (enableTabTrapping) {
+                        event.preventDefault();
+                        if (event.shiftKey) {
+                            navigatePrevious();
+                        } else {
+                            navigateNext();
+                        }
                     }
                     break;
             }
         },
         [
-            onNext,
-            onPrevious,
-            onSave,
-            onPublish,
-            onEscape,
-            onEnter,
+            state.isActive,
+            state.focusedElement,
             enableArrowKeys,
-            enableTabNavigation,
-            enableShortcuts,
+            enableHomeEndKeys,
+            enableEnterActivation,
+            enableEscapeHandling,
+            enableTabTrapping,
+            navigateNext,
+            navigatePrevious,
+            navigateFirst,
+            navigateLast,
         ]
     );
 
-    const handleTabNavigation = useCallback((event: KeyboardEvent) => {
-        if (!containerRef.current) return;
+    // Activate keyboard navigation
+    const activate = useCallback(
+        (startIndex: number = 0) => {
+            updateItems();
+            setState((prev) => ({ ...prev, isActive: true }));
 
-        const focusableElements = containerRef.current.querySelectorAll(
-            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        );
-
-        const firstElement = focusableElements[0] as HTMLElement;
-        const lastElement = focusableElements[
-            focusableElements.length - 1
-        ] as HTMLElement;
-
-        if (event.shiftKey) {
-            // Shift + Tab (backward)
-            if (document.activeElement === firstElement) {
-                event.preventDefault();
-                lastElement?.focus();
+            if (itemsRef.current.length > 0) {
+                focusIndex(
+                    Math.max(
+                        0,
+                        Math.min(startIndex, itemsRef.current.length - 1)
+                    )
+                );
             }
-        } else {
-            // Tab (forward)
-            if (document.activeElement === lastElement) {
-                event.preventDefault();
-                firstElement?.focus();
-            }
-        }
-    }, []);
 
+            announce('Keyboard navigation activated');
+        },
+        [updateItems, focusIndex, announce]
+    );
+
+    // Deactivate keyboard navigation
+    const deactivate = useCallback(() => {
+        setState((prev) => ({
+            ...prev,
+            isActive: false,
+            currentIndex: -1,
+            focusedElement: null,
+        }));
+
+        announce('Keyboard navigation deactivated');
+    }, [announce]);
+
+    // Set up event listeners
     useEffect(() => {
-        document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [handleKeyDown]);
+        const container = containerRef.current;
+        if (!container) return;
 
-    // Focus management utilities
-    const focusFirstElement = useCallback(() => {
-        if (!containerRef.current) return;
-
-        const firstFocusable = containerRef.current.querySelector(
-            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        ) as HTMLElement;
-
-        firstFocusable?.focus();
-    }, []);
-
-    const focusLastElement = useCallback(() => {
-        if (!containerRef.current) return;
-
-        const focusableElements = containerRef.current.querySelectorAll(
-            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        );
-
-        const lastElement = focusableElements[
-            focusableElements.length - 1
-        ] as HTMLElement;
-        lastElement?.focus();
-    }, []);
-
-    const trapFocus = useCallback((element: HTMLElement) => {
-        const focusableElements = element.querySelectorAll(
-            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        );
-
-        const firstElement = focusableElements[0] as HTMLElement;
-        const lastElement = focusableElements[
-            focusableElements.length - 1
-        ] as HTMLElement;
-
-        const handleTrapKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Tab') {
-                if (event.shiftKey) {
-                    if (document.activeElement === firstElement) {
-                        event.preventDefault();
-                        lastElement?.focus();
-                    }
-                } else {
-                    if (document.activeElement === lastElement) {
-                        event.preventDefault();
-                        firstElement?.focus();
-                    }
-                }
-            }
-        };
-
-        element.addEventListener('keydown', handleTrapKeyDown);
-        firstElement?.focus();
+        container.addEventListener('keydown', handleKeyDown);
 
         return () => {
-            element.removeEventListener('keydown', handleTrapKeyDown);
+            container.removeEventListener('keydown', handleKeyDown);
         };
-    }, []);
+    }, [handleKeyDown]);
+
+    // Update items when container changes
+    useEffect(() => {
+        if (state.isActive) {
+            updateItems();
+        }
+    }, [state.isActive, updateItems]);
+
+    // Focus management for dynamic content
+    const handleFocusIn = useCallback(
+        (event: FocusEvent) => {
+            if (!state.isActive) return;
+
+            const target = event.target as HTMLElement;
+            const elements = itemsRef.current;
+            const index = elements.indexOf(target);
+
+            if (index !== -1) {
+                setState((prev) => ({
+                    ...prev,
+                    currentIndex: index,
+                    focusedElement: target,
+                }));
+            }
+        },
+        [state.isActive]
+    );
+
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        container.addEventListener('focusin', handleFocusIn);
+
+        return () => {
+            container.removeEventListener('focusin', handleFocusIn);
+        };
+    }, [handleFocusIn]);
 
     return {
         containerRef,
-        focusFirstElement,
-        focusLastElement,
-        trapFocus,
-    };
-}
-
-// Hook for managing focus announcements for screen readers
-export function useFocusAnnouncement() {
-    const announceRef = useRef<HTMLDivElement>(null);
-
-    const announce = useCallback(
-        (message: string, priority: 'polite' | 'assertive' = 'polite') => {
-            if (announceRef.current) {
-                announceRef.current.setAttribute('aria-live', priority);
-                announceRef.current.textContent = message;
-
-                // Clear the message after a short delay to allow for re-announcements
-                setTimeout(() => {
-                    if (announceRef.current) {
-                        announceRef.current.textContent = '';
-                    }
-                }, 1000);
-            }
-        },
-        []
-    );
-
-    return {
-        announce,
         announceRef,
+        state,
+        activate,
+        deactivate,
+        navigateNext,
+        navigatePrevious,
+        navigateFirst,
+        navigateLast,
+        focusIndex,
+        updateItems,
     };
 }
 

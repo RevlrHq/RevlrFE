@@ -5,7 +5,7 @@ import {
     PagedCollectionOfEventRegistrationSummary,
 } from '../lib/api';
 
-export interface OrganizerRegistrationFilters {
+export interface RegistrationFilters {
     // Pagination
     pageNumber?: number;
     pageSize?: number;
@@ -36,14 +36,14 @@ export interface UseOrganizerRegistrationsResult {
     hasPreviousPage: boolean;
     fetchRegistrations: (
         page?: number,
-        filters?: OrganizerRegistrationFilters
+        filters?: RegistrationFilters
     ) => Promise<void>;
     refetch: () => Promise<void>;
 }
 
 export const useOrganizerRegistrations = (
     initialPageSize: number = 10,
-    initialFilters?: OrganizerRegistrationFilters
+    initialFilters?: RegistrationFilters
 ): UseOrganizerRegistrationsResult => {
     const [registrations, setRegistrations] = useState<
         EventRegistrationSummary[]
@@ -54,12 +54,12 @@ export const useOrganizerRegistrations = (
     const [totalCount, setTotalCount] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [pageSize] = useState(initialPageSize);
-    const [filters, setFilters] = useState<OrganizerRegistrationFilters>(
+    const [filters, setFilters] = useState<RegistrationFilters>(
         initialFilters || {}
     );
 
     const fetchRegistrations = useCallback(
-        async (page: number = 1, newFilters?: OrganizerRegistrationFilters) => {
+        async (page: number = 1, newFilters?: RegistrationFilters) => {
             setLoading(true);
             setError(null);
 

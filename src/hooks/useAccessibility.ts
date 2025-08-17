@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useKeyboardNavigation } from './useKeyboardNavigation';
+import { useFocusManagement } from './useFocusManagement';
+import { useScreenReaderAnnouncements } from './useScreenReaderAnnouncements';
 
 interface AccessibilityOptions {
     enableHighContrast?: boolean;
@@ -6,6 +9,7 @@ interface AccessibilityOptions {
     enableFocusManagement?: boolean;
     enableScreenReaderSupport?: boolean;
     announceChanges?: boolean;
+    enableKeyboardNavigation?: boolean;
 }
 
 interface AccessibilityState {
@@ -22,6 +26,7 @@ export function useAccessibility({
     enableFocusManagement = true,
     enableScreenReaderSupport = true,
     announceChanges = true,
+    enableKeyboardNavigation = true,
 }: AccessibilityOptions = {}) {
     const [state, setState] = useState<AccessibilityState>({
         isHighContrast: false,
@@ -33,6 +38,25 @@ export function useAccessibility({
 
     const announceRef = useRef<HTMLDivElement>(null);
     const focusHistoryRef = useRef<HTMLElement[]>([]);
+
+    // Initialize enhanced accessibility hooks
+    const keyboardNavigation = useKeyboardNavigation({
+        enableArrowKeys: enableKeyboardNavigation,
+        enableTabTrapping: false,
+        enableEscapeHandling: true,
+        enableEnterActivation: true,
+        enableHomeEndKeys: true,
+        announceChanges,
+    });
+
+    const focusManagement = useFocusManagement({
+        restoreOnUnmount: true,
+        trapFocus: false,
+        autoFocus: false,
+        announceChanges,
+    });
+
+    const screenReader = useScreenReaderAnnouncements();
 
     // Detect system preferences
     useEffect(() => {
@@ -355,6 +379,20 @@ export function useAccessibility({
         getAriaAttributes,
         createButtonProps,
         announceRef,
+        // Enhanced accessibility features
+        keyboardNavigation,
+        focusManagement,
+        screenReader,
+        // Convenience methods
+        announceLoading: screenReader.announceLoading,
+        announceError: screenReader.announceError,
+        announceSuccess: screenReader.announceSuccess,
+        announceDataChange: screenReader.announceDataChange,
+        announceNavigation: screenReader.announceNavigation,
+        announceModal: screenReader.announceModal,
+        announceProgress: screenReader.announceProgress,
+        announceTableUpdate: screenReader.announceTableUpdate,
+        announceSearchResults: screenReader.announceSearchResults,
     };
 }
 
