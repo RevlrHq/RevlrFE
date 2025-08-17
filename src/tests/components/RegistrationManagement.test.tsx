@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import RegistrationManagement from '../../components/RegistrationManagement';
 import { useOrganizerRegistrations } from '../../hooks/useOrganizerRegistrations';
@@ -174,8 +174,7 @@ describe('RegistrationManagement', () => {
         expect(screen.getByText('Date Range')).toBeInTheDocument();
     });
 
-    it('should handle sorting', async () => {
-        const user = userEvent.setup();
+    it('should handle sorting', () => {
         render(<RegistrationManagement />);
 
         const attendeeHeader = screen.getByText('Attendee').closest('th');
@@ -262,7 +261,6 @@ describe('RegistrationManagement', () => {
     });
 
     it('should handle pagination clicks', async () => {
-        const user = userEvent.setup();
         const mockFetchRegistrations = jest.fn();
 
         mockUseOrganizerRegistrations.mockReturnValue({
@@ -277,7 +275,7 @@ describe('RegistrationManagement', () => {
         render(<RegistrationManagement />);
 
         const nextButton = screen.getByText('Next');
-        await user.click(nextButton);
+        await userEvent.setup().click(nextButton);
 
         expect(mockFetchRegistrations).toHaveBeenCalledWith(2);
     });

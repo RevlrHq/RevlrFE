@@ -339,7 +339,7 @@ export const AccessibleMediaCard: React.FC<AccessibleMediaCardProps> = ({
                     >
                         <div className='flex size-full items-center justify-center'>
                             <div
-                                className={`h-6 w-6 rounded-full border-b-2 border-revlr-primary-blue ${
+                                className={`size-6 rounded-full border-b-2 border-revlr-primary-blue ${
                                     accessibility.state.isReducedMotion
                                         ? ''
                                         : 'animate-spin'
@@ -370,6 +370,7 @@ export const AccessibleMediaCard: React.FC<AccessibleMediaCardProps> = ({
                 )}
 
                 {/* Main Image */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     ref={imageRef}
                     alt={item.title}
@@ -410,7 +411,7 @@ export const AccessibleMediaCard: React.FC<AccessibleMediaCardProps> = ({
                 } ${isHovered || isFocused ? 'opacity-100' : 'opacity-0'}`}
             >
                 {/* Image Info */}
-                <div className='absolute bottom-2 left-2 right-2'>
+                <div className='absolute inset-x-2 bottom-2'>
                     <p className='truncate font-inter text-xs font-medium text-white'>
                         {item.title}
                     </p>
@@ -630,7 +631,7 @@ export const AccessibleMediaCard: React.FC<AccessibleMediaCardProps> = ({
 
                     {/* Tooltip arrow */}
                     <div
-                        className={`absolute left-1/2 top-full h-2 w-2 -translate-x-1/2 rotate-45 border-b border-r ${
+                        className={`absolute left-1/2 top-full size-2 -translate-x-1/2 rotate-45 border-b border-r ${
                             theme === 'dark'
                                 ? 'border-revlr-dark-border bg-revlr-dark-card'
                                 : 'border-gray-200 bg-white'

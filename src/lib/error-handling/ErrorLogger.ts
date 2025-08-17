@@ -8,7 +8,7 @@ export interface ErrorContext {
     sessionId?: string;
     component?: string;
     action?: string;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
     timestamp?: number;
 }
 
@@ -104,7 +104,7 @@ export class ErrorLogger {
         endpoint: string,
         method: string,
         statusCode?: number,
-        responseData?: any
+        responseData?: unknown
     ): void {
         this.logError(
             error,
@@ -128,8 +128,8 @@ export class ErrorLogger {
     logComponentError(
         error: Error,
         componentName: string,
-        props?: any,
-        state?: any
+        props?: Record<string, unknown>,
+        state?: Record<string, unknown>
     ): void {
         this.logError(
             error,

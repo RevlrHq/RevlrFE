@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderHook, act } from '@testing-library/react';
 import { useAccessibility } from '../../hooks/useAccessibility';
@@ -54,7 +54,6 @@ const FocusManagementTestComponent: React.FC = () => {
         announceRef,
         focusFirst,
         focusLast,
-        focusElement,
         enableFocusTrap,
         disableFocusTrap,
         createModalFocusManagement,
@@ -266,7 +265,7 @@ describe('Accessibility Hooks Tests', () => {
             const enterEvent = {
                 key: 'Enter',
                 preventDefault: jest.fn(),
-            } as any;
+            } as React.KeyboardEvent<HTMLButtonElement>;
 
             buttonProps.onKeyDown(enterEvent);
 
@@ -277,7 +276,7 @@ describe('Accessibility Hooks Tests', () => {
             const spaceEvent = {
                 key: ' ',
                 preventDefault: jest.fn(),
-            } as any;
+            } as React.KeyboardEvent<HTMLButtonElement>;
 
             buttonProps.onKeyDown(spaceEvent);
 

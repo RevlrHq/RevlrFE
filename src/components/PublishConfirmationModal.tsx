@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { useTheme } from '@src/lib/ThemeContext';
 import type { EventCreationData, EventTicket } from '@src/types/event-creation';
 
@@ -476,9 +477,11 @@ export const PublishConfirmationModal: React.FC<
                                             key={image.id || index}
                                             className='size-16 shrink-0 overflow-hidden rounded-lg'
                                         >
-                                            <img
+                                            <Image
                                                 src={image.url}
                                                 alt={`Event image ${index + 1}`}
+                                                width={64}
+                                                height={64}
                                                 className='size-full object-cover'
                                             />
                                         </div>

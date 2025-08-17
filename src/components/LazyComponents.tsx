@@ -24,8 +24,8 @@ export const LazyAttendeeAnalyticsChart = lazy(() =>
 );
 
 // Lazy load heavy dashboard components
-export const LazyEnhancedEventTable = lazy(() =>
-    import('./EnhancedEventTable').then((module) => ({
+export const LazyEventTable = lazy(() =>
+    import('./EventTable').then((module) => ({
         default: module.default,
     }))
 );
@@ -146,14 +146,14 @@ export const LazyTableWrapper: React.FC<LazyComponentWrapperProps> = ({
                                 key={index}
                                 className='flex items-center space-x-4 rounded-lg border p-4'
                             >
-                                <Skeleton className='h-4 w-4' />
-                                <Skeleton className='h-16 w-16 rounded' />
+                                <Skeleton className='size-4' />
+                                <Skeleton className='size-16 rounded' />
                                 <div className='flex-1 space-y-2'>
                                     <Skeleton className='h-4 w-3/4' />
                                     <Skeleton className='h-3 w-1/2' />
                                 </div>
                                 <Skeleton className='h-6 w-20' />
-                                <Skeleton className='h-8 w-8' />
+                                <Skeleton className='size-8' />
                             </div>
                         ))}
                     </div>

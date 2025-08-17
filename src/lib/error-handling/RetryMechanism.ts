@@ -80,7 +80,7 @@ export class RetryMechanism {
         apiCall: () => Promise<T>,
         config: Partial<RetryConfig> = {}
     ): Promise<RetryResult<T>> {
-        return this.retry(apiCall, config, (error, attempt) => {
+        return this.retry(apiCall, config, (error) => {
             // Don't retry on client errors (4xx)
             if (this.isClientError(error)) {
                 return false;
@@ -99,7 +99,7 @@ export class RetryMechanism {
     /**
      * Create a retry wrapper for a function
      */
-    static createRetryWrapper<T extends any[], R>(
+    static createRetryWrapper<T extends unknown[], R>(
         fn: (...args: T) => Promise<R>,
         config: Partial<RetryConfig> = {}
     ): (...args: T) => Promise<R> {

@@ -7,13 +7,8 @@ import {
     AlertTriangle,
     CheckCircle,
     AlertCircle,
-    Info,
     RefreshCw,
     Search,
-    Filter,
-    Eye,
-    EyeOff,
-    Wifi,
     WifiOff,
 } from 'lucide-react';
 import { MediaItem, ProviderStatus } from '@src/types/media-search';
@@ -47,10 +42,8 @@ export const MediaSearchWithGracefulDegradation: React.FC<
     >('full');
 
     const { state, actions } = useMediaSearch({
-        eventCategory: eventCategory as any,
+        initialFilters: { eventCategory },
         maxSelectedItems: maxImages,
-        enableAutoSuggestions: true,
-        preloadPopular: true,
     });
 
     // Categorize providers by health status
@@ -141,7 +134,7 @@ export const MediaSearchWithGracefulDegradation: React.FC<
         switch (degradationMode) {
             case 'minimal':
                 return {
-                    icon: <AlertCircle className='h-4 w-4 text-red-500' />,
+                    icon: <AlertCircle className='size-4 text-red-500' />,
                     message:
                         'All media providers are unavailable. Using fallback options.',
                     severity: 'error' as const,
@@ -149,7 +142,7 @@ export const MediaSearchWithGracefulDegradation: React.FC<
                 };
             case 'partial':
                 return {
-                    icon: <AlertTriangle className='h-4 w-4 text-yellow-500' />,
+                    icon: <AlertTriangle className='size-4 text-yellow-500' />,
                     message:
                         'Some media providers are experiencing issues. Search results may be limited.',
                     severity: 'warning' as const,
@@ -157,7 +150,7 @@ export const MediaSearchWithGracefulDegradation: React.FC<
                 };
             case 'full':
                 return {
-                    icon: <CheckCircle className='h-4 w-4 text-green-500' />,
+                    icon: <CheckCircle className='size-4 text-green-500' />,
                     message: 'All media providers are operating normally.',
                     severity: 'success' as const,
                     details: `${healthyCount}/${totalProviders} providers healthy`,
@@ -245,7 +238,7 @@ export const MediaSearchWithGracefulDegradation: React.FC<
                             className={`rounded-lg p-3 ${theme === 'dark' ? 'border-yellow-700 bg-yellow-900/20' : 'border-yellow-200 bg-yellow-50'} border`}
                         >
                             <div className='flex items-center space-x-2'>
-                                <AlertTriangle className='h-4 w-4 text-yellow-500' />
+                                <AlertTriangle className='size-4 text-yellow-500' />
                                 <span
                                     className={`text-sm ${theme === 'dark' ? 'text-yellow-200' : 'text-yellow-800'}`}
                                 >
@@ -378,7 +371,7 @@ export const MediaSearchWithGracefulDegradation: React.FC<
             <div className='relative'>
                 <div className='relative'>
                     <Search
-                        className={`absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 ${
+                        className={`absolute left-3 top-1/2 size-4 -translate-y-1/2 ${
                             theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                         }`}
                     />
@@ -394,8 +387,8 @@ export const MediaSearchWithGracefulDegradation: React.FC<
                         placeholder='Search for images...'
                         className={`w-full rounded-lg border py-2 pl-10 pr-4 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
                             theme === 'dark'
-                                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400'
-                                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                                ? 'border-gray-600 bg-gray-700 text-white placeholder:text-gray-400'
+                                : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-500'
                         }`}
                         disabled={degradationMode === 'minimal'}
                     />
@@ -443,7 +436,7 @@ export const MediaSearchWithGracefulDegradation: React.FC<
                 >
                     <div className='flex items-center justify-between'>
                         <div className='flex items-center space-x-2'>
-                            <CheckCircle className='h-4 w-4 text-green-500' />
+                            <CheckCircle className='size-4 text-green-500' />
                             <span
                                 className={`text-sm font-medium ${
                                     theme === 'dark'
@@ -502,7 +495,7 @@ export const MediaSearchWithGracefulDegradation: React.FC<
                     }`}
                 >
                     <WifiOff
-                        className={`mx-auto mb-4 h-8 w-8 ${
+                        className={`mx-auto mb-4 size-8 ${
                             theme === 'dark' ? 'text-gray-600' : 'text-gray-400'
                         }`}
                     />
@@ -559,7 +552,7 @@ export const MediaSearchWithGracefulDegradation: React.FC<
                             }}
                             className='rounded-lg bg-blue-600 p-3 text-white transition-colors hover:bg-blue-700'
                         >
-                            <RefreshCw className='mr-2 inline h-4 w-4' />
+                            <RefreshCw className='mr-2 inline size-4' />
                             Retry Connection
                         </button>
                     </div>

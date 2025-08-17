@@ -54,9 +54,9 @@ const RegistrationRow: React.FC<RegistrationRowProps> = ({
         >
             {/* Attendee */}
             <div className='flex min-w-0 flex-1 items-center'>
-                <div className='h-10 w-10 flex-shrink-0'>
-                    <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gray-300 dark:bg-gray-600'>
-                        <User className='h-5 w-5 text-gray-500 dark:text-gray-400' />
+                <div className='size-10 shrink-0'>
+                    <div className='flex size-10 items-center justify-center rounded-full bg-gray-300 dark:bg-gray-600'>
+                        <User className='size-5 text-gray-500 dark:text-gray-400' />
                     </div>
                 </div>
                 <div className='ml-4 min-w-0 flex-1'>
@@ -65,7 +65,7 @@ const RegistrationRow: React.FC<RegistrationRowProps> = ({
                         {registration.attendeeLastName}
                     </div>
                     <div className='flex items-center truncate text-sm text-gray-500 dark:text-gray-400'>
-                        <Mail className='mr-1 h-3 w-3 flex-shrink-0' />
+                        <Mail className='mr-1 size-3 shrink-0' />
                         <span className='truncate'>
                             {registration.attendeeEmail}
                         </span>
@@ -74,23 +74,23 @@ const RegistrationRow: React.FC<RegistrationRowProps> = ({
             </div>
 
             {/* Event */}
-            <div className='w-48 flex-shrink-0'>
+            <div className='w-48 shrink-0'>
                 <div className='truncate text-sm text-gray-900 dark:text-white'>
                     {registration.eventTitle}
                 </div>
             </div>
 
             {/* Ticket */}
-            <div className='w-32 flex-shrink-0'>
+            <div className='w-32 shrink-0'>
                 <div className='truncate text-sm text-gray-900 dark:text-white'>
                     {registration.ticketName}
                 </div>
             </div>
 
             {/* Amount */}
-            <div className='w-24 flex-shrink-0'>
+            <div className='w-24 shrink-0'>
                 <div className='flex items-center text-sm font-medium text-gray-900 dark:text-white'>
-                    <DollarSign className='mr-1 h-3 w-3 flex-shrink-0' />
+                    <DollarSign className='mr-1 size-3 shrink-0' />
                     <span className='truncate'>
                         {formatCurrency(registration.amountPaid)}
                     </span>
@@ -98,14 +98,14 @@ const RegistrationRow: React.FC<RegistrationRowProps> = ({
             </div>
 
             {/* Status */}
-            <div className='w-24 flex-shrink-0'>
+            <div className='w-24 shrink-0'>
                 {getPaymentStatusBadge(registration.paymentStatus)}
             </div>
 
             {/* Registration Date */}
-            <div className='w-32 flex-shrink-0'>
+            <div className='w-32 shrink-0'>
                 <div className='flex items-center text-sm text-gray-900 dark:text-white'>
-                    <Calendar className='mr-1 h-3 w-3 flex-shrink-0' />
+                    <Calendar className='mr-1 size-3 shrink-0' />
                     <span className='truncate'>
                         {formatDate(registration.registrationDate)}
                     </span>
@@ -113,10 +113,10 @@ const RegistrationRow: React.FC<RegistrationRowProps> = ({
             </div>
 
             {/* Financing */}
-            <div className='w-24 flex-shrink-0'>
+            <div className='w-24 shrink-0'>
                 {registration.isFinanced ? (
                     <span className='inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200'>
-                        <CreditCard className='mr-1 h-3 w-3' />
+                        <CreditCard className='mr-1 size-3' />
                         Financed
                     </span>
                 ) : (
@@ -208,7 +208,7 @@ const VirtualizedRegistrationTable: React.FC<
         return (
             <div className='flex h-64 items-center justify-center'>
                 <div className='text-center'>
-                    <FileText className='mx-auto h-12 w-12 text-gray-400' />
+                    <FileText className='mx-auto size-12 text-gray-400' />
                     <h3 className='mt-2 text-sm font-medium text-gray-900 dark:text-white'>
                         No registrations found
                     </h3>
@@ -233,12 +233,12 @@ const VirtualizedRegistrationTable: React.FC<
                 }`}
             >
                 <div className='min-w-0 flex-1'>Attendee</div>
-                <div className='w-48 flex-shrink-0'>Event</div>
-                <div className='w-32 flex-shrink-0'>Ticket</div>
-                <div className='w-24 flex-shrink-0'>Amount</div>
-                <div className='w-24 flex-shrink-0'>Status</div>
-                <div className='w-32 flex-shrink-0'>Registration Date</div>
-                <div className='w-24 flex-shrink-0'>Financing</div>
+                <div className='w-48 shrink-0'>Event</div>
+                <div className='w-32 shrink-0'>Ticket</div>
+                <div className='w-24 shrink-0'>Amount</div>
+                <div className='w-24 shrink-0'>Status</div>
+                <div className='w-32 shrink-0'>Registration Date</div>
+                <div className='w-24 shrink-0'>Financing</div>
             </div>
 
             {/* Virtualized list */}

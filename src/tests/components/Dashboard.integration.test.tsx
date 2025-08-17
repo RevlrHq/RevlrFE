@@ -10,13 +10,15 @@ jest.mock('../../hooks/useOrganizerDashboard');
 jest.mock('../../lib/ThemeContext');
 jest.mock('../../stores/authStore');
 jest.mock('next/link', () => {
-    return ({
+    const MockLink = ({
         children,
         href,
     }: {
         children: React.ReactNode;
         href: string;
     }) => <a href={href}>{children}</a>;
+    MockLink.displayName = 'MockLink';
+    return MockLink;
 });
 
 const mockUseOrganizerDashboard = useOrganizerDashboard as jest.MockedFunction<

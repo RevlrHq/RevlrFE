@@ -190,7 +190,7 @@ export const RetryMechanism: React.FC<RetryMechanismProps> = ({
         if (disabled) {
             return {
                 text: 'Retry Disabled',
-                icon: <XCircle className='h-4 w-4' />,
+                icon: <XCircle className='size-4' />,
                 className: 'opacity-50 cursor-not-allowed',
                 disabled: true,
             };
@@ -199,7 +199,7 @@ export const RetryMechanism: React.FC<RetryMechanismProps> = ({
         if (isRetrying) {
             return {
                 text: `Retrying... (${currentAttempt}/${finalConfig.maxAttempts})`,
-                icon: <RefreshCw className='h-4 w-4 animate-spin' />,
+                icon: <RefreshCw className='size-4 animate-spin' />,
                 className: 'opacity-75',
                 disabled: true,
             };
@@ -208,7 +208,7 @@ export const RetryMechanism: React.FC<RetryMechanismProps> = ({
         if (countdown !== null && countdown > 0) {
             return {
                 text: `Retry in ${countdown}s`,
-                icon: <Timer className='h-4 w-4' />,
+                icon: <Timer className='size-4' />,
                 className: 'opacity-75',
                 disabled: true,
             };
@@ -217,7 +217,7 @@ export const RetryMechanism: React.FC<RetryMechanismProps> = ({
         if (currentAttempt >= finalConfig.maxAttempts) {
             return {
                 text: 'Max Attempts Reached',
-                icon: <XCircle className='h-4 w-4' />,
+                icon: <XCircle className='size-4' />,
                 className: 'opacity-50',
                 disabled: true,
             };
@@ -228,7 +228,7 @@ export const RetryMechanism: React.FC<RetryMechanismProps> = ({
                 currentAttempt > 0
                     ? `Retry (${currentAttempt}/${finalConfig.maxAttempts})`
                     : 'Retry',
-            icon: <RefreshCw className='h-4 w-4' />,
+            icon: <RefreshCw className='size-4' />,
             className: 'hover:bg-blue-700',
             disabled: false,
         };
@@ -265,7 +265,7 @@ export const RetryMechanism: React.FC<RetryMechanismProps> = ({
                     <div className='mb-2 flex items-center space-x-2'>
                         {isRetrying ? (
                             <>
-                                <RefreshCw className='h-4 w-4 animate-spin text-blue-500' />
+                                <RefreshCw className='size-4 animate-spin text-blue-500' />
                                 <span
                                     className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}
                                 >
@@ -274,7 +274,7 @@ export const RetryMechanism: React.FC<RetryMechanismProps> = ({
                             </>
                         ) : lastAttempt?.success ? (
                             <>
-                                <CheckCircle className='h-4 w-4 text-green-500' />
+                                <CheckCircle className='size-4 text-green-500' />
                                 <span
                                     className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}
                                 >
@@ -283,7 +283,7 @@ export const RetryMechanism: React.FC<RetryMechanismProps> = ({
                             </>
                         ) : (
                             <>
-                                <AlertCircle className='h-4 w-4 text-red-500' />
+                                <AlertCircle className='size-4 text-red-500' />
                                 <span
                                     className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-900'}`}
                                 >
@@ -365,9 +365,9 @@ export const RetryMechanism: React.FC<RetryMechanismProps> = ({
                             >
                                 <div className='flex items-center space-x-2'>
                                     {attempt.success ? (
-                                        <CheckCircle className='h-3 w-3 text-green-500' />
+                                        <CheckCircle className='size-3 text-green-500' />
                                     ) : (
-                                        <XCircle className='h-3 w-3 text-red-500' />
+                                        <XCircle className='size-3 text-red-500' />
                                     )}
                                     <span
                                         className={
@@ -451,7 +451,7 @@ export const RetryMechanism: React.FC<RetryMechanismProps> = ({
                     }`}
                 >
                     <div className='flex items-start space-x-2'>
-                        <Zap className='mt-0.5 h-4 w-4 text-yellow-500' />
+                        <Zap className='mt-0.5 size-4 text-yellow-500' />
                         <div>
                             <p
                                 className={`text-sm font-medium ${

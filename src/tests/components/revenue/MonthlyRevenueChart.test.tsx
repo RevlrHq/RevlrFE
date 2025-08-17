@@ -5,7 +5,7 @@ import { MonthlyRevenue } from '@/lib/api';
 
 // Mock Chart.js components
 jest.mock('react-chartjs-2', () => ({
-    Line: ({ data, options }: any) => (
+    Line: ({ data }: { data: unknown }) => (
         <div data-testid='line-chart' data-chart-data={JSON.stringify(data)} />
     ),
 }));
@@ -216,7 +216,9 @@ describe('MonthlyRevenueChart', () => {
             click: mockClick,
         };
 
-        jest.spyOn(document, 'createElement').mockReturnValue(mockLink as any);
+        jest.spyOn(document, 'createElement').mockReturnValue(
+            mockLink as HTMLAnchorElement
+        );
         jest.spyOn(document.body, 'appendChild').mockImplementation(
             mockAppendChild
         );

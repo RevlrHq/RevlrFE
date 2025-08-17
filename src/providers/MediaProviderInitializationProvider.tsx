@@ -1,6 +1,12 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+    createContext,
+    useContext,
+    useEffect,
+    useState,
+    useCallback,
+} from 'react';
 import {
     MediaProviderInitializer,
     InitializationResult,
@@ -71,7 +77,7 @@ export function MediaProviderInitializationProvider({
     const [shouldContinue, setShouldContinue] = useState(true);
     const [recommendations, setRecommendations] = useState<string[]>([]);
 
-    const initializeProviders = async () => {
+    const initializeProviders = useCallback(async () => {
         if (isInitializing) return;
 
         setIsInitializing(true);
@@ -212,7 +218,7 @@ export function MediaProviderInitializationProvider({
         } finally {
             setIsInitializing(false);
         }
-    };
+    }, [errorHandler, isInitializing]);
 
     const reinitialize = async () => {
         console.log('🔄 Reinitializing media providers...');
@@ -253,7 +259,7 @@ export function MediaProviderInitializationProvider({
                 healthMonitor.stopMonitoring();
             }
         };
-    }, []);
+    }, [healthMonitor, initializeProviders]);
 
     const contextValue: MediaProviderInitializationContextType = {
         initializationStatus,

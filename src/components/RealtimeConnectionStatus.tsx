@@ -73,7 +73,7 @@ export const RealtimeConnectionStatus: React.FC<
                             variant='secondary'
                             className={`${statusInfo.bgColor} ${statusInfo.color} ${className}`}
                         >
-                            <Icon className='mr-1 h-3 w-3' />
+                            <Icon className='mr-1 size-3' />
                             {showLabel && statusInfo.label}
                         </Badge>
                     </TooltipTrigger>
@@ -101,9 +101,9 @@ export const RealtimeConnectionStatus: React.FC<
                             className={`${statusInfo.color} ${className}`}
                         >
                             {!isConnected && connectionError ? (
-                                <RefreshCw className='mr-2 h-4 w-4' />
+                                <RefreshCw className='mr-2 size-4' />
                             ) : (
-                                <Icon className='mr-2 h-4 w-4' />
+                                <Icon className='mr-2 size-4' />
                             )}
                             {showLabel ? statusInfo.label : null}
                         </Button>
@@ -130,9 +130,9 @@ export const RealtimeConnectionStatus: React.FC<
                         aria-label={`Connection status: ${statusInfo.label}`}
                     >
                         <div className='relative'>
-                            <Icon className={`h-4 w-4 ${statusInfo.color}`} />
+                            <Icon className={`size-4 ${statusInfo.color}`} />
                             {isConnected && (
-                                <div className='absolute -right-1 -top-1 h-2 w-2 animate-pulse rounded-full bg-green-500' />
+                                <div className='absolute -right-1 -top-1 size-2 animate-pulse rounded-full bg-green-500' />
                             )}
                         </div>
                         {showLabel && (

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useTheme } from '../lib/ThemeContext';
+import { useMobileOptimizations } from '../hooks/useMobileOptimizations';
 import {
     Calendar,
     DollarSign,
@@ -186,7 +187,7 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
 
     return (
         <div
-            className={`rounded-xl border p-6 transition-all duration-200 focus-within:ring-2 focus-within:ring-revlr-primary-blue hover:shadow-lg ${
+            className={`rounded-xl border ${isMobile ? 'p-4' : 'p-6'} transition-all duration-200 focus-within:ring-2 focus-within:ring-revlr-primary-blue hover:shadow-lg ${
                 theme === 'dark'
                     ? 'border-revlr-dark-border bg-revlr-dark-card hover:border-revlr-primary-blue/30'
                     : 'border-gray-200 bg-white hover:border-revlr-primary-blue/30'
@@ -206,7 +207,7 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
                         {title}
                     </p>
                     <p
-                        className='mt-1 font-inter text-2xl font-bold'
+                        className={`mt-1 font-inter ${isMobile ? 'text-xl' : 'text-2xl'} font-bold`}
                         aria-labelledby={`${title.replace(/\s+/g, '-').toLowerCase()}-label`}
                         role='status'
                         aria-live='polite'
@@ -218,10 +219,12 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
                     </p>
                 </div>
                 <div
-                    className={`rounded-lg ${color}/10 p-3`}
+                    className={`rounded-lg ${color}/10 ${isMobile ? 'p-2' : 'p-3'}`}
                     aria-hidden='true'
                 >
-                    <div className={`size-6 ${color.replace('/10', '')}`}>
+                    <div
+                        className={`${isMobile ? 'size-5' : 'size-6'} ${color.replace('/10', '')}`}
+                    >
                         {icon}
                     </div>
                 </div>
@@ -248,6 +251,7 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({
     className = '',
 }) => {
     const { theme } = useTheme();
+    const { getResponsiveValue } = useMobileOptimizations();
 
     // Format currency values
     const formatCurrency = (amount: number) => {
@@ -297,7 +301,11 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({
         <div className={`space-y-6 ${className}`}>
             {/* Statistics Grid */}
             <div
-                className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4'
+                className={`grid gap-4 ${getResponsiveValue(
+                    'grid-cols-2', // Mobile: 2 columns
+                    'grid-cols-3', // Tablet: 3 columns
+                    'grid-cols-4' // Desktop: 4 columns
+                )}`}
                 role='region'
                 aria-label='Event and revenue statistics overview'
             >
@@ -352,7 +360,11 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({
 
             {/* Additional Metrics Row */}
             <div
-                className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'
+                className={`grid gap-4 ${getResponsiveValue(
+                    'grid-cols-1', // Mobile: 1 column for additional metrics
+                    'grid-cols-2', // Tablet: 2 columns
+                    'grid-cols-3' // Desktop: 3 columns
+                )}`}
                 role='region'
                 aria-label='Additional event statistics'
             >

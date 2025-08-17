@@ -16,13 +16,13 @@ const mockUseOrganizerRevenue = useOrganizerRevenue as jest.MockedFunction<
 
 // Mock Chart.js components
 jest.mock('react-chartjs-2', () => ({
-    Line: ({ data, options }: any) => (
+    Line: ({ data }: { data: unknown }) => (
         <div data-testid='line-chart' data-chart-data={JSON.stringify(data)} />
     ),
-    Bar: ({ data, options }: any) => (
+    Bar: ({ data }: { data: unknown }) => (
         <div data-testid='bar-chart' data-chart-data={JSON.stringify(data)} />
     ),
-    Doughnut: ({ data, options }: any) => (
+    Doughnut: ({ data }: { data: unknown }) => (
         <div
             data-testid='doughnut-chart'
             data-chart-data={JSON.stringify(data)}
@@ -49,7 +49,13 @@ jest.mock('chart.js', () => ({
 
 // Mock the sub-components to avoid complex rendering issues
 jest.mock('@/components/revenue/MonthlyRevenueChart', () => ({
-    MonthlyRevenueChart: ({ data, loading }: any) => (
+    MonthlyRevenueChart: ({
+        data,
+        loading,
+    }: {
+        data?: unknown[];
+        loading?: boolean;
+    }) => (
         <div data-testid='monthly-revenue-chart'>
             {loading
                 ? 'Loading...'
@@ -59,7 +65,13 @@ jest.mock('@/components/revenue/MonthlyRevenueChart', () => ({
 }));
 
 jest.mock('@/components/revenue/EventRevenueBreakdown', () => ({
-    EventRevenueBreakdown: ({ data, loading }: any) => (
+    EventRevenueBreakdown: ({
+        data,
+        loading,
+    }: {
+        data?: unknown[];
+        loading?: boolean;
+    }) => (
         <div data-testid='event-revenue-breakdown'>
             {loading
                 ? 'Loading...'
@@ -69,7 +81,13 @@ jest.mock('@/components/revenue/EventRevenueBreakdown', () => ({
 }));
 
 jest.mock('@/components/revenue/RevenueComparison', () => ({
-    RevenueComparison: ({ monthlyData, eventData, loading }: any) => (
+    RevenueComparison: ({
+        loading,
+    }: {
+        monthlyData?: unknown;
+        eventData?: unknown;
+        loading?: boolean;
+    }) => (
         <div data-testid='revenue-comparison'>
             {loading ? 'Loading...' : 'Revenue comparison component'}
         </div>
@@ -77,7 +95,12 @@ jest.mock('@/components/revenue/RevenueComparison', () => ({
 }));
 
 jest.mock('@/components/revenue/CustomReportGenerator', () => ({
-    CustomReportGenerator: ({ loading, revenueStatistics }: any) => (
+    CustomReportGenerator: ({
+        loading,
+    }: {
+        loading?: boolean;
+        revenueStatistics?: unknown;
+    }) => (
         <div data-testid='custom-report-generator'>
             {loading ? 'Loading...' : 'Custom report generator'}
         </div>

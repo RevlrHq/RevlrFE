@@ -5,14 +5,14 @@ import { Navbar } from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import EventDetailsLoading from './components/EventDetailsLoading';
 import EventDetailsError from './components/EventDetailsError';
-import EnhancedEventHeader from './components/EnhancedEventHeader';
-import EnhancedEventContent from './components/EnhancedEventContent';
-import EnhancedMediaGallery from './components/EnhancedMediaGallery';
+import EventHeader from './components/EventHeader';
+import EventContent from './components/EventContent';
+import MediaGallery from './components/MediaGallery';
 import EventTicketSection from './components/EventTicketSection';
 import EventOrganizerInfo from './components/EventOrganizerInfo';
 import EventMap from './components/EventMap';
 import EventMetadata from './components/EventMetadata';
-import EnhancedTicketDetails from './components/EnhancedTicketDetails';
+import TicketDetails from './components/TicketDetails';
 
 interface EventDetailsProps {
     eventId: string;
@@ -59,10 +59,10 @@ const EventDetails = ({ eventId }: EventDetailsProps) => {
                     <div className='grid grid-cols-1 gap-12 lg:grid-cols-3'>
                         {/* Main Content */}
                         <div className='space-y-8 lg:col-span-2'>
-                            <EnhancedEventHeader event={event} />
-                            <EnhancedEventContent event={event} />
-                            <EnhancedMediaGallery event={event} />
-                            <EnhancedTicketDetails event={event} />
+                            <EventHeader event={event} />
+                            <EventContent event={event} />
+                            <MediaGallery event={event} />
+                            <TicketDetails event={event} />
                             <EventMap event={event} />
                         </div>
 

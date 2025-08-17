@@ -425,7 +425,7 @@ const SelectedMediaCard: React.FC<SelectedMediaCardProps> = ({
             <img
                 src={item.thumbnailUrl}
                 alt={item.title}
-                className='h-full w-full object-cover'
+                className='size-full object-cover'
             />
 
             {/* Order indicator */}
@@ -495,7 +495,7 @@ const SelectedMediaCard: React.FC<SelectedMediaCardProps> = ({
 };
 
 // Selected Media List Item Component (List View)
-interface SelectedMediaListItemProps extends SelectedMediaCardProps {}
+type SelectedMediaListItemProps = SelectedMediaCardProps;
 
 const SelectedMediaListItem: React.FC<SelectedMediaListItemProps> = ({
     item,
@@ -537,16 +537,16 @@ const SelectedMediaListItem: React.FC<SelectedMediaListItemProps> = ({
             onDragEnd={onDragEnd}
         >
             {/* Order indicator */}
-            <div className='flex size-6 flex-shrink-0 items-center justify-center rounded-full bg-revlr-primary-blue text-xs font-bold text-white'>
+            <div className='flex size-6 shrink-0 items-center justify-center rounded-full bg-revlr-primary-blue text-xs font-bold text-white'>
                 {index + 1}
             </div>
 
             {/* Thumbnail */}
-            <div className='relative size-12 flex-shrink-0 overflow-hidden rounded'>
+            <div className='relative size-12 shrink-0 overflow-hidden rounded'>
                 <img
                     src={item.thumbnailUrl}
                     alt={item.title}
-                    className='h-full w-full object-cover'
+                    className='size-full object-cover'
                 />
                 {item.mediaType === 'video' && (
                     <div className='absolute inset-0 flex items-center justify-center bg-black/50'>

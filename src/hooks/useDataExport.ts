@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { ExportService, type ExportResult } from '@/lib/services/ExportService';
-import type { ExportOptions, ExportDataType } from '@/components/ExportModal';
+import type { ExportOptions } from '@/components/ExportModal';
 import type {
     EventSummaryView,
     EventRegistrationSummary,
@@ -32,7 +32,16 @@ export interface UseDataExportResult {
         revenueData: MonthlyRevenue[] | EventRevenueBreakdown[],
         options: Omit<ExportOptions, 'dataType'>
     ) => Promise<ExportResult>;
-    exportData: (data: any[], options: ExportOptions) => Promise<ExportResult>;
+    exportData: (
+        data: (
+            | EventSummaryView
+            | EventRegistrationSummary
+            | MonthlyRevenue
+            | EventRevenueBreakdown
+            | Record<string, unknown>
+        )[],
+        options: ExportOptions
+    ) => Promise<ExportResult>;
     clearError: () => void;
 }
 
@@ -204,7 +213,13 @@ export const useDataExport = (
 
     const exportData = useCallback(
         async (
-            data: any[],
+            data: (
+                | EventSummaryView
+                | EventRegistrationSummary
+                | MonthlyRevenue
+                | EventRevenueBreakdown
+                | Record<string, unknown>
+            )[],
             exportOptions: ExportOptions
         ): Promise<ExportResult> => {
             setIsExporting(true);

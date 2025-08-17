@@ -65,7 +65,7 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
                     title: 'No Media Providers Available',
                     description:
                         'All media search providers are currently unavailable. You can still add images to your event using the options below.',
-                    icon: <AlertCircle className='h-8 w-8 text-red-500' />,
+                    icon: <AlertCircle className='size-8 text-red-500' />,
                     severity: 'error' as const,
                 };
 
@@ -74,7 +74,7 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
                     title: 'Media Search Setup Failed',
                     description:
                         'There was an issue setting up the media search feature. Try the alternatives below or retry the setup.',
-                    icon: <AlertCircle className='h-8 w-8 text-orange-500' />,
+                    icon: <AlertCircle className='size-8 text-orange-500' />,
                     severity: 'warning' as const,
                 };
 
@@ -83,7 +83,7 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
                     title: 'Connection Issue',
                     description:
                         'Unable to connect to media providers. Check your internet connection or use offline options.',
-                    icon: <AlertCircle className='h-8 w-8 text-red-500' />,
+                    icon: <AlertCircle className='size-8 text-red-500' />,
                     severity: 'error' as const,
                 };
 
@@ -92,7 +92,7 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
                     title: 'Rate Limit Reached',
                     description:
                         'Media providers have reached their usage limits. Try again later or use alternative options.',
-                    icon: <Info className='h-8 w-8 text-yellow-500' />,
+                    icon: <Info className='size-8 text-yellow-500' />,
                     severity: 'warning' as const,
                 };
 
@@ -101,7 +101,7 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
                     title: 'Configuration Issue',
                     description:
                         'Media providers are not properly configured. Contact support or use alternative options.',
-                    icon: <AlertCircle className='h-8 w-8 text-orange-500' />,
+                    icon: <AlertCircle className='size-8 text-orange-500' />,
                     severity: 'warning' as const,
                 };
 
@@ -110,7 +110,7 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
                     title: 'Media Search Unavailable',
                     description:
                         'The media search feature is temporarily unavailable. Please try the alternatives below.',
-                    icon: <AlertCircle className='h-8 w-8 text-gray-500' />,
+                    icon: <AlertCircle className='size-8 text-gray-500' />,
                     severity: 'info' as const,
                 };
         }
@@ -123,7 +123,7 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
                 title: 'Upload Your Own Images',
                 description:
                     'Upload images from your device to use in your event',
-                icon: <Upload className='h-5 w-5' />,
+                icon: <Upload className='size-5' />,
                 action: 'upload',
                 onClick: onUpload,
                 primary: true,
@@ -132,7 +132,7 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
                 id: 'browse_local',
                 title: 'Browse Local Files',
                 description: 'Select images from your computer or device',
-                icon: <Folder className='h-5 w-5' />,
+                icon: <Folder className='size-5' />,
                 action: 'browse_local',
                 onClick: onBrowseLocal,
             },
@@ -140,7 +140,7 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
                 id: 'placeholder',
                 title: 'Use Placeholder Images',
                 description: 'Continue with generic placeholder images for now',
-                icon: <ImageIcon className='h-5 w-5' />,
+                icon: <ImageIcon className='size-5' />,
                 action: 'use_placeholder',
                 onClick: onUsePlaceholder,
             },
@@ -157,7 +157,7 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
                 id: 'retry',
                 title: 'Try Again',
                 description: 'Retry connecting to media providers',
-                icon: <RefreshCw className='h-5 w-5' />,
+                icon: <RefreshCw className='size-5' />,
                 action: 'retry',
                 onClick: onRetry,
                 primary:
@@ -171,7 +171,7 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
             title: 'Search Unsplash Directly',
             description:
                 'Open Unsplash in a new tab to find and download images',
-            icon: <ExternalLink className='h-5 w-5' />,
+            icon: <ExternalLink className='size-5' />,
             action: 'external',
             url: 'https://unsplash.com',
         });
@@ -180,7 +180,7 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
             id: 'external_pexels',
             title: 'Search Pexels Directly',
             description: 'Open Pexels in a new tab to find and download images',
-            icon: <ExternalLink className='h-5 w-5' />,
+            icon: <ExternalLink className='size-5' />,
             action: 'external',
             url: 'https://pexels.com',
         });
@@ -279,14 +279,14 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
                     >
                         <div className='flex items-start space-x-3'>
                             <div
-                                className={`flex-shrink-0 rounded-lg p-2 ${
+                                className={`shrink-0 rounded-lg p-2 ${
                                     option.primary
                                         ? 'bg-blue-100 text-blue-600 dark:bg-blue-800 dark:text-blue-300'
                                         : `${theme === 'dark' ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'}`
                                 }`}
                             >
                                 {selectedOption === option.id ? (
-                                    <RefreshCw className='h-5 w-5 animate-spin' />
+                                    <RefreshCw className='size-5 animate-spin' />
                                 ) : (
                                     option.icon
                                 )}
@@ -304,7 +304,7 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
                                 </p>
                             </div>
                             <ArrowRight
-                                className={`h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
+                                className={`size-4 opacity-0 transition-opacity group-hover:opacity-100 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
                             />
                         </div>
 
@@ -325,7 +325,7 @@ export const MediaSearchFallback: React.FC<MediaSearchFallbackProps> = ({
             >
                 <div className='flex items-start space-x-2'>
                     <Info
-                        className={`mt-0.5 h-4 w-4 flex-shrink-0 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
+                        className={`mt-0.5 size-4 shrink-0 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
                     />
                     <div
                         className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}

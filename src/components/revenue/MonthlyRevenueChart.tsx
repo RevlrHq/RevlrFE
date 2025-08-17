@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, Download, Filter } from 'lucide-react';
+import { Download, Filter } from 'lucide-react';
 import { MonthlyRevenue } from '@/lib/api';
 import { RevenueChart } from '@/components/charts/RevenueChart';
 import { formatCurrency, formatNumber } from '@/lib/utils/chartConfig';
@@ -130,7 +130,7 @@ export const MonthlyRevenueChart: React.FC<MonthlyRevenueChartProps> = ({
                         size='sm'
                         onClick={() => setShowFilters(!showFilters)}
                     >
-                        <Filter className='mr-2 h-4 w-4' />
+                        <Filter className='mr-2 size-4' />
                         Filters
                     </Button>
                     <Button
@@ -139,7 +139,7 @@ export const MonthlyRevenueChart: React.FC<MonthlyRevenueChartProps> = ({
                         onClick={handleExportData}
                         disabled={loading || !data || data.length === 0}
                     >
-                        <Download className='mr-2 h-4 w-4' />
+                        <Download className='mr-2 size-4' />
                         Export CSV
                     </Button>
                 </div>

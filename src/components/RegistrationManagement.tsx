@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useTheme } from '../lib/ThemeContext';
-import { EventRegistrationSummary } from '../lib/api';
 import {
     useOrganizerRegistrations,
     RegistrationFilters,
@@ -43,7 +42,7 @@ interface RegistrationManagementProps {
 const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
     className = '',
 }) => {
-    const { theme } = useTheme();
+    useTheme();
     const [searchTerm, setSearchTerm] = useState('');
     const [showFilters, setShowFilters] = useState(false);
     const [showExportModal, setShowExportModal] = useState(false);
@@ -164,11 +163,11 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
 
     const getSortIcon = useCallback(
         (field: string) => {
-            if (sortBy !== field) return <ArrowUpDown className='h-4 w-4' />;
+            if (sortBy !== field) return <ArrowUpDown className='size-4' />;
             return sortOrder === 'asc' ? (
-                <ArrowUp className='h-4 w-4' />
+                <ArrowUp className='size-4' />
             ) : (
-                <ArrowDown className='h-4 w-4' />
+                <ArrowDown className='size-4' />
             );
         },
         [sortBy, sortOrder]
@@ -185,7 +184,7 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
                         {error}
                     </p>
                     <Button onClick={refetch} variant='outline'>
-                        <RefreshCw className='mr-2 h-4 w-4' />
+                        <RefreshCw className='mr-2 size-4' />
                         Try Again
                     </Button>
                 </div>
@@ -210,18 +209,18 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
                         variant='outline'
                         onClick={() => setShowFilters(!showFilters)}
                     >
-                        <Filter className='mr-2 h-4 w-4' />
+                        <Filter className='mr-2 size-4' />
                         Filters
                     </Button>
                     <Button
                         variant='outline'
                         onClick={() => setShowExportModal(true)}
                     >
-                        <Download className='mr-2 h-4 w-4' />
+                        <Download className='mr-2 size-4' />
                         Export
                     </Button>
                     <Button variant='outline' onClick={refetch}>
-                        <RefreshCw className='mr-2 h-4 w-4' />
+                        <RefreshCw className='mr-2 size-4' />
                         Refresh
                     </Button>
                 </div>
@@ -230,7 +229,7 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
             {/* Search and Stats */}
             <div className='flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center'>
                 <div className='relative max-w-md flex-1'>
-                    <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400' />
+                    <Search className='absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400' />
                     <Input
                         placeholder='Search registrations...'
                         value={searchTerm}
@@ -421,7 +420,7 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
                                         className='px-6 py-12 text-center'
                                     >
                                         <div className='text-gray-500 dark:text-gray-400'>
-                                            <FileText className='mx-auto mb-4 h-12 w-12 opacity-50' />
+                                            <FileText className='mx-auto mb-4 size-12 opacity-50' />
                                             <p className='mb-2 text-lg font-medium'>
                                                 No registrations found
                                             </p>
@@ -440,9 +439,9 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
                                     >
                                         <td className='whitespace-nowrap px-6 py-4'>
                                             <div className='flex items-center'>
-                                                <div className='h-10 w-10 flex-shrink-0'>
-                                                    <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gray-300 dark:bg-gray-600'>
-                                                        <User className='h-5 w-5 text-gray-500 dark:text-gray-400' />
+                                                <div className='size-10 shrink-0'>
+                                                    <div className='flex size-10 items-center justify-center rounded-full bg-gray-300 dark:bg-gray-600'>
+                                                        <User className='size-5 text-gray-500 dark:text-gray-400' />
                                                     </div>
                                                 </div>
                                                 <div className='ml-4'>
@@ -455,7 +454,7 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
                                                         }
                                                     </div>
                                                     <div className='flex items-center text-sm text-gray-500 dark:text-gray-400'>
-                                                        <Mail className='mr-1 h-3 w-3' />
+                                                        <Mail className='mr-1 size-3' />
                                                         {
                                                             registration.attendeeEmail
                                                         }
@@ -475,7 +474,7 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
                                         </td>
                                         <td className='whitespace-nowrap px-6 py-4'>
                                             <div className='flex items-center text-sm font-medium text-gray-900 dark:text-white'>
-                                                <DollarSign className='mr-1 h-3 w-3' />
+                                                <DollarSign className='mr-1 size-3' />
                                                 {formatCurrency(
                                                     registration.amountPaid
                                                 )}
@@ -488,7 +487,7 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
                                         </td>
                                         <td className='whitespace-nowrap px-6 py-4'>
                                             <div className='flex items-center text-sm text-gray-900 dark:text-white'>
-                                                <Calendar className='mr-1 h-3 w-3' />
+                                                <Calendar className='mr-1 size-3' />
                                                 {formatDate(
                                                     registration.registrationDate
                                                 )}
@@ -497,7 +496,7 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
                                         <td className='whitespace-nowrap px-6 py-4'>
                                             {registration.isFinanced ? (
                                                 <span className='inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200'>
-                                                    <CreditCard className='mr-1 h-3 w-3' />
+                                                    <CreditCard className='mr-1 size-3' />
                                                     Financed
                                                 </span>
                                             ) : (
@@ -566,9 +565,9 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
                                             handlePageChange(currentPage - 1)
                                         }
                                         disabled={!hasPreviousPage}
-                                        className='relative inline-flex items-center rounded-l-md px-2 py-2'
+                                        className='relative inline-flex items-center rounded-l-md p-2'
                                     >
-                                        <ChevronLeft className='h-5 w-5' />
+                                        <ChevronLeft className='size-5' />
                                     </Button>
 
                                     {Array.from(
@@ -602,9 +601,9 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
                                             handlePageChange(currentPage + 1)
                                         }
                                         disabled={!hasNextPage}
-                                        className='relative inline-flex items-center rounded-r-md px-2 py-2'
+                                        className='relative inline-flex items-center rounded-r-md p-2'
                                     >
-                                        <ChevronRight className='h-5 w-5' />
+                                        <ChevronRight className='size-5' />
                                     </Button>
                                 </nav>
                             </div>
@@ -628,7 +627,7 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
                             className='w-full justify-start'
                             variant='outline'
                         >
-                            <FileText className='mr-2 h-4 w-4' />
+                            <FileText className='mr-2 size-4' />
                             Export as CSV
                         </Button>
                         <Button
@@ -636,7 +635,7 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
                             className='w-full justify-start'
                             variant='outline'
                         >
-                            <FileText className='mr-2 h-4 w-4' />
+                            <FileText className='mr-2 size-4' />
                             Export as Excel
                         </Button>
                         <Button
@@ -644,7 +643,7 @@ const RegistrationManagement: React.FC<RegistrationManagementProps> = ({
                             className='w-full justify-start'
                             variant='outline'
                         >
-                            <FileText className='mr-2 h-4 w-4' />
+                            <FileText className='mr-2 size-4' />
                             Export as PDF
                         </Button>
                     </div>

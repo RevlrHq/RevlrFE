@@ -12,14 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-    TrendingUp,
-    TrendingDown,
-    Calendar,
-    BarChart3,
-    PieChart,
-    Activity,
-} from 'lucide-react';
+import { TrendingUp, TrendingDown, Calendar, Activity } from 'lucide-react';
 import { MonthlyRevenue, EventRevenueBreakdown } from '@/lib/api';
 import {
     formatCurrency,
@@ -254,8 +247,8 @@ export const RevenueComparison: React.FC<RevenueComparisonProps> = ({
                     },
                     ticks: {
                         ...baseOptions.scales?.y?.ticks,
-                        callback: function (value: any) {
-                            return formatCurrency(value);
+                        callback: function (value: unknown) {
+                            return formatCurrency(value as number);
                         },
                     },
                 },
@@ -330,7 +323,7 @@ export const RevenueComparison: React.FC<RevenueComparisonProps> = ({
                 <Card>
                     <CardHeader className='pb-2'>
                         <CardTitle className='flex items-center text-sm font-medium'>
-                            <Calendar className='mr-2 h-4 w-4' />
+                            <Calendar className='mr-2 size-4' />
                             Current {comparisonPeriod}
                         </CardTitle>
                     </CardHeader>
@@ -350,7 +343,7 @@ export const RevenueComparison: React.FC<RevenueComparisonProps> = ({
                 <Card>
                     <CardHeader className='pb-2'>
                         <CardTitle className='flex items-center text-sm font-medium'>
-                            <Activity className='mr-2 h-4 w-4' />
+                            <Activity className='mr-2 size-4' />
                             Previous {comparisonPeriod}
                         </CardTitle>
                     </CardHeader>
@@ -371,9 +364,9 @@ export const RevenueComparison: React.FC<RevenueComparisonProps> = ({
                     <CardHeader className='pb-2'>
                         <CardTitle className='flex items-center text-sm font-medium'>
                             {periodComparisons.isPositive ? (
-                                <TrendingUp className='mr-2 h-4 w-4 text-green-500' />
+                                <TrendingUp className='mr-2 size-4 text-green-500' />
                             ) : (
-                                <TrendingDown className='mr-2 h-4 w-4 text-red-500' />
+                                <TrendingDown className='mr-2 size-4 text-red-500' />
                             )}
                             Growth Rate
                         </CardTitle>
@@ -629,7 +622,7 @@ export const RevenueComparison: React.FC<RevenueComparisonProps> = ({
                                                     <div className='flex items-center gap-2'>
                                                         <Badge
                                                             variant='default'
-                                                            className='flex h-6 w-6 items-center justify-center p-0 text-xs'
+                                                            className='flex size-6 items-center justify-center p-0 text-xs'
                                                         >
                                                             {index + 1}
                                                         </Badge>
@@ -692,7 +685,7 @@ export const RevenueComparison: React.FC<RevenueComparisonProps> = ({
                                                     <div className='flex items-center gap-2'>
                                                         <Badge
                                                             variant='secondary'
-                                                            className='flex h-6 w-6 items-center justify-center p-0 text-xs'
+                                                            className='flex size-6 items-center justify-center p-0 text-xs'
                                                         >
                                                             {eventData.length -
                                                                 eventPerformanceComparison

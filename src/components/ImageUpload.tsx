@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import { useTheme } from '@src/lib/ThemeContext';
 import { ImageUploadService } from '@src/lib/services/ImageUploadService';
 import type { EventImage, ImageUploadOptions } from '@src/types/event-creation';
@@ -48,21 +49,21 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     const [previewImage, setPreviewImage] = useState<EventImage | null>(null);
     const [isMediaSearchOpen, setIsMediaSearchOpen] = useState(false);
 
-    const uploadOptions: Partial<ImageUploadOptions> = {
-        maxFiles: maxImages,
-        maxFileSize,
-        acceptedTypes: ['image/jpeg', 'image/png', 'image/webp'],
-        compressionQuality: 0.8,
-        maxWidth: 1920,
-        maxHeight: 1080,
-    };
-
     // Handle file selection
     const handleFileSelect = useCallback(
         async (files: FileList | File[]) => {
             if (disabled) return;
 
             const fileArray = Array.from(files);
+
+            const uploadOptions: Partial<ImageUploadOptions> = {
+                maxFiles: maxImages,
+                maxFileSize,
+                acceptedTypes: ['image/jpeg', 'image/png', 'image/webp'],
+                compressionQuality: 0.8,
+                maxWidth: 1920,
+                maxHeight: 1080,
+            };
 
             // Validate files
             const validation = ImageUploadService.validateImages(
@@ -138,7 +139,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                 }, 3000);
             }
         },
-        [disabled, images, onImagesChange, uploadOptions]
+        [disabled, images, onImagesChange, maxImages, maxFileSize]
     );
 
     // Handle drag and drop
@@ -654,7 +655,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                                 onDragOver={handleImageDragOver}
                                 onDrop={(e) => handleImageDrop(e, index)}
                             >
-                                <img
+                                <Image
                                     src={ImageUploadService.generateOptimizedUrl(
                                         image.cdnUrl || image.url,
                                         {
@@ -666,6 +667,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                                         }
                                     )}
                                     alt={image.name}
+                                    width={200}
+                                    height={200}
                                     className='size-full object-cover'
                                 />
 
@@ -726,7 +729,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                         >
                             <X className='size-5' />
                         </button>
-                        <img
+                        <Image
                             src={ImageUploadService.generateOptimizedUrl(
                                 previewImage.cdnUrl || previewImage.url,
                                 {
@@ -736,6 +739,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                                 }
                             )}
                             alt={previewImage.name}
+                            width={1200}
+                            height={800}
                             className='max-h-full max-w-full rounded-lg object-contain'
                         />
                         <div className='mt-4 text-center'>

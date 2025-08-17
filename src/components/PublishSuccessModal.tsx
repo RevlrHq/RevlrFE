@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { useTheme } from '@src/lib/ThemeContext';
 import type { EventCreationData } from '@src/types/event-creation';
 
@@ -79,9 +80,11 @@ export const PublishSuccessModal: React.FC<PublishSuccessModalProps> = ({
                         <div className='flex items-start space-x-3'>
                             {eventData.images.length > 0 && (
                                 <div className='size-12 shrink-0 overflow-hidden rounded-lg'>
-                                    <img
+                                    <Image
                                         src={eventData.images[0].url}
                                         alt={eventData.eventName}
+                                        width={48}
+                                        height={48}
                                         className='size-full object-cover'
                                     />
                                 </div>

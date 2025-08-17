@@ -20,7 +20,6 @@ import {
     FileText,
     FileSpreadsheet,
     File,
-    X,
     Calendar,
     Users,
     DollarSign,
@@ -40,7 +39,7 @@ export interface ExportOptions {
         endDate: string;
     };
     includeFields: string[];
-    filters?: Record<string, any>;
+    filters?: Record<string, unknown>;
 }
 
 export interface ExportModalProps {
@@ -162,8 +161,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
             // Auto-close after successful export
             setTimeout(() => {
-                onClose();
                 resetState();
+                onClose();
             }, 1500);
         } catch (error) {
             setExportStatus('error');
@@ -173,7 +172,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         } finally {
             setIsExporting(false);
         }
-    }, [format, dataType, includeFields, onExport, onClose]);
+    }, [format, dataType, includeFields, onExport, onClose, resetState]);
 
     const resetState = useCallback(() => {
         setExportProgress(0);
@@ -184,8 +183,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
     const handleClose = useCallback(() => {
         if (!isExporting) {
-            onClose();
             resetState();
+            onClose();
         }
     }, [isExporting, onClose, resetState]);
 

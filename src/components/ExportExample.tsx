@@ -83,7 +83,7 @@ export const ExportExample: React.FC = () => {
         setIsExportModalOpen(true);
     };
 
-    const handleExport = async (options: any) => {
+    const handleExport = async (options: Record<string, unknown>) => {
         try {
             switch (currentExportType) {
                 case 'events':

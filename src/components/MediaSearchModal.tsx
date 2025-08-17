@@ -103,7 +103,14 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
                     });
             }
         },
-        [searchQuery, actions, analytics, state.filters, state.activeProviders]
+        [
+            searchQuery,
+            actions,
+            analytics,
+            state.filters,
+            state.activeProviders,
+            state.results?.items.length,
+        ]
     );
 
     // Handle suggestion selection
@@ -386,8 +393,8 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
                                 placeholder='Search for images...'
                                 className={`w-full rounded-xl border py-3 pl-10 pr-12 font-inter transition-colors focus:outline-none focus:ring-2 focus:ring-revlr-primary-blue/20 ${
                                     theme === 'dark'
-                                        ? 'border-revlr-dark-border bg-revlr-dark-card text-white placeholder-gray-400'
-                                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                                        ? 'border-revlr-dark-border bg-revlr-dark-card text-white placeholder:text-gray-400'
+                                        : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-500'
                                 }`}
                                 disabled={isProcessing}
                                 aria-label='Search for images'
@@ -442,7 +449,7 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
                         {state.showSuggestions &&
                             state.suggestions.length > 0 && (
                                 <div
-                                    className={`absolute left-0 right-0 top-full z-10 mt-1 rounded-lg border shadow-lg ${
+                                    className={`absolute inset-x-0 top-full z-10 mt-1 rounded-lg border shadow-lg ${
                                         theme === 'dark'
                                             ? 'border-revlr-dark-border bg-revlr-dark-card'
                                             : 'border-gray-200 bg-white'
@@ -479,7 +486,7 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
                         {state.isLoading && !state.results && (
                             <div className='flex h-64 items-center justify-center'>
                                 <div className='text-center'>
-                                    <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
+                                    <div className='mx-auto mb-4 size-8 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
                                     <p
                                         className={`font-inter text-sm ${
                                             theme === 'dark'
@@ -760,7 +767,7 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
                                 >
                                     {isProcessing ? (
                                         <div className='flex items-center justify-center space-x-2'>
-                                            <div className='h-4 w-4 animate-spin rounded-full border-b-2 border-white'></div>
+                                            <div className='size-4 animate-spin rounded-full border-b-2 border-white'></div>
                                             <span>
                                                 Processing...{' '}
                                                 {Math.round(processingProgress)}

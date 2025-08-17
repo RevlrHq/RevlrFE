@@ -31,7 +31,7 @@ export const ChartError: React.FC<ChartErrorProps> = ({
                 className='flex h-full flex-col items-center justify-center text-center'
                 style={{ height }}
             >
-                <AlertCircle className='mb-4 h-12 w-12 text-destructive' />
+                <AlertCircle className='mb-4 size-12 text-destructive' />
 
                 <h3 className='mb-2 text-lg font-semibold text-foreground'>
                     {title}
@@ -47,7 +47,7 @@ export const ChartError: React.FC<ChartErrorProps> = ({
                         className='inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2'
                         aria-label='Retry loading chart data'
                     >
-                        <RefreshCw className='mr-2 h-4 w-4' />
+                        <RefreshCw className='mr-2 size-4' />
                         Try Again
                     </button>
                 )}

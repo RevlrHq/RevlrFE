@@ -6,21 +6,21 @@ import { EventPerformanceView } from '@/lib/api';
 
 // Mock Chart.js components
 jest.mock('react-chartjs-2', () => ({
-    Line: ({ data, options }: any) => (
+    Line: ({ data, options }: { data: unknown; options: unknown }) => (
         <div
             data-testid='line-chart'
             data-chart-data={JSON.stringify(data)}
             data-chart-options={JSON.stringify(options)}
         />
     ),
-    Bar: ({ data, options }: any) => (
+    Bar: ({ data, options }: { data: unknown; options: unknown }) => (
         <div
             data-testid='bar-chart'
             data-chart-data={JSON.stringify(data)}
             data-chart-options={JSON.stringify(options)}
         />
     ),
-    Doughnut: ({ data, options }: any) => (
+    Doughnut: ({ data, options }: { data: unknown; options: unknown }) => (
         <div
             data-testid='doughnut-chart'
             data-chart-data={JSON.stringify(data)}
@@ -131,7 +131,11 @@ describe('IndividualEventPerformance', () => {
     });
 
     it('displays empty state when no performance data', () => {
-        render(<IndividualEventPerformance eventPerformance={null as any} />);
+        render(
+            <IndividualEventPerformance
+                eventPerformance={null as EventPerformanceView}
+            />
+        );
 
         expect(
             screen.getByText('No performance data available for this event.')
@@ -306,7 +310,7 @@ describe('IndividualEventPerformance', () => {
         const minimalEventPerformance = {
             eventId: '1',
             eventTitle: 'Minimal Event',
-        };
+        } as EventPerformanceView;
 
         render(
             <IndividualEventPerformance

@@ -111,7 +111,7 @@ const VendorEventCard: React.FC<VendorEventCardProps> = ({
             }`}
         >
             {/* Event Image */}
-            <div className='relative size-48 flex-shrink-0 overflow-hidden rounded-xl'>
+            <div className='relative size-48 shrink-0 overflow-hidden rounded-xl'>
                 {getImageSrc() ? (
                     <Image
                         src={getImageSrc()!}

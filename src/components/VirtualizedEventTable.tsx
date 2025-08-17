@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useMemo, useCallback } from 'react';
+import Image from 'next/image';
 import { FixedSizeList as List } from 'react-window';
 import { EventSummaryView } from '../lib/api';
 import { useTheme } from '../lib/ThemeContext';
 import { Checkbox } from './ui/checkbox';
 import { Button } from './ui/button';
 import {
-    MoreHorizontal,
     Edit,
     Copy,
     Eye,
@@ -98,15 +98,15 @@ const EventRow: React.FC<EventRowProps> = ({ index, style, data }) => {
     const getStatusIcon = useCallback((status: number) => {
         switch (status) {
             case 1:
-                return <CheckCircle className='h-4 w-4' />;
+                return <CheckCircle className='size-4' />;
             case 0:
-                return <Clock className='h-4 w-4' />;
+                return <Clock className='size-4' />;
             case 2:
-                return <XCircle className='h-4 w-4' />;
+                return <XCircle className='size-4' />;
             case 3:
-                return <Archive className='h-4 w-4' />;
+                return <Archive className='size-4' />;
             default:
-                return <Clock className='h-4 w-4' />;
+                return <Clock className='size-4' />;
         }
     }, []);
 
@@ -134,7 +134,7 @@ const EventRow: React.FC<EventRowProps> = ({ index, style, data }) => {
             } ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
         >
             {showBulkActions && (
-                <div className='w-12 flex-shrink-0'>
+                <div className='w-12 shrink-0'>
                     <Checkbox
                         checked={isSelected}
                         onCheckedChange={(checked) =>
@@ -147,17 +147,18 @@ const EventRow: React.FC<EventRowProps> = ({ index, style, data }) => {
 
             {/* Event thumbnail and title */}
             <div className='flex min-w-0 flex-1 items-center space-x-4'>
-                <div className='h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700'>
+                <div className='size-12 shrink-0 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700'>
                     {event.bannerImageUrl ? (
-                        <img
+                        <Image
                             src={event.bannerImageUrl}
                             alt={event.title}
-                            className='h-full w-full object-cover'
-                            loading='lazy'
+                            width={48}
+                            height={48}
+                            className='size-full object-cover'
                         />
                     ) : (
-                        <div className='flex h-full w-full items-center justify-center'>
-                            <Calendar className='h-6 w-6 text-gray-400' />
+                        <div className='flex size-full items-center justify-center'>
+                            <Calendar className='size-6 text-gray-400' />
                         </div>
                     )}
                 </div>
@@ -173,7 +174,7 @@ const EventRow: React.FC<EventRowProps> = ({ index, style, data }) => {
             </div>
 
             {/* Status */}
-            <div className='w-24 flex-shrink-0'>
+            <div className='w-24 shrink-0'>
                 <span
                     className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(event.status!)}`}
                 >
@@ -183,53 +184,53 @@ const EventRow: React.FC<EventRowProps> = ({ index, style, data }) => {
             </div>
 
             {/* Date */}
-            <div className='w-24 flex-shrink-0 text-sm text-gray-900 dark:text-white'>
+            <div className='w-24 shrink-0 text-sm text-gray-900 dark:text-white'>
                 {formatDate(event.startDate!)}
             </div>
 
             {/* Registrations */}
-            <div className='w-24 flex-shrink-0'>
+            <div className='w-24 shrink-0'>
                 <div className='flex items-center text-sm text-gray-900 dark:text-white'>
-                    <Users className='mr-1 h-4 w-4 text-gray-400' />
+                    <Users className='mr-1 size-4 text-gray-400' />
                     {event.registrationCount || 0}
                 </div>
             </div>
 
             {/* Revenue */}
-            <div className='w-32 flex-shrink-0'>
+            <div className='w-32 shrink-0'>
                 <div className='flex items-center text-sm font-medium text-gray-900 dark:text-white'>
-                    <DollarSign className='mr-1 h-4 w-4 text-gray-400' />
+                    <DollarSign className='mr-1 size-4 text-gray-400' />
                     {formatCurrency(event.revenue || 0)}
                 </div>
             </div>
 
             {/* Actions */}
             {showActions && (
-                <div className='w-20 flex-shrink-0'>
+                <div className='w-20 shrink-0'>
                     <div className='flex items-center justify-end space-x-1'>
                         <Button
                             variant='ghost'
                             size='sm'
                             onClick={() => onEventView?.(event.id!)}
-                            className='h-8 w-8 p-0'
+                            className='size-8 p-0'
                         >
-                            <Eye className='h-4 w-4' />
+                            <Eye className='size-4' />
                         </Button>
                         <Button
                             variant='ghost'
                             size='sm'
                             onClick={() => onEventEdit?.(event.id!)}
-                            className='h-8 w-8 p-0'
+                            className='size-8 p-0'
                         >
-                            <Edit className='h-4 w-4' />
+                            <Edit className='size-4' />
                         </Button>
                         <Button
                             variant='ghost'
                             size='sm'
                             onClick={() => onEventDuplicate?.(event.id!)}
-                            className='h-8 w-8 p-0'
+                            className='size-8 p-0'
                         >
-                            <Copy className='h-4 w-4' />
+                            <Copy className='size-4' />
                         </Button>
                     </div>
                 </div>
@@ -281,7 +282,7 @@ const VirtualizedEventTable: React.FC<VirtualizedEventTableProps> = ({
         return (
             <div className='flex h-64 items-center justify-center'>
                 <div className='text-center'>
-                    <Calendar className='mx-auto h-12 w-12 text-gray-400' />
+                    <Calendar className='mx-auto size-12 text-gray-400' />
                     <h3 className='mt-2 text-sm font-medium text-gray-900 dark:text-white'>
                         No events found
                     </h3>
@@ -305,17 +306,13 @@ const VirtualizedEventTable: React.FC<VirtualizedEventTableProps> = ({
                         : 'border-gray-200 bg-gray-50'
                 }`}
             >
-                {showBulkActions && (
-                    <div className='w-12 flex-shrink-0'>Select</div>
-                )}
+                {showBulkActions && <div className='w-12 shrink-0'>Select</div>}
                 <div className='min-w-0 flex-1'>Event</div>
-                <div className='w-24 flex-shrink-0'>Status</div>
-                <div className='w-24 flex-shrink-0'>Date</div>
-                <div className='w-24 flex-shrink-0'>Registrations</div>
-                <div className='w-32 flex-shrink-0'>Revenue</div>
-                {showActions && (
-                    <div className='w-20 flex-shrink-0'>Actions</div>
-                )}
+                <div className='w-24 shrink-0'>Status</div>
+                <div className='w-24 shrink-0'>Date</div>
+                <div className='w-24 shrink-0'>Registrations</div>
+                <div className='w-32 shrink-0'>Revenue</div>
+                {showActions && <div className='w-20 shrink-0'>Actions</div>}
             </div>
 
             {/* Virtualized list */}

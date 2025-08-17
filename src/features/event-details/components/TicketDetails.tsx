@@ -1,11 +1,11 @@
 import { EventView } from '../../../lib/services/models/EventView';
 import { EventTicketView } from '../../../lib/services/models/EventTicketView';
 
-interface EnhancedTicketDetailsProps {
+interface TicketDetailsProps {
     event: EventView;
 }
 
-const EnhancedTicketDetails = ({ event }: EnhancedTicketDetailsProps) => {
+const TicketDetails = ({ event }: TicketDetailsProps) => {
     const tickets = event.tickets || [];
 
     if (tickets.length === 0) return null;
@@ -263,4 +263,4 @@ const EnhancedTicketDetails = ({ event }: EnhancedTicketDetailsProps) => {
     );
 };
 
-export default EnhancedTicketDetails;
+export default TicketDetails;

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ThemeProvider } from '../lib/ThemeContext';
-import EnhancedEventTable from './EnhancedEventTable';
+import EventTable from './EventTable';
 
 const EnhancedEventTableDemo: React.FC = () => {
     const handleEventView = (eventId: string) => {
@@ -21,7 +21,7 @@ const EnhancedEventTableDemo: React.FC = () => {
                         Enhanced Event Management
                     </h1>
 
-                    <EnhancedEventTable
+                    <EventTable
                         onEventView={handleEventView}
                         onEventEdit={handleEventEdit}
                         showActions={true}

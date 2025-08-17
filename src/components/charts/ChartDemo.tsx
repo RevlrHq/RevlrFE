@@ -6,18 +6,14 @@ import {
     EventPerformanceChart,
     AttendeeAnalyticsChart,
 } from '@/components/charts';
-import {
-    generateMockMonthlyRevenue,
-    generateMockEventSummaryView,
-    generateMockAttendeeAnalyticsView,
-} from '@/tests/utils/chartTestUtils';
 
 export const ChartDemo: React.FC = () => {
     const [isDark, setIsDark] = useState(false);
 
-    const revenueData = generateMockMonthlyRevenue(12);
-    const eventData = generateMockEventSummaryView(10);
-    const attendeeData = generateMockAttendeeAnalyticsView();
+    // Mock data for demonstration
+    const revenueData = [];
+    const eventData = [];
+    const attendeeData = { attendeeSegments: [] };
 
     return (
         <div
@@ -118,7 +114,7 @@ export const ChartDemo: React.FC = () => {
                         height={200}
                     />
                     <AttendeeAnalyticsChart
-                        data={{ attendeeSegments: [] } as any}
+                        data={{ attendeeSegments: [] }}
                         isDark={isDark}
                         height={200}
                     />

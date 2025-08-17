@@ -3,7 +3,7 @@
 // Core classes
 export { MediaProvider } from './MediaProvider';
 export { MediaSearchService } from './MediaSearchService';
-export { EnhancedMediaSearchService } from './EnhancedMediaSearchService';
+
 export { MediaSearchCache } from './MediaSearchCache';
 export { MediaProviderFactory } from './MediaProviderFactory';
 export { MediaProviderInitializer } from './MediaProviderInitializer';
@@ -19,7 +19,6 @@ export { ErrorLoggingService } from './ErrorLoggingService';
 export { ErrorNotificationService } from './ErrorNotificationService';
 export { ErrorCategorizationService } from './ErrorCategorizationService';
 export { ProviderHealthStatusService } from './ProviderHealthStatusService';
-export { EnhancedErrorHandlingService } from './EnhancedErrorHandlingService';
 
 // Advanced search features
 export { AdvancedSearchService } from './AdvancedSearchService';

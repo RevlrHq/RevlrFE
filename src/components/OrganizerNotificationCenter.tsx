@@ -75,7 +75,7 @@ const NotificationItem: React.FC<{
         >
             <div className='flex items-start justify-between gap-3'>
                 <div className='flex min-w-0 flex-1 items-start gap-3'>
-                    <span className='mt-0.5 flex-shrink-0 text-lg'>
+                    <span className='mt-0.5 shrink-0 text-lg'>
                         {typeIcons[notification.type]}
                     </span>
                     <div className='min-w-0 flex-1'>
@@ -98,32 +98,32 @@ const NotificationItem: React.FC<{
                         </p>
                     </div>
                 </div>
-                <div className='flex flex-shrink-0 items-center gap-1'>
+                <div className='flex shrink-0 items-center gap-1'>
                     {!notification.read && (
                         <Button
                             variant='ghost'
                             size='sm'
-                            className='h-6 w-6 p-0'
+                            className='size-6 p-0'
                             onClick={(e) => {
                                 e.stopPropagation();
                                 onMarkAsRead(notification.id);
                             }}
                             title='Mark as read'
                         >
-                            <CheckCheck className='h-3 w-3' />
+                            <CheckCheck className='size-3' />
                         </Button>
                     )}
                     <Button
                         variant='ghost'
                         size='sm'
-                        className='h-6 w-6 p-0 text-gray-400 hover:text-red-500'
+                        className='size-6 p-0 text-gray-400 hover:text-red-500'
                         onClick={(e) => {
                             e.stopPropagation();
                             onDismiss(notification.id);
                         }}
                         title='Dismiss'
                     >
-                        <X className='h-3 w-3' />
+                        <X className='size-3' />
                     </Button>
                 </div>
             </div>
@@ -139,7 +139,7 @@ const ConnectionStatus: React.FC<{
     if (isConnected) {
         return (
             <div className='flex items-center gap-2 text-sm text-green-600 dark:text-green-400'>
-                <Wifi className='h-4 w-4' />
+                <Wifi className='size-4' />
                 <span>Connected</span>
             </div>
         );
@@ -148,7 +148,7 @@ const ConnectionStatus: React.FC<{
     return (
         <div className='flex items-center justify-between'>
             <div className='flex items-center gap-2 text-sm text-red-600 dark:text-red-400'>
-                <WifiOff className='h-4 w-4' />
+                <WifiOff className='size-4' />
                 <span>{connectionError || 'Disconnected'}</span>
             </div>
             <Button
@@ -208,11 +208,11 @@ export const OrganizerNotificationCenter: React.FC<
                         className='relative p-2'
                         aria-label={`Notifications ${unreadCount > 0 ? `(${unreadCount} unread)` : ''}`}
                     >
-                        <Bell className='h-5 w-5' />
+                        <Bell className='size-5' />
                         {unreadCount > 0 && (
                             <Badge
                                 variant='destructive'
-                                className='absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center p-0 text-xs'
+                                className='absolute -right-1 -top-1 flex size-5 items-center justify-center p-0 text-xs'
                             >
                                 {unreadCount > 99 ? '99+' : unreadCount}
                             </Badge>
@@ -245,7 +245,7 @@ export const OrganizerNotificationCenter: React.FC<
                                                 onClick={clearAllNotifications}
                                                 className='text-xs text-red-600 hover:text-red-700'
                                             >
-                                                <Trash2 className='h-3 w-3' />
+                                                <Trash2 className='size-3' />
                                             </Button>
                                         </>
                                     )}
@@ -261,7 +261,7 @@ export const OrganizerNotificationCenter: React.FC<
                         <CardContent className='p-0'>
                             {sortedNotifications.length === 0 ? (
                                 <div className='p-6 text-center text-gray-500 dark:text-gray-400'>
-                                    <Bell className='mx-auto mb-2 h-8 w-8 opacity-50' />
+                                    <Bell className='mx-auto mb-2 size-8 opacity-50' />
                                     <p>No notifications yet</p>
                                     <p className='mt-1 text-sm'>
                                         You'll see real-time updates here

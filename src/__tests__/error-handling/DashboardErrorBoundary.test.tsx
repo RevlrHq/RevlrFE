@@ -5,6 +5,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { DashboardErrorBoundary } from '@/components/error-handling/DashboardErrorBoundary';
+import { errorLogger } from '@/lib/error-handling/ErrorLogger';
 
 // Mock the error logger
 jest.mock('@/lib/error-handling/ErrorLogger', () => ({
@@ -263,7 +264,10 @@ describe('DashboardErrorBoundary', () => {
 
         it('should show error report button in development', () => {
             const originalEnv = process.env.NODE_ENV;
-            process.env.NODE_ENV = 'development';
+            Object.defineProperty(process.env, 'NODE_ENV', {
+                value: 'development',
+                writable: true,
+            });
 
             render(
                 <DashboardErrorBoundary section='Test Section'>
@@ -273,12 +277,18 @@ describe('DashboardErrorBoundary', () => {
 
             expect(screen.getByText(/Copy Error Report/)).toBeInTheDocument();
 
-            process.env.NODE_ENV = originalEnv;
+            Object.defineProperty(process.env, 'NODE_ENV', {
+                value: originalEnv,
+                writable: true,
+            });
         });
 
         it('should copy error report to clipboard', async () => {
             const originalEnv = process.env.NODE_ENV;
-            process.env.NODE_ENV = 'development';
+            Object.defineProperty(process.env, 'NODE_ENV', {
+                value: 'development',
+                writable: true,
+            });
 
             render(
                 <DashboardErrorBoundary section='Test Section'>
@@ -296,7 +306,10 @@ describe('DashboardErrorBoundary', () => {
                 'Error report copied to clipboard. Please share this with support.'
             );
 
-            process.env.NODE_ENV = originalEnv;
+            Object.defineProperty(process.env, 'NODE_ENV', {
+                value: originalEnv,
+                writable: true,
+            });
         });
     });
 
@@ -329,8 +342,6 @@ describe('DashboardErrorBoundary', () => {
 
     describe('Error Logging Integration', () => {
         it('should log component errors', () => {
-            const { errorLogger } = require('@/lib/error-handling/ErrorLogger');
-
             render(
                 <DashboardErrorBoundary section='Test Section'>
                     <ThrowError />

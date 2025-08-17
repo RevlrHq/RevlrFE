@@ -143,7 +143,7 @@ export class DashboardErrorBoundary extends Component<Props, State> {
                 <Card className={`border-destructive/50 ${className || ''}`}>
                     <CardHeader className='pb-3'>
                         <CardTitle className='flex items-center gap-2 text-destructive'>
-                            <AlertCircle className='h-5 w-5' />
+                            <AlertCircle className='size-5' />
                             {section
                                 ? `${section} Error`
                                 : 'Something went wrong'}
@@ -177,12 +177,12 @@ export class DashboardErrorBoundary extends Component<Props, State> {
                             >
                                 {isRetrying ? (
                                     <>
-                                        <RefreshCw className='mr-2 h-4 w-4 animate-spin' />
+                                        <RefreshCw className='mr-2 size-4 animate-spin' />
                                         Retrying...
                                     </>
                                 ) : (
                                     <>
-                                        <RefreshCw className='mr-2 h-4 w-4' />
+                                        <RefreshCw className='mr-2 size-4' />
                                         Try Again{' '}
                                         {retryCount > 0 &&
                                             `(${3 - retryCount} left)`}
@@ -195,7 +195,7 @@ export class DashboardErrorBoundary extends Component<Props, State> {
                                 variant='outline'
                                 size='sm'
                             >
-                                <Home className='mr-2 h-4 w-4' />
+                                <Home className='mr-2 size-4' />
                                 Refresh Page
                             </Button>
 
@@ -205,7 +205,7 @@ export class DashboardErrorBoundary extends Component<Props, State> {
                                     variant='outline'
                                     size='sm'
                                 >
-                                    <Bug className='mr-2 h-4 w-4' />
+                                    <Bug className='mr-2 size-4' />
                                     Copy Error Report
                                 </Button>
                             )}

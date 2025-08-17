@@ -28,11 +28,7 @@ import {
     Target,
     Activity,
 } from 'lucide-react';
-import {
-    EventPerformanceView,
-    TicketPerformance,
-    DailyRegistrationStats,
-} from '@/lib/api';
+import { EventPerformanceView } from '@/lib/api';
 import {
     formatCurrency,
     formatNumber,
@@ -95,7 +91,7 @@ export const IndividualEventPerformance: React.FC<
                 label: 'Total Revenue',
                 value: formatCurrency(eventPerformance.totalRevenue || 0),
                 trend: 'up',
-                icon: <DollarSign className='h-4 w-4' />,
+                icon: <DollarSign className='size-4' />,
                 color: 'text-green-600',
             },
             {
@@ -107,7 +103,7 @@ export const IndividualEventPerformance: React.FC<
                         : salesRate > 0.4
                           ? 'neutral'
                           : 'down',
-                icon: <Target className='h-4 w-4' />,
+                icon: <Target className='size-4' />,
                 color:
                     salesRate > 0.7
                         ? 'text-green-600'
@@ -119,7 +115,7 @@ export const IndividualEventPerformance: React.FC<
                 label: 'Avg. Ticket Price',
                 value: formatCurrency(eventPerformance.averageTicketPrice || 0),
                 trend: 'neutral',
-                icon: <Ticket className='h-4 w-4' />,
+                icon: <Ticket className='size-4' />,
                 color: 'text-blue-600',
             },
             {
@@ -131,7 +127,7 @@ export const IndividualEventPerformance: React.FC<
                         : completionRate > 0.6
                           ? 'neutral'
                           : 'down',
-                icon: <Users className='h-4 w-4' />,
+                icon: <Users className='size-4' />,
                 color:
                     completionRate > 0.8
                         ? 'text-green-600'
@@ -288,8 +284,8 @@ export const IndividualEventPerformance: React.FC<
                     },
                     ticks: {
                         color: getChartColors(isDark).muted,
-                        callback: function (value: any) {
-                            return formatCurrency(value);
+                        callback: function (value: string | number) {
+                            return formatCurrency(Number(value));
                         },
                     },
                 },
@@ -338,7 +334,7 @@ export const IndividualEventPerformance: React.FC<
     if (!eventPerformance) {
         return (
             <div className={`py-8 text-center ${className}`}>
-                <Activity className='mx-auto mb-4 h-12 w-12 opacity-50' />
+                <Activity className='mx-auto mb-4 size-12 opacity-50' />
                 <p className='text-muted-foreground'>
                     No performance data available for this event.
                 </p>
@@ -392,13 +388,13 @@ export const IndividualEventPerformance: React.FC<
                             {metric.trend && (
                                 <div className='flex items-center text-xs text-muted-foreground'>
                                     {metric.trend === 'up' && (
-                                        <TrendingUp className='mr-1 h-3 w-3 text-green-500' />
+                                        <TrendingUp className='mr-1 size-3 text-green-500' />
                                     )}
                                     {metric.trend === 'down' && (
-                                        <TrendingDown className='mr-1 h-3 w-3 text-red-500' />
+                                        <TrendingDown className='mr-1 size-3 text-red-500' />
                                     )}
                                     {metric.trend === 'neutral' && (
-                                        <Activity className='mr-1 h-3 w-3 text-gray-500' />
+                                        <Activity className='mr-1 size-3 text-gray-500' />
                                     )}
                                 </div>
                             )}
@@ -414,7 +410,7 @@ export const IndividualEventPerformance: React.FC<
                     <Card>
                         <CardHeader>
                             <CardTitle className='flex items-center gap-2'>
-                                <Calendar className='h-5 w-5' />
+                                <Calendar className='size-5' />
                                 Daily Registration Trends
                             </CardTitle>
                         </CardHeader>
@@ -434,7 +430,7 @@ export const IndividualEventPerformance: React.FC<
                     <Card>
                         <CardHeader>
                             <CardTitle className='flex items-center gap-2'>
-                                <Users className='h-5 w-5' />
+                                <Users className='size-5' />
                                 Registration Status
                             </CardTitle>
                         </CardHeader>
@@ -463,7 +459,7 @@ export const IndividualEventPerformance: React.FC<
                     <Card>
                         <CardHeader>
                             <CardTitle className='flex items-center gap-2'>
-                                <Ticket className='h-5 w-5' />
+                                <Ticket className='size-5' />
                                 Ticket Performance
                             </CardTitle>
                         </CardHeader>

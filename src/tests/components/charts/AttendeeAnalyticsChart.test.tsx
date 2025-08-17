@@ -16,7 +16,7 @@ jest.mock('chart.js', () => ({
 }));
 
 jest.mock('react-chartjs-2', () => ({
-    Doughnut: jest.fn(({ data, options }) => (
+    Doughnut: jest.fn(() => (
         <div
             data-testid='doughnut-chart'
             data-chart-type='doughnut'
@@ -25,7 +25,7 @@ jest.mock('react-chartjs-2', () => ({
             Doughnut Chart Mock
         </div>
     )),
-    Bar: jest.fn(({ data, options }) => (
+    Bar: jest.fn(() => (
         <div
             data-testid='bar-chart'
             data-chart-type='bar'
@@ -170,8 +170,8 @@ describe('AttendeeAnalyticsChart', () => {
                 },
                 {
                     segmentName: 'Segment 3',
-                    count: null as any,
-                    percentage: null as any,
+                    count: null,
+                    percentage: null,
                 }, // Null values
             ],
         };
@@ -183,7 +183,7 @@ describe('AttendeeAnalyticsChart', () => {
     });
 
     it('handles null data gracefully', () => {
-        render(<AttendeeAnalyticsChart data={null as any} />);
+        render(<AttendeeAnalyticsChart data={null} />);
 
         expect(
             screen.getByText('No attendee analytics data available')
@@ -191,7 +191,7 @@ describe('AttendeeAnalyticsChart', () => {
     });
 
     it('handles undefined data gracefully', () => {
-        render(<AttendeeAnalyticsChart data={undefined as any} />);
+        render(<AttendeeAnalyticsChart data={undefined} />);
 
         expect(
             screen.getByText('No attendee analytics data available')
@@ -199,7 +199,7 @@ describe('AttendeeAnalyticsChart', () => {
     });
 
     it('displays error state when chart data cannot be rendered', () => {
-        const invalidData = { ...mockData, attendeeSegments: null as any };
+        const invalidData = { ...mockData, attendeeSegments: null };
         render(<AttendeeAnalyticsChart data={invalidData} />);
 
         expect(

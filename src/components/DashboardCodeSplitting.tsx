@@ -32,8 +32,8 @@ const LazyAttendeeAnalyticsChart = lazy(() =>
     }))
 );
 
-const LazyEnhancedEventTable = lazy(() =>
-    import('./EnhancedEventTable').then((module) => ({
+const LazyEventTable = lazy(() =>
+    import('./EventTable').then((module) => ({
         default: module.default,
     }))
 );
@@ -88,7 +88,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({
     componentName = 'Component',
 }) => (
     <div className='flex flex-col items-center justify-center p-8 text-center'>
-        <AlertTriangle className='mb-4 h-12 w-12 text-red-500' />
+        <AlertTriangle className='mb-4 size-12 text-red-500' />
         <h3 className='mb-2 text-lg font-semibold text-gray-900 dark:text-white'>
             Failed to load {componentName}
         </h3>
@@ -96,7 +96,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({
             {error.message || 'An unexpected error occurred'}
         </p>
         <Button onClick={resetErrorBoundary} variant='outline' size='sm'>
-            <RefreshCw className='mr-2 h-4 w-4' />
+            <RefreshCw className='mr-2 size-4' />
             Try Again
         </Button>
     </div>
@@ -109,7 +109,7 @@ const StatisticsLoadingFallback = () => (
             <div key={i} className='rounded-lg border p-6'>
                 <div className='flex items-center justify-between'>
                     <Skeleton className='h-4 w-20' />
-                    <Skeleton className='h-8 w-8 rounded' />
+                    <Skeleton className='size-8 rounded' />
                 </div>
                 <Skeleton className='mt-2 h-8 w-24' />
                 <Skeleton className='mt-1 h-3 w-16' />
@@ -132,14 +132,14 @@ const TableLoadingFallback = () => (
                 key={i}
                 className='flex items-center space-x-4 rounded-lg border p-4'
             >
-                <Skeleton className='h-4 w-4' />
-                <Skeleton className='h-16 w-16 rounded' />
+                <Skeleton className='size-4' />
+                <Skeleton className='size-16 rounded' />
                 <div className='flex-1 space-y-2'>
                     <Skeleton className='h-4 w-3/4' />
                     <Skeleton className='h-3 w-1/2' />
                 </div>
                 <Skeleton className='h-6 w-20' />
-                <Skeleton className='h-8 w-8' />
+                <Skeleton className='size-8' />
             </div>
         ))}
     </div>
@@ -181,7 +181,7 @@ export const preloadDashboardComponents = () => {
 
     // Preload secondary components after a delay
     setTimeout(() => {
-        import('./EnhancedEventTable');
+        import('./EventTable');
         import('./charts/EventPerformanceChart');
     }, 1000);
 
@@ -196,7 +196,7 @@ export const preloadDashboardComponents = () => {
 // Hook for conditional preloading
 export const useConditionalPreload = (
     condition: boolean,
-    componentImports: (() => Promise<any>)[]
+    componentImports: (() => Promise<unknown>)[]
 ) => {
     React.useEffect(() => {
         if (condition) {
@@ -208,7 +208,7 @@ export const useConditionalPreload = (
 };
 
 // Exported lazy components with proper wrappers
-export const LazyStatisticsOverviewWithWrapper: React.FC<any> = (props) => (
+export const LazyStatisticsOverviewWithWrapper: React.FC<unknown> = (props) => (
     <LazyWrapper
         fallback={<StatisticsLoadingFallback />}
         componentName='Statistics Overview'
@@ -217,7 +217,7 @@ export const LazyStatisticsOverviewWithWrapper: React.FC<any> = (props) => (
     </LazyWrapper>
 );
 
-export const LazyRevenueChartWithWrapper: React.FC<any> = (props) => (
+export const LazyRevenueChartWithWrapper: React.FC<unknown> = (props) => (
     <LazyWrapper
         fallback={<ChartSkeleton height={300} />}
         componentName='Revenue Chart'
@@ -226,7 +226,9 @@ export const LazyRevenueChartWithWrapper: React.FC<any> = (props) => (
     </LazyWrapper>
 );
 
-export const LazyEventPerformanceChartWithWrapper: React.FC<any> = (props) => (
+export const LazyEventPerformanceChartWithWrapper: React.FC<unknown> = (
+    props
+) => (
     <LazyWrapper
         fallback={<ChartSkeleton height={300} />}
         componentName='Event Performance Chart'
@@ -235,7 +237,9 @@ export const LazyEventPerformanceChartWithWrapper: React.FC<any> = (props) => (
     </LazyWrapper>
 );
 
-export const LazyAttendeeAnalyticsChartWithWrapper: React.FC<any> = (props) => (
+export const LazyAttendeeAnalyticsChartWithWrapper: React.FC<unknown> = (
+    props
+) => (
     <LazyWrapper
         fallback={<ChartSkeleton height={300} />}
         componentName='Attendee Analytics Chart'
@@ -244,16 +248,18 @@ export const LazyAttendeeAnalyticsChartWithWrapper: React.FC<any> = (props) => (
     </LazyWrapper>
 );
 
-export const LazyEnhancedEventTableWithWrapper: React.FC<any> = (props) => (
+export const LazyEventTableWithWrapper: React.FC<unknown> = (props) => (
     <LazyWrapper
         fallback={<TableLoadingFallback />}
-        componentName='Enhanced Event Table'
+        componentName='Event Table'
     >
-        <LazyEnhancedEventTable {...props} />
+        <LazyEventTable {...props} />
     </LazyWrapper>
 );
 
-export const LazyRegistrationManagementWithWrapper: React.FC<any> = (props) => (
+export const LazyRegistrationManagementWithWrapper: React.FC<unknown> = (
+    props
+) => (
     <LazyWrapper
         fallback={<TableLoadingFallback />}
         componentName='Registration Management'
@@ -262,7 +268,7 @@ export const LazyRegistrationManagementWithWrapper: React.FC<any> = (props) => (
     </LazyWrapper>
 );
 
-export const LazyEventPerformanceAnalyticsWithWrapper: React.FC<any> = (
+export const LazyEventPerformanceAnalyticsWithWrapper: React.FC<unknown> = (
     props
 ) => (
     <LazyWrapper
@@ -273,7 +279,7 @@ export const LazyEventPerformanceAnalyticsWithWrapper: React.FC<any> = (
     </LazyWrapper>
 );
 
-export const LazyRevenueReportingWithWrapper: React.FC<any> = (props) => (
+export const LazyRevenueReportingWithWrapper: React.FC<unknown> = (props) => (
     <LazyWrapper
         fallback={<ChartSkeleton height={400} />}
         componentName='Revenue Reporting'
@@ -282,7 +288,7 @@ export const LazyRevenueReportingWithWrapper: React.FC<any> = (props) => (
     </LazyWrapper>
 );
 
-export const LazyAttendeeAnalyticsWithWrapper: React.FC<any> = (props) => (
+export const LazyAttendeeAnalyticsWithWrapper: React.FC<unknown> = (props) => (
     <LazyWrapper
         fallback={<ChartSkeleton height={300} />}
         componentName='Attendee Analytics'
@@ -291,7 +297,9 @@ export const LazyAttendeeAnalyticsWithWrapper: React.FC<any> = (props) => (
     </LazyWrapper>
 );
 
-export const LazyVirtualizedEventTableWithWrapper: React.FC<any> = (props) => (
+export const LazyVirtualizedEventTableWithWrapper: React.FC<unknown> = (
+    props
+) => (
     <LazyWrapper
         fallback={<TableLoadingFallback />}
         componentName='Virtualized Event Table'
@@ -300,7 +308,7 @@ export const LazyVirtualizedEventTableWithWrapper: React.FC<any> = (props) => (
     </LazyWrapper>
 );
 
-export const LazyVirtualizedRegistrationTableWithWrapper: React.FC<any> = (
+export const LazyVirtualizedRegistrationTableWithWrapper: React.FC<unknown> = (
     props
 ) => (
     <LazyWrapper
@@ -318,17 +326,18 @@ export const logBundleInfo = () => {
             timestamp: new Date().toISOString(),
             userAgent: navigator.userAgent,
             connection:
-                (navigator as any).connection?.effectiveType || 'unknown',
+                (navigator as Record<string, unknown>).connection
+                    ?.effectiveType || 'unknown',
         });
     }
 };
 
 // Performance monitoring for lazy components
-export const withPerformanceMonitoring = <P extends object>(
+export const withPerformanceMonitoring = <P extends Record<string, unknown>>(
     Component: React.ComponentType<P>,
     componentName: string
 ) => {
-    return React.memo((props: P) => {
+    const WrappedComponent = React.memo((props: P) => {
         const startTime = React.useRef<number>(0);
 
         React.useEffect(() => {
@@ -356,4 +365,8 @@ export const withPerformanceMonitoring = <P extends object>(
 
         return <Component {...props} />;
     });
+
+    WrappedComponent.displayName = `withPerformanceMonitoring(${componentName})`;
+
+    return WrappedComponent;
 };

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { EventView } from '../../../lib/services/models/EventView';
 
-interface EnhancedEventContentProps {
+interface EventContentProps {
     event: EventView;
 }
 
-const EnhancedEventContent = ({ event }: EnhancedEventContentProps) => {
+const EventContent = ({ event }: EventContentProps) => {
     const [shareStatus, setShareStatus] = useState<
         'idle' | 'copying' | 'copied' | 'error'
     >('idle');
@@ -666,4 +666,4 @@ const EnhancedEventContent = ({ event }: EnhancedEventContentProps) => {
     );
 };
 
-export default EnhancedEventContent;
+export default EventContent;

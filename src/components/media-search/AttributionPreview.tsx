@@ -26,7 +26,7 @@ export const AttributionPreview: React.FC<AttributionPreviewProps> = ({
                 className={`rounded-lg bg-green-50 p-3 dark:bg-green-900/20 ${className}`}
             >
                 <div className='flex items-center text-green-800 dark:text-green-200'>
-                    <Check className='mr-2 h-4 w-4' />
+                    <Check className='mr-2 size-4' />
                     <span className='font-medium'>No attribution required</span>
                 </div>
             </div>
@@ -83,12 +83,12 @@ export const AttributionPreview: React.FC<AttributionPreviewProps> = ({
                     >
                         {showPreview ? (
                             <>
-                                <EyeOff className='h-4 w-4' />
+                                <EyeOff className='size-4' />
                                 <span>Hide Preview</span>
                             </>
                         ) : (
                             <>
-                                <Eye className='h-4 w-4' />
+                                <Eye className='size-4' />
                                 <span>Show Preview</span>
                             </>
                         )}
@@ -194,12 +194,12 @@ const AttributionFormat: React.FC<AttributionFormatProps> = ({
                 >
                     {copied ? (
                         <>
-                            <Check className='h-3 w-3' />
+                            <Check className='size-3' />
                             <span>Copied!</span>
                         </>
                     ) : (
                         <>
-                            <Copy className='h-3 w-3' />
+                            <Copy className='size-3' />
                             <span>Copy</span>
                         </>
                     )}

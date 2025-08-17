@@ -1,40 +1,33 @@
-import { ChartOptions, TooltipItem } from 'chart.js';
+import { ChartOptions } from 'chart.js';
 
-// Chart.js theme-aware color configuration
-export const getChartColors = (isDark: boolean = false) => {
-    if (isDark) {
-        return {
-            primary: 'hsl(220, 70%, 50%)',
-            secondary: 'hsl(160, 60%, 45%)',
-            tertiary: 'hsl(30, 80%, 55%)',
-            quaternary: 'hsl(280, 65%, 60%)',
-            quinary: 'hsl(340, 75%, 55%)',
-            background: 'hsl(0, 0%, 3.9%)',
-            foreground: 'hsl(0, 0%, 98%)',
-            muted: 'hsl(0, 0%, 63.9%)',
-            border: 'hsl(0, 0%, 14.9%)',
-            grid: 'hsl(0, 0%, 14.9%)',
-        };
-    }
+export interface ChartColors {
+    primary: string;
+    secondary: string;
+    success: string;
+    warning: string;
+    error: string;
+    background: string;
+    foreground: string;
+    muted: string;
+}
 
+export function getChartColors(isDark: boolean): ChartColors {
     return {
-        primary: 'hsl(12, 76%, 61%)',
-        secondary: 'hsl(173, 58%, 39%)',
-        tertiary: 'hsl(197, 37%, 24%)',
-        quaternary: 'hsl(43, 74%, 66%)',
-        quinary: 'hsl(27, 87%, 67%)',
-        background: 'hsl(0, 0%, 100%)',
-        foreground: 'hsl(0, 0%, 3.9%)',
-        muted: 'hsl(0, 0%, 45.1%)',
-        border: 'hsl(0, 0%, 89.8%)',
-        grid: 'hsl(0, 0%, 89.8%)',
+        primary: isDark ? '#60a5fa' : '#3b82f6',
+        secondary: isDark ? '#a78bfa' : '#8b5cf6',
+        success: isDark ? '#4ade80' : '#22c55e',
+        warning: isDark ? '#fbbf24' : '#f59e0b',
+        error: isDark ? '#f87171' : '#ef4444',
+        background: isDark ? '#1f2937' : '#ffffff',
+        foreground: isDark ? '#f9fafb' : '#111827',
+        muted: isDark ? '#9ca3af' : '#6b7280',
     };
-};
+}
 
-// Base chart options with responsive design and accessibility
-export const getBaseChartOptions = (
-    isDark: boolean = false
-): ChartOptions<any> => {
+export function getBaseChartOptions(
+    isDark: boolean,
+    isMobile: boolean = false
+): ChartOptions {
     const colors = getChartColors(isDark);
 
     return {
@@ -47,98 +40,273 @@ export const getBaseChartOptions = (
         plugins: {
             legend: {
                 display: true,
-                position: 'top',
+                position: isMobile ? 'bottom' : 'top',
                 labels: {
                     color: colors.foreground,
                     usePointStyle: true,
-                    padding: 20,
+                    padding: isMobile ? 10 : 20,
                     font: {
-                        size: 12,
+                        size: isMobile ? 12 : 14,
                         family: 'Inter, sans-serif',
                     },
                 },
             },
             tooltip: {
-                backgroundColor: colors.background,
+                backgroundColor: isDark ? '#374151' : '#ffffff',
                 titleColor: colors.foreground,
                 bodyColor: colors.foreground,
-                borderColor: colors.border,
+                borderColor: isDark ? '#4b5563' : '#e5e7eb',
                 borderWidth: 1,
                 cornerRadius: 8,
-                padding: 12,
-                displayColors: true,
+                padding: isMobile ? 8 : 12,
                 titleFont: {
-                    size: 14,
+                    size: isMobile ? 12 : 14,
                     weight: '600',
+                    family: 'Inter, sans-serif',
                 },
                 bodyFont: {
-                    size: 13,
+                    size: isMobile ? 11 : 13,
+                    family: 'Inter, sans-serif',
                 },
+                displayColors: true,
+                usePointStyle: true,
             },
         },
         scales: {
             x: {
                 grid: {
-                    color: colors.grid,
+                    color: isDark ? '#374151' : '#f3f4f6',
                     drawBorder: false,
                 },
                 ticks: {
                     color: colors.muted,
                     font: {
-                        size: 11,
+                        size: isMobile ? 10 : 12,
                         family: 'Inter, sans-serif',
                     },
+                    maxRotation: isMobile ? 45 : 0,
+                    minRotation: isMobile ? 45 : 0,
                 },
             },
             y: {
                 grid: {
-                    color: colors.grid,
+                    color: isDark ? '#374151' : '#f3f4f6',
                     drawBorder: false,
                 },
                 ticks: {
                     color: colors.muted,
                     font: {
-                        size: 11,
+                        size: isMobile ? 10 : 12,
                         family: 'Inter, sans-serif',
                     },
                 },
             },
         },
+        elements: {
+            point: {
+                radius: isMobile ? 3 : 4,
+                hoverRadius: isMobile ? 5 : 6,
+                borderWidth: 2,
+            },
+            line: {
+                borderWidth: isMobile ? 2 : 3,
+                tension: 0.4,
+            },
+            bar: {
+                borderRadius: isMobile ? 4 : 6,
+                borderSkipped: false,
+            },
+        },
+        animation: {
+            duration: isMobile ? 750 : 1000,
+            easing: 'easeInOutQuart',
+        },
     };
-};
+}
 
-// Format currency for tooltips and labels
-export const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('en-US', {
+export function formatCurrency(
+    amount: number,
+    currency: string = 'NGN'
+): string {
+    return new Intl.NumberFormat('en-NG', {
         style: 'currency',
-        currency: 'USD',
+        currency,
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
+    }).format(amount);
+}
+
+export function formatNumber(
+    value: number,
+    options?: Intl.NumberFormatOptions
+): string {
+    return new Intl.NumberFormat('en-US', {
+        notation: 'compact',
+        compactDisplay: 'short',
+        ...options,
     }).format(value);
-};
+}
 
-// Format numbers with commas
-export const formatNumber = (value: number): string => {
-    return new Intl.NumberFormat('en-US').format(value);
-};
+export function formatPercentage(value: number, decimals: number = 1): string {
+    return `${value.toFixed(decimals)}%`;
+}
 
-// Format percentage
-export const formatPercentage = (value: number): string => {
-    return `${value.toFixed(1)}%`;
-};
+export function revenueTooltipFormatter(value: number, label: string): string {
+    return `${label}: ${formatCurrency(value)}`;
+}
 
-// Custom tooltip formatter for revenue charts
-export const revenueTooltipFormatter = (
-    tooltipItem: TooltipItem<any>
-): string => {
-    const value = tooltipItem.parsed.y || tooltipItem.parsed;
-    return formatCurrency(typeof value === 'number' ? value : 0);
-};
+export function getResponsiveChartHeight(
+    baseHeight: number,
+    isMobile: boolean,
+    isTablet: boolean
+): number {
+    if (isMobile) {
+        return Math.min(baseHeight, 250);
+    }
+    if (isTablet) {
+        return Math.min(baseHeight, 350);
+    }
+    return baseHeight;
+}
 
-// Custom tooltip formatter for count charts
-export const countTooltipFormatter = (
-    tooltipItem: TooltipItem<any>
-): string => {
-    const value = tooltipItem.parsed.y || tooltipItem.parsed;
-    return formatNumber(typeof value === 'number' ? value : 0);
+export function getResponsiveChartOptions(
+    isDark: boolean,
+    isMobile: boolean,
+    chartType: 'line' | 'bar' | 'pie' | 'doughnut' = 'line'
+): ChartOptions {
+    const baseOptions = getBaseChartOptions(isDark, isMobile);
+
+    // Chart-specific optimizations
+    switch (chartType) {
+        case 'pie':
+        case 'doughnut':
+            return {
+                ...baseOptions,
+                plugins: {
+                    ...baseOptions.plugins,
+                    legend: {
+                        ...baseOptions.plugins?.legend,
+                        position: isMobile ? 'bottom' : 'right',
+                        labels: {
+                            ...baseOptions.plugins?.legend?.labels,
+                            generateLabels: (chart) => {
+                                const data = chart.data;
+                                if (data.labels && data.datasets.length) {
+                                    return data.labels.map((label, i) => {
+                                        const dataset = data.datasets[0];
+                                        const value = dataset.data[i] as number;
+                                        const total = (
+                                            dataset.data as number[]
+                                        ).reduce((a, b) => a + b, 0);
+                                        const percentage = (
+                                            (value / total) *
+                                            100
+                                        ).toFixed(1);
+
+                                        return {
+                                            text: isMobile
+                                                ? `${label}`
+                                                : `${label} (${percentage}%)`,
+                                            fillStyle: dataset
+                                                .backgroundColor?.[i] as string,
+                                            strokeStyle: dataset.borderColor?.[
+                                                i
+                                            ] as string,
+                                            lineWidth:
+                                                dataset.borderWidth as number,
+                                            hidden: false,
+                                            index: i,
+                                        };
+                                    });
+                                }
+                                return [];
+                            },
+                        },
+                    },
+                },
+                scales: undefined, // Remove scales for pie/doughnut charts
+            };
+
+        case 'bar':
+            return {
+                ...baseOptions,
+                scales: {
+                    ...baseOptions.scales,
+                    x: {
+                        ...baseOptions.scales?.x,
+                        ticks: {
+                            ...baseOptions.scales?.x?.ticks,
+                            maxRotation: isMobile ? 90 : 45,
+                            minRotation: isMobile ? 45 : 0,
+                        },
+                    },
+                },
+            };
+
+        default:
+            return baseOptions;
+    }
+}
+
+export function createGradient(
+    ctx: CanvasRenderingContext2D,
+    color: string,
+    opacity: number = 0.1
+): CanvasGradient {
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(
+        0,
+        color +
+            Math.round(opacity * 255)
+                .toString(16)
+                .padStart(2, '0')
+    );
+    gradient.addColorStop(1, color + '00');
+    return gradient;
+}
+
+export function getDatasetColors(isDark: boolean): string[] {
+    const colors = getChartColors(isDark);
+    return [
+        colors.primary,
+        colors.secondary,
+        colors.success,
+        colors.warning,
+        colors.error,
+        '#f97316', // orange
+        '#06b6d4', // cyan
+        '#8b5cf6', // violet
+        '#ec4899', // pink
+        '#84cc16', // lime
+    ];
+}
+
+export function truncateLabel(label: string, maxLength: number = 15): string {
+    if (label.length <= maxLength) return label;
+    return label.substring(0, maxLength - 3) + '...';
+}
+
+export function getOptimalTickCount(
+    containerWidth: number,
+    isMobile: boolean
+): number {
+    if (isMobile) {
+        return Math.max(3, Math.floor(containerWidth / 80));
+    }
+    return Math.max(5, Math.floor(containerWidth / 100));
+}
+
+export default {
+    getChartColors,
+    getBaseChartOptions,
+    getResponsiveChartOptions,
+    getResponsiveChartHeight,
+    formatCurrency,
+    formatNumber,
+    formatPercentage,
+    revenueTooltipFormatter,
+    createGradient,
+    getDatasetColors,
+    truncateLabel,
+    getOptimalTickCount,
 };

@@ -11,7 +11,7 @@ import {
     BarElement,
 } from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
-import { AttendeeAnalyticsView, AttendeeSegment } from '@/lib/api';
+import { AttendeeAnalyticsView } from '@/lib/api';
 import {
     getBaseChartOptions,
     getChartColors,
@@ -63,7 +63,7 @@ export const AttendeeAnalyticsChart: React.FC<AttendeeAnalyticsChartProps> = ({
             (segment) => segment.segmentName || 'Unknown'
         );
         const counts = segments.map((segment) => segment.count || 0);
-        const percentages = segments.map((segment) => segment.percentage || 0);
+        segments.map((segment) => segment.percentage || 0);
         const spending = segments.map((segment) => segment.averageSpend || 0);
 
         // Generate colors for segments
@@ -181,7 +181,10 @@ export const AttendeeAnalyticsChart: React.FC<AttendeeAnalyticsChartProps> = ({
                         cornerRadius: 8,
                         padding: 12,
                         callbacks: {
-                            label: (context: any) => {
+                            label: (context: {
+                                label?: string;
+                                parsed: number;
+                            }) => {
                                 const label = context.label || '';
                                 const value = context.parsed;
                                 const segment =
@@ -230,7 +233,10 @@ export const AttendeeAnalyticsChart: React.FC<AttendeeAnalyticsChartProps> = ({
                     tooltip: {
                         ...baseOptions.plugins?.tooltip,
                         callbacks: {
-                            label: (context: any) => {
+                            label: (context: {
+                                dataset: { label?: string };
+                                parsed: { y: number };
+                            }) => {
                                 const label = context.dataset.label || '';
                                 const value = context.parsed.y;
 
@@ -261,7 +267,7 @@ export const AttendeeAnalyticsChart: React.FC<AttendeeAnalyticsChartProps> = ({
                         },
                         ticks: {
                             ...baseOptions.scales?.y?.ticks,
-                            callback: function (value: any) {
+                            callback: function (value: number) {
                                 return formatNumber(value);
                             },
                         },
@@ -289,7 +295,7 @@ export const AttendeeAnalyticsChart: React.FC<AttendeeAnalyticsChartProps> = ({
                                     size: 11,
                                     family: 'Inter, sans-serif',
                                 },
-                                callback: function (value: any) {
+                                callback: function (value: number) {
                                     return formatCurrency(value);
                                 },
                             },

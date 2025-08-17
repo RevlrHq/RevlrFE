@@ -5,7 +5,7 @@
 import React from 'react';
 import { AlertTriangle, RefreshCw, Wifi, WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 
@@ -148,7 +148,7 @@ export const ApiErrorFallback: React.FC<ApiErrorFallbackProps> = ({
         <Card className={`border-destructive/50 ${className}`}>
             <CardHeader className='pb-3'>
                 <CardTitle className='flex items-center gap-2 text-destructive'>
-                    <Icon className='h-5 w-5' />
+                    <Icon className='size-5' />
                     {title || config.title}
                 </CardTitle>
             </CardHeader>
@@ -169,12 +169,12 @@ export const ApiErrorFallback: React.FC<ApiErrorFallbackProps> = ({
                         >
                             {isLoading ? (
                                 <>
-                                    <RefreshCw className='mr-2 h-4 w-4 animate-spin' />
+                                    <RefreshCw className='mr-2 size-4 animate-spin' />
                                     Retrying...
                                 </>
                             ) : (
                                 <>
-                                    <RefreshCw className='mr-2 h-4 w-4' />
+                                    <RefreshCw className='mr-2 size-4' />
                                     Try Again
                                 </>
                             )}
@@ -189,7 +189,7 @@ export const ApiErrorFallback: React.FC<ApiErrorFallbackProps> = ({
                             variant='outline'
                             size='sm'
                         >
-                            <RefreshCw className='mr-2 h-4 w-4' />
+                            <RefreshCw className='mr-2 size-4' />
                             Refresh Page
                         </Button>
                     </div>

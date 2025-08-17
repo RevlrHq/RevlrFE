@@ -20,8 +20,23 @@ const mockUseSignalRStore = useSignalRStore as jest.MockedFunction<
 >;
 
 describe('SignalR Organizer Realtime Integration', () => {
-    let mockConnection: any;
-    let mockHubConnectionBuilder: any;
+    let mockConnection: {
+        start: jest.Mock;
+        stop: jest.Mock;
+        on: jest.Mock;
+        off: jest.Mock;
+        invoke: jest.Mock;
+        onclose: jest.Mock;
+        onreconnected: jest.Mock;
+        onreconnecting: jest.Mock;
+        state: string;
+    };
+    let mockHubConnectionBuilder: {
+        withUrl: jest.Mock;
+        withAutomaticReconnect: jest.Mock;
+        configureLogging: jest.Mock;
+        build: jest.Mock;
+    };
 
     beforeEach(() => {
         // Reset all mocks
@@ -53,11 +68,11 @@ describe('SignalR Organizer Realtime Integration', () => {
             .mockImplementation(() => mockHubConnectionBuilder);
         mockSignalR.LogLevel = {
             Information: 'Information',
-        } as any;
+        } as typeof signalR.LogLevel;
         mockSignalR.HubConnectionState = {
             Connected: 'Connected',
             Disconnected: 'Disconnected',
-        } as any;
+        } as typeof signalR.HubConnectionState;
 
         // Mock useSignalRStore
         mockUseSignalRStore.mockReturnValue({
@@ -133,7 +148,23 @@ describe('SignalR Organizer Realtime Integration', () => {
     });
 
     describe('real-time event handling', () => {
-        let realtimeHookResult: any;
+        let realtimeHookResult: {
+            current: {
+                dashboardUpdates: unknown;
+                notifications: Array<{
+                    type: string;
+                    priority?: string;
+                    title?: string;
+                }>;
+                eventStatusUpdates: unknown[];
+                registrationUpdates: unknown[];
+                revenueUpdates: unknown[];
+                connectionError: string | null;
+                onDashboardUpdate: (
+                    callback: (update: unknown) => void
+                ) => () => void;
+            };
+        };
 
         beforeEach(async () => {
             // Setup SignalR connection

@@ -14,7 +14,7 @@ global.Blob = jest.fn().mockImplementation((content, options) => ({
     options,
     size: content[0].length,
     type: options?.type || 'text/plain',
-})) as any;
+})) as jest.MockedClass<typeof Blob>;
 
 const mockLink = {
     href: '',
@@ -283,7 +283,7 @@ describe('Export Functionality Integration', () => {
 
         it('handles invalid format', async () => {
             const result = await ExportService.exportData([{ id: 1 }], {
-                format: 'xml' as any,
+                format: 'xml' as 'csv' | 'pdf' | 'excel',
                 dataType: 'events',
                 includeFields: ['id'],
             });

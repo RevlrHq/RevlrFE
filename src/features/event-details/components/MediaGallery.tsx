@@ -4,11 +4,11 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { EventView } from '../../../lib/services/models/EventView';
 
-interface EnhancedMediaGalleryProps {
+interface MediaGalleryProps {
     event: EventView;
 }
 
-const EnhancedMediaGallery = ({ event }: EnhancedMediaGalleryProps) => {
+const MediaGallery = ({ event }: MediaGalleryProps) => {
     const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
@@ -288,4 +288,4 @@ const EnhancedMediaGallery = ({ event }: EnhancedMediaGalleryProps) => {
     );
 };
 
-export default EnhancedMediaGallery;
+export default MediaGallery;

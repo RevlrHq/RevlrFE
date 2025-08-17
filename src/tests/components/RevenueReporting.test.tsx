@@ -16,13 +16,13 @@ const mockUseOrganizerRevenue = useOrganizerRevenue as jest.MockedFunction<
 
 // Mock Chart.js components
 jest.mock('react-chartjs-2', () => ({
-    Line: ({ data, options }: any) => (
+    Line: ({ data }: { data: unknown }) => (
         <div data-testid='line-chart' data-chart-data={JSON.stringify(data)} />
     ),
-    Bar: ({ data, options }: any) => (
+    Bar: ({ data }: { data: unknown }) => (
         <div data-testid='bar-chart' data-chart-data={JSON.stringify(data)} />
     ),
-    Doughnut: ({ data, options }: any) => (
+    Doughnut: ({ data }: { data: unknown }) => (
         <div
             data-testid='doughnut-chart'
             data-chart-data={JSON.stringify(data)}

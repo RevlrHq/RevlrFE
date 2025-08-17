@@ -10,14 +10,13 @@ import {
     Clock,
     Wifi,
     WifiOff,
-    Settings,
     RefreshCw,
     ChevronDown,
     ChevronUp,
     Eye,
     EyeOff,
 } from 'lucide-react';
-import { ProviderStatus, MediaProviderError } from '@src/types/media-search';
+import { ProviderStatus } from '@src/types/media-search';
 
 interface ProviderStatusPanelProps {
     providers: ProviderStatus[];
@@ -46,7 +45,7 @@ export const ProviderStatusPanel: React.FC<ProviderStatusPanelProps> = ({
         if (!provider.isAvailable) {
             return {
                 status: 'unavailable',
-                icon: <XCircle className='h-4 w-4 text-red-500' />,
+                icon: <XCircle className='size-4 text-red-500' />,
                 color: 'text-red-500',
                 bgColor: theme === 'dark' ? 'bg-red-900/20' : 'bg-red-50',
                 borderColor: 'border-red-200',
@@ -57,7 +56,7 @@ export const ProviderStatusPanel: React.FC<ProviderStatusPanelProps> = ({
         if (provider.healthScore < 50) {
             return {
                 status: 'poor',
-                icon: <AlertCircle className='h-4 w-4 text-red-500' />,
+                icon: <AlertCircle className='size-4 text-red-500' />,
                 color: 'text-red-500',
                 bgColor: theme === 'dark' ? 'bg-red-900/20' : 'bg-red-50',
                 borderColor: 'border-red-200',
@@ -68,7 +67,7 @@ export const ProviderStatusPanel: React.FC<ProviderStatusPanelProps> = ({
         if (provider.healthScore < 80) {
             return {
                 status: 'degraded',
-                icon: <AlertTriangle className='h-4 w-4 text-yellow-500' />,
+                icon: <AlertTriangle className='size-4 text-yellow-500' />,
                 color: 'text-yellow-500',
                 bgColor: theme === 'dark' ? 'bg-yellow-900/20' : 'bg-yellow-50',
                 borderColor: 'border-yellow-200',
@@ -82,7 +81,7 @@ export const ProviderStatusPanel: React.FC<ProviderStatusPanelProps> = ({
         ) {
             return {
                 status: 'limited',
-                icon: <Clock className='h-4 w-4 text-orange-500' />,
+                icon: <Clock className='size-4 text-orange-500' />,
                 color: 'text-orange-500',
                 bgColor: theme === 'dark' ? 'bg-orange-900/20' : 'bg-orange-50',
                 borderColor: 'border-orange-200',
@@ -92,7 +91,7 @@ export const ProviderStatusPanel: React.FC<ProviderStatusPanelProps> = ({
 
         return {
             status: 'healthy',
-            icon: <CheckCircle className='h-4 w-4 text-green-500' />,
+            icon: <CheckCircle className='size-4 text-green-500' />,
             color: 'text-green-500',
             bgColor: theme === 'dark' ? 'bg-green-900/20' : 'bg-green-50',
             borderColor: 'border-green-200',
@@ -135,7 +134,7 @@ export const ProviderStatusPanel: React.FC<ProviderStatusPanelProps> = ({
             >
                 <div className='flex items-center space-x-2'>
                     <WifiOff
-                        className={`h-4 w-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
+                        className={`size-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
                     />
                     <span
                         className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
@@ -155,7 +154,7 @@ export const ProviderStatusPanel: React.FC<ProviderStatusPanelProps> = ({
             <div className='flex items-center justify-between border-b border-gray-200 p-3 dark:border-gray-700'>
                 <div className='flex items-center space-x-2'>
                     <Wifi
-                        className={`h-4 w-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
+                        className={`size-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
                     />
                     <span
                         className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}
@@ -179,9 +178,9 @@ export const ProviderStatusPanel: React.FC<ProviderStatusPanelProps> = ({
                         className={`rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-700 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
                     >
                         {isExpanded ? (
-                            <ChevronUp className='h-4 w-4' />
+                            <ChevronUp className='size-4' />
                         ) : (
-                            <ChevronDown className='h-4 w-4' />
+                            <ChevronDown className='size-4' />
                         )}
                     </button>
                 )}
@@ -264,9 +263,9 @@ export const ProviderStatusPanel: React.FC<ProviderStatusPanelProps> = ({
                                             }
                                         >
                                             {isActive ? (
-                                                <Eye className='h-4 w-4' />
+                                                <Eye className='size-4' />
                                             ) : (
-                                                <EyeOff className='h-4 w-4' />
+                                                <EyeOff className='size-4' />
                                             )}
                                         </button>
 
@@ -283,7 +282,7 @@ export const ProviderStatusPanel: React.FC<ProviderStatusPanelProps> = ({
                                                     className={`rounded p-1 transition-colors ${theme === 'dark' ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`}
                                                     title='Retry provider'
                                                 >
-                                                    <RefreshCw className='h-4 w-4' />
+                                                    <RefreshCw className='size-4' />
                                                 </button>
                                             )}
 
@@ -299,9 +298,9 @@ export const ProviderStatusPanel: React.FC<ProviderStatusPanelProps> = ({
                                             className={`rounded p-1 transition-colors ${theme === 'dark' ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`}
                                         >
                                             {showDetails === provider.id ? (
-                                                <ChevronUp className='h-4 w-4' />
+                                                <ChevronUp className='size-4' />
                                             ) : (
-                                                <ChevronDown className='h-4 w-4' />
+                                                <ChevronDown className='size-4' />
                                             )}
                                         </button>
                                     </div>
@@ -420,7 +419,7 @@ export const ProviderStatusPanel: React.FC<ProviderStatusPanelProps> = ({
                                                     className={`rounded p-1 transition-colors ${theme === 'dark' ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`}
                                                     title='Retry provider'
                                                 >
-                                                    <RefreshCw className='h-4 w-4' />
+                                                    <RefreshCw className='size-4' />
                                                 </button>
                                             )}
                                         </div>

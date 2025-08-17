@@ -70,14 +70,15 @@ const EventTableRow: React.FC<EventTableRowProps> = ({
             <td className='p-4'>
                 <div className='flex items-center space-x-3'>
                     {event.bannerImageUrl ? (
-                        <img
-                            src={event.bannerImageUrl}
-                            alt={event.title}
-                            className='h-12 w-12 rounded-lg object-cover'
+                        <div
+                            className='size-12 rounded-lg bg-cover bg-center'
+                            style={{
+                                backgroundImage: `url(${event.bannerImageUrl})`,
+                            }}
                         />
                     ) : (
-                        <div className='flex h-12 w-12 items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700'>
-                            <Calendar className='h-6 w-6 text-gray-400' />
+                        <div className='flex size-12 items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700'>
+                            <Calendar className='size-6 text-gray-400' />
                         </div>
                     )}
                     <div>
@@ -126,7 +127,7 @@ const EventTableRow: React.FC<EventTableRowProps> = ({
 
             <td className='p-4'>
                 <div className='flex items-center gap-1 text-sm'>
-                    <Users className='h-4 w-4 text-gray-400' />
+                    <Users className='size-4 text-gray-400' />
                     <span className='font-medium'>
                         {event.registrationCount || 0}
                     </span>
@@ -146,7 +147,7 @@ const EventTableRow: React.FC<EventTableRowProps> = ({
 
             <td className='p-4'>
                 <div className='flex items-center gap-1 text-sm'>
-                    <DollarSign className='h-4 w-4 text-gray-400' />
+                    <DollarSign className='size-4 text-gray-400' />
                     <span className='font-medium'>
                         {formatCurrency(event.revenue || 0)}
                     </span>
@@ -160,9 +161,9 @@ const EventTableRow: React.FC<EventTableRowProps> = ({
                             variant='ghost'
                             size='sm'
                             onClick={() => setShowActionsMenu(!showActionsMenu)}
-                            className='h-8 w-8 p-0'
+                            className='size-8 p-0'
                         >
-                            <MoreHorizontal className='h-4 w-4' />
+                            <MoreHorizontal className='size-4' />
                         </Button>
 
                         {showActionsMenu && (
@@ -181,7 +182,7 @@ const EventTableRow: React.FC<EventTableRowProps> = ({
                                         }}
                                         className='flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-revlr-dark-border'
                                     >
-                                        <Eye className='h-4 w-4' />
+                                        <Eye className='size-4' />
                                         View Details
                                     </button>
                                     <button
@@ -191,7 +192,7 @@ const EventTableRow: React.FC<EventTableRowProps> = ({
                                         }}
                                         className='flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-revlr-dark-border'
                                     >
-                                        <Edit className='h-4 w-4' />
+                                        <Edit className='size-4' />
                                         Edit Event
                                     </button>
                                     <button
@@ -201,7 +202,7 @@ const EventTableRow: React.FC<EventTableRowProps> = ({
                                         }}
                                         className='flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-revlr-dark-border'
                                     >
-                                        <Copy className='h-4 w-4' />
+                                        <Copy className='size-4' />
                                         Duplicate
                                     </button>
                                 </div>

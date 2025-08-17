@@ -286,7 +286,7 @@ describe('StatisticsOverview', () => {
         });
 
         it('applies animation styling during counting', async () => {
-            const { container } = render(
+            render(
                 <TestWrapper>
                     <StatisticsOverview
                         eventStatistics={mockEventStatistics}
@@ -356,7 +356,7 @@ describe('StatisticsOverview', () => {
 
     describe('Responsive Design', () => {
         it('applies responsive grid classes', () => {
-            const { container } = render(
+            render(
                 <TestWrapper>
                     <StatisticsOverview
                         eventStatistics={mockEventStatistics}
@@ -366,12 +366,12 @@ describe('StatisticsOverview', () => {
             );
 
             // Check for responsive grid classes
-            const mainGrid = container.querySelector(
+            const mainGrid = document.querySelector(
                 '.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-4'
             );
             expect(mainGrid).toBeInTheDocument();
 
-            const additionalGrid = container.querySelector(
+            const additionalGrid = document.querySelector(
                 '.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3'
             );
             expect(additionalGrid).toBeInTheDocument();

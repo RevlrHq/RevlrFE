@@ -315,11 +315,11 @@ export const DragDropMediaGrid: React.FC<DragDropMediaGridProps> = ({
                 style={{ zIndex: -1 }}
             >
                 {dragState.draggedIndex !== null && (
-                    <div className='h-32 w-32 overflow-hidden rounded-xl border-2 border-revlr-primary-blue bg-white shadow-lg'>
+                    <div className='size-32 overflow-hidden rounded-xl border-2 border-revlr-primary-blue bg-white shadow-lg'>
                         <img
                             src={items[dragState.draggedIndex]?.thumbnailUrl}
                             alt='Dragging'
-                            className='h-full w-full object-cover'
+                            className='size-full object-cover'
                         />
                         <div className='absolute inset-0 flex items-center justify-center bg-revlr-primary-blue/20'>
                             <Move className='size-6 text-revlr-primary-blue' />

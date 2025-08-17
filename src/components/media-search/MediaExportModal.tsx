@@ -13,13 +13,8 @@ import {
     FileText,
     FileSpreadsheet,
     Archive,
-    Link,
-    Users,
-    Calendar,
-    Tag,
     Image as ImageIcon,
     Check,
-    AlertCircle,
 } from 'lucide-react';
 
 interface MediaExportModalProps {
@@ -74,38 +69,8 @@ export const MediaExportModal: React.FC<MediaExportModalProps> = ({
         []
     );
 
-    // Handle export
-    const handleExport = useCallback(async () => {
-        if (exportCount === 0) return;
-
-        setIsExporting(true);
-        setExportProgress(0);
-
-        try {
-            switch (exportOptions.format) {
-                case 'json':
-                    await exportAsJSON();
-                    break;
-                case 'csv':
-                    await exportAsCSV();
-                    break;
-                case 'zip':
-                    await exportAsZIP();
-                    break;
-                case 'share':
-                    await createShareLink();
-                    break;
-            }
-        } catch (error) {
-            console.error('Export failed:', error);
-        } finally {
-            setIsExporting(false);
-            setExportProgress(0);
-        }
-    }, [exportOptions, exportCount]);
-
-    // Export as JSON
-    const exportAsJSON = async () => {
+    // Export functions
+    const exportAsJSON = useCallback(async () => {
         const exportData = {
             title: collection?.name || title,
             description: collection?.description,
@@ -145,10 +110,9 @@ export const MediaExportModal: React.FC<MediaExportModalProps> = ({
         });
 
         downloadBlob(blob, `${collection?.name || 'media-export'}.json`);
-    };
+    }, [collection, title, exportCount, items, exportOptions]);
 
-    // Export as CSV
-    const exportAsCSV = async () => {
+    const exportAsCSV = useCallback(async () => {
         const headers = [
             'Title',
             'Provider',
@@ -206,10 +170,9 @@ export const MediaExportModal: React.FC<MediaExportModalProps> = ({
         const blob = new Blob([csvContent], { type: 'text/csv' });
 
         downloadBlob(blob, `${collection?.name || 'media-export'}.csv`);
-    };
+    }, [collection, items, exportOptions]);
 
-    // Export as ZIP (mock implementation)
-    const exportAsZIP = async () => {
+    const exportAsZIP = useCallback(async () => {
         // In a real implementation, this would use JSZip to create a ZIP file
         // with the actual images and a metadata file
 
@@ -232,10 +195,9 @@ export const MediaExportModal: React.FC<MediaExportModalProps> = ({
         });
 
         downloadBlob(blob, `${collection?.name || 'media-export'}.zip`);
-    };
+    }, [collection, exportCount, items]);
 
-    // Create share link
-    const createShareLink = async () => {
+    const createShareLink = useCallback(async () => {
         // Mock share link creation
         const shareToken = `share_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const url = `${window.location.origin}/shared/${shareToken}`;
@@ -244,7 +206,44 @@ export const MediaExportModal: React.FC<MediaExportModalProps> = ({
 
         // In a real implementation, this would save the share data to a backend
         console.log('Share link created:', url);
-    };
+    }, []);
+
+    // Handle export
+    const handleExport = useCallback(async () => {
+        if (exportCount === 0) return;
+
+        setIsExporting(true);
+        setExportProgress(0);
+
+        try {
+            switch (exportOptions.format) {
+                case 'json':
+                    await exportAsJSON();
+                    break;
+                case 'csv':
+                    await exportAsCSV();
+                    break;
+                case 'zip':
+                    await exportAsZIP();
+                    break;
+                case 'share':
+                    await createShareLink();
+                    break;
+            }
+        } catch (error) {
+            console.error('Export failed:', error);
+        } finally {
+            setIsExporting(false);
+            setExportProgress(0);
+        }
+    }, [
+        exportOptions,
+        exportCount,
+        exportAsJSON,
+        exportAsCSV,
+        exportAsZIP,
+        createShareLink,
+    ]);
 
     // Download blob helper
     const downloadBlob = (blob: Blob, filename: string) => {
@@ -379,7 +378,7 @@ export const MediaExportModal: React.FC<MediaExportModalProps> = ({
                                     onClick={() =>
                                         updateExportOption(
                                             'format',
-                                            value as any
+                                            value as ExportOptions['format']
                                         )
                                     }
                                     disabled={isExporting}
@@ -470,7 +469,7 @@ export const MediaExportModal: React.FC<MediaExportModalProps> = ({
                                             onChange={(e) =>
                                                 updateExportOption(
                                                     key as keyof ExportOptions,
-                                                    e.target.checked as any
+                                                    e.target.checked
                                                 )
                                             }
                                             disabled={isExporting}

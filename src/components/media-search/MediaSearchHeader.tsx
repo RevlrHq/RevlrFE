@@ -424,8 +424,8 @@ export const MediaSearchHeader: React.FC<MediaSearchHeaderProps> = ({
                         placeholder='Search for images and videos...'
                         className={`w-full rounded-xl border py-3 pl-10 pr-32 font-inter transition-colors focus:outline-none focus:ring-2 focus:ring-revlr-primary-blue/20 ${
                             theme === 'dark'
-                                ? 'border-revlr-dark-border bg-revlr-dark-card text-white placeholder-gray-400'
-                                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                                ? 'border-revlr-dark-border bg-revlr-dark-card text-white placeholder:text-gray-400'
+                                : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-500'
                         }`}
                         disabled={disabled}
                         aria-label='Search for images and videos'
@@ -618,7 +618,7 @@ export const MediaSearchHeader: React.FC<MediaSearchHeaderProps> = ({
                 {/* Search Suggestions */}
                 {showSuggestions && suggestions.length > 0 && (
                     <div
-                        className={`absolute left-0 right-0 top-full z-10 mt-1 rounded-lg border shadow-lg ${
+                        className={`absolute inset-x-0 top-full z-10 mt-1 rounded-lg border shadow-lg ${
                             theme === 'dark'
                                 ? 'border-revlr-dark-border bg-revlr-dark-card'
                                 : 'border-gray-200 bg-white'
@@ -659,7 +659,7 @@ export const MediaSearchHeader: React.FC<MediaSearchHeaderProps> = ({
                     (searchHistory.length > 0 || savedSearches.length > 0) && (
                         <div
                             ref={historyDropdownRef}
-                            className={`absolute left-0 right-0 top-full z-10 mt-1 rounded-lg border shadow-lg ${
+                            className={`absolute inset-x-0 top-full z-10 mt-1 rounded-lg border shadow-lg ${
                                 theme === 'dark'
                                     ? 'border-revlr-dark-border bg-revlr-dark-card'
                                     : 'border-gray-200 bg-white'

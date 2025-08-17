@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useDebouncedValue } from './useDebounce';
-import { EnhancedMediaSearchService } from '@/lib/services/media/EnhancedMediaSearchService';
+import { MediaSearchService } from '@/lib/services/media/MediaSearchService';
 import { ErrorNotification } from '@/lib/services/media/ErrorNotificationService';
 import {
     MediaSearchQuery,
@@ -133,7 +133,7 @@ export interface UseEnhancedMediaSearchOptions {
 export interface UseEnhancedMediaSearchReturn {
     state: EnhancedMediaSearchState;
     actions: EnhancedMediaSearchActions;
-    service: EnhancedMediaSearchService;
+    service: MediaSearchService;
 }
 
 /**
@@ -146,28 +146,19 @@ export function useEnhancedMediaSearch(
         initialQuery = '',
         initialFilters = {},
         enableErrorHandling = true,
-        enableLogging = true,
-        enableNotifications = true,
+        // enableLogging: _enableLogging = true,
+        // enableNotifications: _enableNotifications = true,
         debounceDelay = 500,
     } = options;
 
     // Initialize service
-    const serviceRef = useRef<EnhancedMediaSearchService | null>(null);
+    const serviceRef = useRef<MediaSearchService | null>(null);
     if (!serviceRef.current) {
-        serviceRef.current = new EnhancedMediaSearchService(1000, 30, {
-            enableErrorHandling,
-            enableLogging,
-            enableNotifications,
-            retryConfig: {
-                maxRetries: 3,
-                baseDelay: 1000,
-                maxDelay: 10000,
-                backoffMultiplier: 2,
-                jitter: true,
-            },
-            offlineMode: false,
-            gracefulDegradation: true,
-        });
+        serviceRef.current = new MediaSearchService(
+            1000,
+            30,
+            enableErrorHandling
+        );
     }
 
     const service = serviceRef.current;

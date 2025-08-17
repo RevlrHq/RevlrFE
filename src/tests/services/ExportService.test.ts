@@ -15,7 +15,7 @@ global.Blob = jest.fn().mockImplementation((content, options) => ({
     options,
     size: content[0].length,
     type: options?.type || 'text/plain',
-})) as any;
+})) as jest.MockedClass<typeof Blob>;
 
 // Mock document methods
 const mockLink = {
@@ -318,7 +318,7 @@ describe('ExportService', () => {
     describe('error handling', () => {
         it('handles unsupported format', async () => {
             const result = await ExportService.exportData([], {
-                format: 'xml' as any,
+                format: 'xml' as 'csv' | 'pdf' | 'excel',
                 dataType: 'events',
                 includeFields: [],
             });

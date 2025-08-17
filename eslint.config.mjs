@@ -83,17 +83,22 @@ export default [
                     type: 'shared',
                     pattern: [
                         'src/components/*',
+                        'src/components/**/*',
                         'src/lib/*',
                         'src/lib/**/*',
                         'src/stores/**/*',
                         'src/hooks/**/*',
                         'src/providers/**/*',
+                        'src/types/**/*',
                     ],
                 },
                 {
                     mode: 'full',
                     type: 'tests', // Separate type for tests
-                    pattern: ['src/tests/**/*.+(ts|tsx|js|jsx)'],
+                    pattern: [
+                        'src/tests/**/*.+(ts|tsx|js|jsx)',
+                        'src/__tests__/**/*.+(ts|tsx|js|jsx)',
+                    ],
                 },
                 {
                     type: 'services', // Separate type for services

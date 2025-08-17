@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { EventPerformanceChart } from '@/components/charts/EventPerformanceChart';
 import { useEventPerformanceAnalytics } from '@/hooks/useEventPerformanceAnalytics';
-import { EventSummaryView, EventPerformanceView } from '@/lib/api';
+
 import {
     formatCurrency,
     formatNumber,
@@ -76,15 +76,12 @@ export const EventPerformanceAnalytics: React.FC<
     showRecommendations = true,
     showAlerts = true,
 }) => {
-    const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState('overview');
 
     const {
         topPerformingEvents,
-        eventPerformance,
         loading,
         error,
-        fetchTopPerforming,
         fetchEventPerformance,
         refetch,
     } = useEventPerformanceAnalytics({
@@ -124,21 +121,21 @@ export const EventPerformanceAnalytics: React.FC<
                 label: 'Total Revenue',
                 value: formatCurrency(totalRevenue),
                 trend: 'up',
-                icon: <DollarSign className='h-4 w-4' />,
+                icon: <DollarSign className='size-4' />,
                 color: 'text-green-600',
             },
             {
                 label: 'Total Registrations',
                 value: formatNumber(totalRegistrations),
                 trend: 'up',
-                icon: <Users className='h-4 w-4' />,
+                icon: <Users className='size-4' />,
                 color: 'text-blue-600',
             },
             {
                 label: 'Average Revenue',
                 value: formatCurrency(averageRevenue),
                 trend: 'neutral',
-                icon: <BarChart3 className='h-4 w-4' />,
+                icon: <BarChart3 className='size-4' />,
                 color: 'text-purple-600',
             },
             {
@@ -150,7 +147,7 @@ export const EventPerformanceAnalytics: React.FC<
                         : averageSalesRate > 40
                           ? 'neutral'
                           : 'down',
-                icon: <Target className='h-4 w-4' />,
+                icon: <Target className='size-4' />,
                 color:
                     averageSalesRate > 70
                         ? 'text-green-600'
@@ -339,7 +336,7 @@ export const EventPerformanceAnalytics: React.FC<
         return (
             <div className={className}>
                 <Alert>
-                    <AlertTriangle className='h-4 w-4' />
+                    <AlertTriangle className='size-4' />
                     <AlertDescription>
                         Failed to load performance analytics: {error}
                         <Button
@@ -375,13 +372,13 @@ export const EventPerformanceAnalytics: React.FC<
                             {metric.trend && (
                                 <div className='flex items-center text-xs text-muted-foreground'>
                                     {metric.trend === 'up' && (
-                                        <TrendingUp className='mr-1 h-3 w-3 text-green-500' />
+                                        <TrendingUp className='mr-1 size-3 text-green-500' />
                                     )}
                                     {metric.trend === 'down' && (
-                                        <TrendingDown className='mr-1 h-3 w-3 text-red-500' />
+                                        <TrendingDown className='mr-1 size-3 text-red-500' />
                                     )}
                                     {metric.trend === 'neutral' && (
-                                        <Activity className='mr-1 h-3 w-3 text-gray-500' />
+                                        <Activity className='mr-1 size-3 text-gray-500' />
                                     )}
                                     {metric.change &&
                                         `${metric.change > 0 ? '+' : ''}${metric.change}%`}
@@ -416,7 +413,7 @@ export const EventPerformanceAnalytics: React.FC<
                     <Card>
                         <CardHeader>
                             <CardTitle className='flex items-center gap-2'>
-                                <Star className='h-5 w-5' />
+                                <Star className='size-5' />
                                 Top Performing Events
                             </CardTitle>
                         </CardHeader>
@@ -434,7 +431,7 @@ export const EventPerformanceAnalytics: React.FC<
                     {performanceAlerts.length > 0 && (
                         <div className='space-y-2'>
                             <h3 className='flex items-center gap-2 text-lg font-semibold'>
-                                <AlertTriangle className='h-5 w-5' />
+                                <AlertTriangle className='size-5' />
                                 Performance Alerts
                             </h3>
                             {performanceAlerts.map((alert) => (
@@ -448,7 +445,7 @@ export const EventPerformanceAnalytics: React.FC<
                                               : 'border-blue-200 bg-blue-50'
                                     }
                                 >
-                                    <AlertTriangle className='h-4 w-4' />
+                                    <AlertTriangle className='size-4' />
                                     <div>
                                         <div className='font-medium'>
                                             {alert.title}
@@ -470,7 +467,7 @@ export const EventPerformanceAnalytics: React.FC<
                         </CardHeader>
                         <CardContent>
                             <div className='py-8 text-center text-muted-foreground'>
-                                <BarChart3 className='mx-auto mb-4 h-12 w-12 opacity-50' />
+                                <BarChart3 className='mx-auto mb-4 size-12 opacity-50' />
                                 <p>
                                     Trend analysis will be available with more
                                     historical data.
@@ -565,9 +562,6 @@ export const EventPerformanceAnalytics: React.FC<
                                                 variant='outline'
                                                 size='sm'
                                                 onClick={() => {
-                                                    setSelectedEventId(
-                                                        event.id || null
-                                                    );
                                                     if (event.id) {
                                                         fetchEventPerformance(
                                                             event.id
@@ -581,7 +575,7 @@ export const EventPerformanceAnalytics: React.FC<
                                     ))
                                 ) : (
                                     <div className='py-8 text-center text-muted-foreground'>
-                                        <Calendar className='mx-auto mb-4 h-12 w-12 opacity-50' />
+                                        <Calendar className='mx-auto mb-4 size-12 opacity-50' />
                                         <p>
                                             No event performance data available.
                                         </p>
@@ -597,7 +591,7 @@ export const EventPerformanceAnalytics: React.FC<
                         <Card>
                             <CardHeader>
                                 <CardTitle className='flex items-center gap-2'>
-                                    <Target className='h-5 w-5' />
+                                    <Target className='size-5' />
                                     Performance Recommendations
                                 </CardTitle>
                             </CardHeader>
@@ -647,7 +641,7 @@ export const EventPerformanceAnalytics: React.FC<
                                     </div>
                                 ) : (
                                     <div className='py-8 text-center text-muted-foreground'>
-                                        <Target className='mx-auto mb-4 h-12 w-12 opacity-50' />
+                                        <Target className='mx-auto mb-4 size-12 opacity-50' />
                                         <p>
                                             No recommendations available at this
                                             time.

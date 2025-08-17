@@ -12,26 +12,10 @@ import {
 import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter,
-} from './ui/dialog';
-import {
     Search,
     Filter,
     Download,
-    MoreHorizontal,
-    Edit,
-    Copy,
-    Eye,
     Calendar,
-    Users,
-    DollarSign,
-    ChevronLeft,
-    ChevronRight,
     ArrowUpDown,
     ArrowUp,
     ArrowDown,
@@ -46,6 +30,8 @@ import EventTableRow from './EventTableRow';
 import EventMobileCard from './EventMobileCard';
 import EventTablePagination from './EventTablePagination';
 import EventTableModals from './EventTableModals';
+import MobileTableNavigation from './MobileTableNavigation';
+import { useMobileOptimizations } from '../hooks/useMobileOptimizations';
 
 // Types for the component
 interface EventTableFilters {
@@ -85,7 +71,7 @@ interface ExportConfig {
     includeFields: string[];
 }
 
-interface EnhancedEventTableProps {
+interface EventTableProps {
     className?: string;
     onEventSelect?: (event: EventSummaryView) => void;
     onEventEdit?: (eventId: string) => void;
@@ -96,9 +82,8 @@ interface EnhancedEventTableProps {
     defaultPageSize?: number;
 }
 
-const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
+const EventTable: React.FC<EventTableProps> = ({
     className = '',
-    onEventSelect,
     onEventEdit,
     onEventView,
     showActions = true,
@@ -107,6 +92,7 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
     defaultPageSize = 10,
 }) => {
     const { theme } = useTheme();
+    const { isMobile } = useMobileOptimizations();
 
     // State management
     const [events, setEvents] = useState<EventSummaryView[]>([]);
@@ -253,12 +239,10 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
     const handleDuplicateEvent = async (
         duplicateData: EventDuplicationRequest
     ) => {
-        if (!duplicateEventId) return;
-
         setLoading(true);
         try {
             const request: EventDuplicationRequest = {
-                sourceEventId: duplicateEventId,
+                sourceEventId: '',
                 ...duplicateData,
             };
 
@@ -269,7 +253,6 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
 
             if (response.success) {
                 setShowDuplicateModal(false);
-                setDuplicateEventId(null);
                 fetchEvents(); // Refresh the data
             } else {
                 setError(response.message || 'Event duplication failed');
@@ -308,7 +291,7 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
 
             if (response.success && response.data?.items) {
                 const exportData = response.data.items.map((event) => {
-                    const row: any = {};
+                    const row: Record<string, string | number> = {};
 
                     if (exportConfig.includeFields.includes('title'))
                         row.Title = event.title;
@@ -357,7 +340,7 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
     };
 
     // CSV download utility
-    const downloadCSV = (data: any[], filename: string) => {
+    const downloadCSV = (data: Record<string, unknown>[], filename: string) => {
         if (data.length === 0) return;
 
         const headers = Object.keys(data[0]);
@@ -415,15 +398,15 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
     const getStatusIcon = (status: EventStatus) => {
         switch (status) {
             case 1:
-                return <CheckCircle className='h-4 w-4' />;
+                return <CheckCircle className='size-4' />;
             case 0:
-                return <Clock className='h-4 w-4' />;
+                return <Clock className='size-4' />;
             case 2:
-                return <XCircle className='h-4 w-4' />;
+                return <XCircle className='size-4' />;
             case 3:
-                return <Archive className='h-4 w-4' />;
+                return <Archive className='size-4' />;
             default:
-                return <Clock className='h-4 w-4' />;
+                return <Clock className='size-4' />;
         }
     };
 
@@ -476,12 +459,12 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
 
     const getSortIcon = (field: string) => {
         if (sortConfig.field !== field) {
-            return <ArrowUpDown className='h-4 w-4 opacity-50' />;
+            return <ArrowUpDown className='size-4 opacity-50' />;
         }
         return sortConfig.direction === 'asc' ? (
-            <ArrowUp className='h-4 w-4' />
+            <ArrowUp className='size-4' />
         ) : (
-            <ArrowDown className='h-4 w-4' />
+            <ArrowDown className='size-4' />
         );
     };
 
@@ -499,7 +482,10 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
     };
 
     // Filter handlers
-    const handleFilterChange = (key: keyof EventTableFilters, value: any) => {
+    const handleFilterChange = (
+        key: keyof EventTableFilters,
+        value: unknown
+    ) => {
         setFilters((prev) => ({ ...prev, [key]: value }));
         setPagination((prev) => ({ ...prev, pageNumber: 1 })); // Reset to first page
     };
@@ -520,6 +506,228 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
         });
     };
 
+    // Mobile table columns configuration
+    const mobileTableColumns = [
+        {
+            key: 'title',
+            label: 'Event',
+            sortable: true,
+            filterable: true,
+            priority: 'high' as const,
+        },
+        {
+            key: 'status',
+            label: 'Status',
+            sortable: true,
+            filterable: true,
+            priority: 'high' as const,
+        },
+        {
+            key: 'startDate',
+            label: 'Date',
+            sortable: true,
+            filterable: false,
+            priority: 'medium' as const,
+        },
+        {
+            key: 'registrationCount',
+            label: 'Registrations',
+            sortable: true,
+            filterable: false,
+            priority: 'medium' as const,
+        },
+        {
+            key: 'revenue',
+            label: 'Revenue',
+            sortable: true,
+            filterable: false,
+            priority: 'low' as const,
+        },
+    ];
+
+    // Handle mobile view mode change
+    const [mobileViewMode, setMobileViewMode] = useState<
+        'grid' | 'list' | 'cards'
+    >('cards');
+
+    // Handle mobile sort
+    const handleMobileSort = (column: string, direction: 'asc' | 'desc') => {
+        setSortConfig({ field: column, direction });
+    };
+
+    // Mobile layout
+    if (isMobile) {
+        return (
+            <>
+                <div className={`space-y-4 ${className}`}>
+                    {/* Mobile Navigation */}
+                    <MobileTableNavigation
+                        columns={mobileTableColumns}
+                        currentPage={pagination.pageNumber}
+                        totalPages={pagination.totalPages}
+                        totalItems={pagination.totalItems}
+                        pageSize={pagination.pageSize}
+                        onPageChange={handlePageChange}
+                        onPageSizeChange={handlePageSizeChange}
+                        onSort={handleMobileSort}
+                        onSearch={(query) =>
+                            handleFilterChange('searchTerm', query)
+                        }
+                        onViewModeChange={setMobileViewMode}
+                        onExport={handleExport}
+                        sortColumn={sortConfig.field}
+                        sortDirection={sortConfig.direction}
+                        viewMode={mobileViewMode}
+                        showSearch={true}
+                        showFilters={true}
+                        showViewToggle={true}
+                        showExport={showExport}
+                    />
+
+                    {/* Bulk actions bar */}
+                    {showBulkActions && selectedEvents.size > 0 && (
+                        <div
+                            className={`flex items-center justify-between rounded-lg border p-4 ${
+                                theme === 'dark'
+                                    ? 'border-revlr-dark-border bg-revlr-dark-card'
+                                    : 'border-blue-200 bg-blue-50'
+                            }`}
+                        >
+                            <span className='text-sm font-medium'>
+                                {selectedEvents.size} event
+                                {selectedEvents.size !== 1 ? 's' : ''} selected
+                            </span>
+                            <div className='flex items-center gap-2'>
+                                <Button
+                                    variant='outline'
+                                    size='sm'
+                                    onClick={() =>
+                                        setShowBulkActionsModal(true)
+                                    }
+                                >
+                                    Actions
+                                </Button>
+                                <Button
+                                    variant='ghost'
+                                    size='sm'
+                                    onClick={() => setSelectedEvents(new Set())}
+                                >
+                                    Clear
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Loading state */}
+                    {loading && (
+                        <div className='space-y-4'>
+                            {Array.from({ length: pagination.pageSize }).map(
+                                (_, index) => (
+                                    <div
+                                        key={index}
+                                        className='rounded-lg border p-4'
+                                    >
+                                        <div className='flex items-center space-x-4'>
+                                            <Skeleton className='size-4' />
+                                            <Skeleton className='size-16 rounded' />
+                                            <div className='flex-1 space-y-2'>
+                                                <Skeleton className='h-4 w-3/4' />
+                                                <Skeleton className='h-3 w-1/2' />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            )}
+                        </div>
+                    )}
+
+                    {/* Error state */}
+                    {error && !loading && (
+                        <div
+                            className={`rounded-lg border p-6 ${
+                                theme === 'dark'
+                                    ? 'border-red-800 bg-red-900/20 text-red-400'
+                                    : 'border-red-200 bg-red-50 text-red-800'
+                            }`}
+                        >
+                            <div className='mb-2 flex items-center gap-2'>
+                                <XCircle className='size-5' />
+                                <h3 className='font-semibold'>
+                                    Error loading events
+                                </h3>
+                            </div>
+                            <p className='mb-4 text-sm'>{error}</p>
+                            <Button
+                                variant='outline'
+                                size='sm'
+                                onClick={fetchEvents}
+                                className='flex items-center gap-2'
+                            >
+                                <RefreshCw className='size-4' />
+                                Try Again
+                            </Button>
+                        </div>
+                    )}
+
+                    {/* Mobile Events Display */}
+                    {!loading && !error && (
+                        <div className='space-y-3'>
+                            {events.map((event) => (
+                                <EventMobileCard
+                                    key={event.id}
+                                    event={event}
+                                    selected={selectedEvents.has(event.id!)}
+                                    onSelect={(checked) =>
+                                        handleSelectEvent(event.id!, checked)
+                                    }
+                                    onView={() => onEventView?.(event.id!)}
+                                    onEdit={() => onEventEdit?.(event.id!)}
+                                    onDuplicate={() => {
+                                        setDuplicateEventId(event.id!);
+                                        setShowDuplicateModal(true);
+                                    }}
+                                    showBulkActions={showBulkActions}
+                                    showActions={showActions}
+                                    theme={theme}
+                                    formatCurrency={formatCurrency}
+                                    formatDate={formatDate}
+                                    getStatusColor={getStatusColor}
+                                    getStatusLabel={getStatusLabel}
+                                    getStatusIcon={getStatusIcon}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Modals */}
+                <EventTableModals
+                    showFilters={showFilters}
+                    showBulkActionsModal={showBulkActionsModal}
+                    showExportModal={showExportModal}
+                    showDuplicateModal={showDuplicateModal}
+                    onCloseFilters={() => setShowFilters(false)}
+                    onCloseBulkActions={() => setShowBulkActionsModal(false)}
+                    onCloseExport={() => setShowExportModal(false)}
+                    onCloseDuplicate={() => setShowDuplicateModal(false)}
+                    filters={filters}
+                    onFilterChange={handleFilterChange}
+                    onClearFilters={clearFilters}
+                    bulkActionConfig={bulkActionConfig}
+                    onBulkActionConfigChange={setBulkActionConfig}
+                    onBulkAction={handleBulkAction}
+                    exportConfig={exportConfig}
+                    onExportConfigChange={setExportConfig}
+                    onExport={handleExport}
+                    onDuplicateEvent={handleDuplicateEvent}
+                    selectedEventsCount={selectedEvents.size}
+                    loading={loading}
+                />
+            </>
+        );
+    }
+
+    // Desktop/Tablet layout
     return (
         <>
             <div className={`space-y-4 ${className}`}>
@@ -527,7 +735,7 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
                 <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
                     <div className='max-w-md flex-1'>
                         <div className='relative'>
-                            <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400' />
+                            <Search className='absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400' />
                             <input
                                 type='text'
                                 placeholder='Search events...'
@@ -554,7 +762,7 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
                             onClick={() => setShowFilters(true)}
                             className='flex items-center gap-2'
                         >
-                            <Filter className='h-4 w-4' />
+                            <Filter className='size-4' />
                             Filters
                         </Button>
 
@@ -565,7 +773,7 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
                                 onClick={() => setShowExportModal(true)}
                                 className='flex items-center gap-2'
                             >
-                                <Download className='h-4 w-4' />
+                                <Download className='size-4' />
                                 Export
                             </Button>
                         )}
@@ -578,7 +786,7 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
                             className='flex items-center gap-2'
                         >
                             <RefreshCw
-                                className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`}
+                                className={`size-4 ${loading ? 'animate-spin' : ''}`}
                             />
                             Refresh
                         </Button>
@@ -626,14 +834,14 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
                                     key={index}
                                     className='flex items-center space-x-4 rounded-lg border p-4'
                                 >
-                                    <Skeleton className='h-4 w-4' />
-                                    <Skeleton className='h-16 w-16 rounded' />
+                                    <Skeleton className='size-4' />
+                                    <Skeleton className='size-16 rounded' />
                                     <div className='flex-1 space-y-2'>
                                         <Skeleton className='h-4 w-3/4' />
                                         <Skeleton className='h-3 w-1/2' />
                                     </div>
                                     <Skeleton className='h-6 w-20' />
-                                    <Skeleton className='h-8 w-8' />
+                                    <Skeleton className='size-8' />
                                 </div>
                             )
                         )}
@@ -650,7 +858,7 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
                         }`}
                     >
                         <div className='mb-2 flex items-center gap-2'>
-                            <XCircle className='h-5 w-5' />
+                            <XCircle className='size-5' />
                             <h3 className='font-semibold'>
                                 Error loading events
                             </h3>
@@ -662,7 +870,7 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
                             onClick={fetchEvents}
                             className='flex items-center gap-2'
                         >
-                            <RefreshCw className='h-4 w-4' />
+                            <RefreshCw className='size-4' />
                             Try Again
                         </Button>
                     </div>
@@ -832,7 +1040,7 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
                         {/* Empty state */}
                         {events.length === 0 && (
                             <div className='flex flex-col items-center justify-center py-12'>
-                                <Calendar className='mb-4 h-12 w-12 text-gray-400' />
+                                <Calendar className='mb-4 size-12 text-gray-400' />
                                 <h3 className='mb-2 text-lg font-semibold'>
                                     No events found
                                 </h3>
@@ -905,4 +1113,4 @@ const EnhancedEventTable: React.FC<EnhancedEventTableProps> = ({
     );
 };
 
-export default EnhancedEventTable;
+export default EventTable;

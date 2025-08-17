@@ -147,7 +147,15 @@ export const mockChartJS = () => {
 
     // Mock react-chartjs-2
     jest.mock('react-chartjs-2', () => ({
-        Line: ({ data, options, ...props }: any) => {
+        Line: ({
+            data,
+            options,
+            ...props
+        }: {
+            data: unknown;
+            options: unknown;
+            [key: string]: unknown;
+        }) => {
             return React.createElement(
                 'div',
                 {
@@ -159,7 +167,15 @@ export const mockChartJS = () => {
                 'Line Chart Mock'
             );
         },
-        Bar: ({ data, options, ...props }: any) => {
+        Bar: ({
+            data,
+            options,
+            ...props
+        }: {
+            data: unknown;
+            options: unknown;
+            [key: string]: unknown;
+        }) => {
             return React.createElement(
                 'div',
                 {
@@ -171,7 +187,15 @@ export const mockChartJS = () => {
                 'Bar Chart Mock'
             );
         },
-        Doughnut: ({ data, options, ...props }: any) => {
+        Doughnut: ({
+            data,
+            options,
+            ...props
+        }: {
+            data: unknown;
+            options: unknown;
+            [key: string]: unknown;
+        }) => {
             return React.createElement(
                 'div',
                 {

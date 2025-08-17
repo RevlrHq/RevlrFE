@@ -158,7 +158,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
                         }`}
                     >
                         <div className='flex size-full items-center justify-center'>
-                            <div className='h-6 w-6 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
+                            <div className='size-6 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
                         </div>
                     </div>
                 )}
@@ -215,7 +215,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
                 }`}
             >
                 {/* Image Info */}
-                <div className='absolute bottom-2 left-2 right-2'>
+                <div className='absolute inset-x-2 bottom-2'>
                     <p className='truncate font-inter text-xs font-medium text-white'>
                         {item.title}
                     </p>

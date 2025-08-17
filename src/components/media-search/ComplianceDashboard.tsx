@@ -4,8 +4,7 @@ import {
     LicenseValidator,
     ComplianceCheckResult,
 } from '@/lib/services/media/LicenseValidator';
-import { AttributionService } from '@/lib/services/media/AttributionService';
-import { LicenseChangeNotificationService } from '@/lib/services/media/LicenseChangeNotificationService';
+
 import {
     AlertTriangle,
     Check,
@@ -91,7 +90,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
             <div
                 className={`flex items-center justify-center p-8 ${className}`}
             >
-                <RefreshCw className='h-6 w-6 animate-spin text-blue-500' />
+                <RefreshCw className='size-6 animate-spin text-blue-500' />
                 <span className='ml-2 text-gray-600 dark:text-gray-400'>
                     Checking compliance...
                 </span>
@@ -116,12 +115,8 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
     }
 
     const externalImages = images.filter((img) => img.source === 'external');
-    const criticalViolations = complianceResult.violations.filter(
-        (v) => v.severity === 'critical'
-    );
-    const highViolations = complianceResult.violations.filter(
-        (v) => v.severity === 'high'
-    );
+    complianceResult.violations.filter((v) => v.severity === 'critical');
+    complianceResult.violations.filter((v) => v.severity === 'high');
 
     return (
         <div className={`space-y-6 ${className}`}>
@@ -135,14 +130,14 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
                         onClick={checkCompliance}
                         className='flex items-center space-x-1 rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                     >
-                        <RefreshCw className='h-4 w-4' />
+                        <RefreshCw className='size-4' />
                         <span>Refresh</span>
                     </button>
                     <button
                         onClick={generateComplianceReport}
                         className='flex items-center space-x-1 rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700'
                     >
-                        <Download className='h-4 w-4' />
+                        <Download className='size-4' />
                         <span>Export Report</span>
                     </button>
                 </div>
@@ -153,19 +148,19 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
                 <ComplianceMetric
                     label='Total Images'
                     value={images.length}
-                    icon={<Eye className='h-5 w-5' />}
+                    icon={<Eye className='size-5' />}
                     color='gray'
                 />
                 <ComplianceMetric
                     label='External Images'
                     value={externalImages.length}
-                    icon={<Info className='h-5 w-5' />}
+                    icon={<Info className='size-5' />}
                     color='blue'
                 />
                 <ComplianceMetric
                     label='Violations'
                     value={complianceResult.violations.length}
-                    icon={<AlertTriangle className='h-5 w-5' />}
+                    icon={<AlertTriangle className='size-5' />}
                     color={
                         complianceResult.violations.length > 0 ? 'red' : 'green'
                     }
@@ -173,7 +168,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
                 <ComplianceMetric
                     label='Warnings'
                     value={complianceResult.warnings.length}
-                    icon={<Info className='h-5 w-5' />}
+                    icon={<Info className='size-5' />}
                     color={
                         complianceResult.warnings.length > 0
                             ? 'yellow'
@@ -192,9 +187,9 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
             >
                 <div className='flex items-center'>
                     {complianceResult.isCompliant ? (
-                        <Check className='mr-2 h-5 w-5 text-green-600 dark:text-green-400' />
+                        <Check className='mr-2 size-5 text-green-600 dark:text-green-400' />
                     ) : (
-                        <AlertTriangle className='mr-2 h-5 w-5 text-red-600 dark:text-red-400' />
+                        <AlertTriangle className='mr-2 size-5 text-red-600 dark:text-red-400' />
                     )}
                     <span
                         className={`font-medium ${
@@ -255,7 +250,15 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
                     ].map((tab) => (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id as any)}
+                            onClick={() =>
+                                setActiveTab(
+                                    tab.id as
+                                        | 'overview'
+                                        | 'violations'
+                                        | 'warnings'
+                                        | 'attribution'
+                                )
+                            }
                             className={`border-b-2 px-1 py-2 text-sm font-medium ${
                                 activeTab === tab.id
                                     ? 'border-blue-500 text-blue-600 dark:text-blue-400'
@@ -333,11 +336,11 @@ const ComplianceMetric: React.FC<ComplianceMetricProps> = ({
 };
 
 // Additional tab components would be implemented here...
-const OverviewTab: React.FC<any> = ({
-    complianceResult,
-    images,
-    eventData,
-}) => (
+const OverviewTab: React.FC<{
+    complianceResult: ComplianceCheckResult;
+    images: EventImage[];
+    eventData: EventCreationData;
+}> = ({ complianceResult }) => (
     <div className='space-y-4'>
         <p className='text-gray-600 dark:text-gray-400'>
             Overview of compliance status for all external images in this event.
@@ -357,11 +360,14 @@ const OverviewTab: React.FC<any> = ({
     </div>
 );
 
-const ViolationsTab: React.FC<any> = ({ violations, onReplaceImage }) => (
+const ViolationsTab: React.FC<{
+    violations: ComplianceCheckResult['violations'];
+    onReplaceImage: (imageId: string) => void;
+}> = ({ violations, onReplaceImage }) => (
     <div className='space-y-4'>
         {violations.length === 0 ? (
             <div className='py-8 text-center'>
-                <Check className='mx-auto mb-4 h-12 w-12 text-green-500' />
+                <Check className='mx-auto mb-4 size-12 text-green-500' />
                 <p className='text-gray-600 dark:text-gray-400'>
                     No violations found!
                 </p>
@@ -375,7 +381,7 @@ const ViolationsTab: React.FC<any> = ({ violations, onReplaceImage }) => (
                     <div className='flex items-start justify-between'>
                         <div className='flex-1'>
                             <div className='mb-2 flex items-center'>
-                                <AlertTriangle className='mr-2 h-4 w-4 text-red-500' />
+                                <AlertTriangle className='mr-2 size-4 text-red-500' />
                                 <span className='font-medium text-red-800 dark:text-red-200'>
                                     {violation.severity.toUpperCase()} -{' '}
                                     {violation.type}
@@ -408,11 +414,13 @@ const ViolationsTab: React.FC<any> = ({ violations, onReplaceImage }) => (
     </div>
 );
 
-const WarningsTab: React.FC<any> = ({ warnings }) => (
+const WarningsTab: React.FC<{
+    warnings: ComplianceCheckResult['warnings'];
+}> = ({ warnings }) => (
     <div className='space-y-4'>
         {warnings.length === 0 ? (
             <div className='py-8 text-center'>
-                <Check className='mx-auto mb-4 h-12 w-12 text-green-500' />
+                <Check className='mx-auto mb-4 size-12 text-green-500' />
                 <p className='text-gray-600 dark:text-gray-400'>No warnings!</p>
             </div>
         ) : (
@@ -422,7 +430,7 @@ const WarningsTab: React.FC<any> = ({ warnings }) => (
                     className='rounded-lg border border-yellow-200 p-4 dark:border-yellow-800'
                 >
                     <div className='flex items-start'>
-                        <Info className='mr-2 mt-0.5 h-4 w-4 text-yellow-500' />
+                        <Info className='mr-2 mt-0.5 size-4 text-yellow-500' />
                         <div className='flex-1'>
                             <p className='mb-1 text-gray-700 dark:text-gray-300'>
                                 {warning.message}

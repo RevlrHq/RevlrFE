@@ -265,8 +265,8 @@ export const useFilteredAndSortedEvents = (
 
         // Apply sorting
         filtered.sort((a, b) => {
-            let aValue: any;
-            let bValue: any;
+            let aValue: unknown;
+            let bValue: unknown;
 
             switch (sortBy) {
                 case 'title':

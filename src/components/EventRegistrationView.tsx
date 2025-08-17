@@ -1,14 +1,8 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { useTheme } from '../lib/ThemeContext';
-import { EventRegistrationView } from '../lib/api';
-import {
-    useEventRegistrations,
-    EventRegistrationFilters,
-} from '../hooks/useEventRegistrations';
+import { useEventRegistrations } from '../hooks/useEventRegistrations';
 import { Button } from './ui/button';
-import { Input } from './ui/input';
 import {
     Dialog,
     DialogContent,
@@ -17,7 +11,6 @@ import {
     DialogDescription,
 } from './ui/dialog';
 import {
-    Search,
     Download,
     RefreshCw,
     Calendar,
@@ -38,7 +31,6 @@ import {
     AlertCircle,
 } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
-import { useDebounce } from '../hooks/useDebounce';
 
 interface EventRegistrationViewProps {
     eventId: string;
@@ -51,7 +43,6 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
     eventTitle,
     className = '',
 }) => {
-    const { theme } = useTheme();
     const [showExportModal, setShowExportModal] = useState(false);
     const [sortBy, setSortBy] = useState<string>('registrationDate');
     const [sortOrder, setSortOrder] = useState<string>('desc');
@@ -125,25 +116,25 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                 label: 'Pending',
                 className:
                     'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-                icon: <Clock className='mr-1 h-3 w-3' />,
+                icon: <Clock className='mr-1 size-3' />,
             },
             Completed: {
                 label: 'Completed',
                 className:
                     'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-                icon: <CheckCircle className='mr-1 h-3 w-3' />,
+                icon: <CheckCircle className='mr-1 size-3' />,
             },
             Failed: {
                 label: 'Failed',
                 className:
                     'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-                icon: <XCircle className='mr-1 h-3 w-3' />,
+                icon: <XCircle className='mr-1 size-3' />,
             },
             Cancelled: {
                 label: 'Cancelled',
                 className:
                     'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
-                icon: <XCircle className='mr-1 h-3 w-3' />,
+                icon: <XCircle className='mr-1 size-3' />,
             },
         };
 
@@ -162,11 +153,11 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
 
     const getSortIcon = useCallback(
         (field: string) => {
-            if (sortBy !== field) return <ArrowUpDown className='h-4 w-4' />;
+            if (sortBy !== field) return <ArrowUpDown className='size-4' />;
             return sortOrder === 'asc' ? (
-                <ArrowUp className='h-4 w-4' />
+                <ArrowUp className='size-4' />
             ) : (
-                <ArrowDown className='h-4 w-4' />
+                <ArrowDown className='size-4' />
             );
         },
         [sortBy, sortOrder]
@@ -183,7 +174,7 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                         {error}
                     </p>
                     <Button onClick={refetch} variant='outline'>
-                        <RefreshCw className='mr-2 h-4 w-4' />
+                        <RefreshCw className='mr-2 size-4' />
                         Try Again
                     </Button>
                 </div>
@@ -210,11 +201,11 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                         variant='outline'
                         onClick={() => setShowExportModal(true)}
                     >
-                        <Download className='mr-2 h-4 w-4' />
+                        <Download className='mr-2 size-4' />
                         Export
                     </Button>
                     <Button variant='outline' onClick={refetch}>
-                        <RefreshCw className='mr-2 h-4 w-4' />
+                        <RefreshCw className='mr-2 size-4' />
                         Refresh
                     </Button>
                 </div>
@@ -318,7 +309,7 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                                         className='px-6 py-12 text-center'
                                     >
                                         <div className='text-gray-500 dark:text-gray-400'>
-                                            <FileText className='mx-auto mb-4 h-12 w-12 opacity-50' />
+                                            <FileText className='mx-auto mb-4 size-12 opacity-50' />
                                             <p className='mb-2 text-lg font-medium'>
                                                 No registrations found
                                             </p>
@@ -337,9 +328,9 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                                     >
                                         <td className='whitespace-nowrap px-6 py-4'>
                                             <div className='flex items-center'>
-                                                <div className='h-10 w-10 flex-shrink-0'>
-                                                    <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gray-300 dark:bg-gray-600'>
-                                                        <User className='h-5 w-5 text-gray-500 dark:text-gray-400' />
+                                                <div className='size-10 shrink-0'>
+                                                    <div className='flex size-10 items-center justify-center rounded-full bg-gray-300 dark:bg-gray-600'>
+                                                        <User className='size-5 text-gray-500 dark:text-gray-400' />
                                                     </div>
                                                 </div>
                                                 <div className='ml-4'>
@@ -349,14 +340,14 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                                                         }
                                                     </div>
                                                     <div className='flex items-center text-sm text-gray-500 dark:text-gray-400'>
-                                                        <Mail className='mr-1 h-3 w-3' />
+                                                        <Mail className='mr-1 size-3' />
                                                         {
                                                             registration.attendeeEmail
                                                         }
                                                     </div>
                                                     {registration.attendeePhoneNumber && (
                                                         <div className='flex items-center text-sm text-gray-500 dark:text-gray-400'>
-                                                            <Phone className='mr-1 h-3 w-3' />
+                                                            <Phone className='mr-1 size-3' />
                                                             {
                                                                 registration.attendeePhoneNumber
                                                             }
@@ -378,7 +369,7 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                                         </td>
                                         <td className='whitespace-nowrap px-6 py-4'>
                                             <div className='flex items-center text-sm font-medium text-gray-900 dark:text-white'>
-                                                <DollarSign className='mr-1 h-3 w-3' />
+                                                <DollarSign className='mr-1 size-3' />
                                                 {formatCurrency(
                                                     registration.amountPaid
                                                 )}
@@ -391,7 +382,7 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                                         </td>
                                         <td className='whitespace-nowrap px-6 py-4'>
                                             <div className='flex items-center text-sm text-gray-900 dark:text-white'>
-                                                <Calendar className='mr-1 h-3 w-3' />
+                                                <Calendar className='mr-1 size-3' />
                                                 {formatDate(
                                                     registration.registrationDate
                                                 )}
@@ -401,7 +392,7 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                                             <div className='flex flex-col space-y-1'>
                                                 {registration.isFinanced && (
                                                     <span className='inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200'>
-                                                        <CreditCard className='mr-1 h-3 w-3' />
+                                                        <CreditCard className='mr-1 size-3' />
                                                         Financed
                                                     </span>
                                                 )}
@@ -412,7 +403,7 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                                                 )}
                                                 {!registration.verificationEmailSent && (
                                                     <span className='inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'>
-                                                        <AlertCircle className='mr-1 h-3 w-3' />
+                                                        <AlertCircle className='mr-1 size-3' />
                                                         Unverified
                                                     </span>
                                                 )}
@@ -478,9 +469,9 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                                             handlePageChange(currentPage - 1)
                                         }
                                         disabled={!hasPreviousPage}
-                                        className='relative inline-flex items-center rounded-l-md px-2 py-2'
+                                        className='relative inline-flex items-center rounded-l-md p-2'
                                     >
-                                        <ChevronLeft className='h-5 w-5' />
+                                        <ChevronLeft className='size-5' />
                                     </Button>
 
                                     {Array.from(
@@ -514,9 +505,9 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                                             handlePageChange(currentPage + 1)
                                         }
                                         disabled={!hasNextPage}
-                                        className='relative inline-flex items-center rounded-r-md px-2 py-2'
+                                        className='relative inline-flex items-center rounded-r-md p-2'
                                     >
-                                        <ChevronRight className='h-5 w-5' />
+                                        <ChevronRight className='size-5' />
                                     </Button>
                                 </nav>
                             </div>
@@ -541,7 +532,7 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                             className='w-full justify-start'
                             variant='outline'
                         >
-                            <FileText className='mr-2 h-4 w-4' />
+                            <FileText className='mr-2 size-4' />
                             Export as CSV
                         </Button>
                         <Button
@@ -549,7 +540,7 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                             className='w-full justify-start'
                             variant='outline'
                         >
-                            <FileText className='mr-2 h-4 w-4' />
+                            <FileText className='mr-2 size-4' />
                             Export as Excel
                         </Button>
                         <Button
@@ -557,7 +548,7 @@ const EventRegistrationViewComponent: React.FC<EventRegistrationViewProps> = ({
                             className='w-full justify-start'
                             variant='outline'
                         >
-                            <FileText className='mr-2 h-4 w-4' />
+                            <FileText className='mr-2 size-4' />
                             Export as PDF
                         </Button>
                     </div>

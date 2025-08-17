@@ -11,7 +11,6 @@ import {
     MediaCollection,
 } from '@/lib/services/media/MediaCollectionsService';
 import { mediaBulkOperationsService } from '@/lib/services/media/MediaBulkOperationsService';
-import { eventTemplateMediaService } from '@/lib/services/media/EventTemplateMediaService';
 import { DragDropMediaGrid } from './DragDropMediaGrid';
 import { MediaExportModal } from './MediaExportModal';
 import { SelectedMediaPanel } from './SelectedMediaPanel';
@@ -34,7 +33,6 @@ interface AdvancedMediaSearchModalProps {
     onSelectMedia: (items: MediaItem[]) => void;
     eventCategory?: EventCategory;
     eventTitle?: string;
-    eventDescription?: string;
     maxItems?: number;
     className?: string;
 }
@@ -51,27 +49,22 @@ export const AdvancedMediaSearchModal: React.FC<
     onSelectMedia,
     eventCategory,
     eventTitle,
-    eventDescription,
     maxItems = 10,
     className = '',
 }) => {
     const { theme } = useTheme();
     const [viewMode, setViewMode] = useState<ViewMode>('grid');
     const [selectionMode, setSelectionMode] = useState<SelectionMode>('single');
-    const [sortBy, setSortBy] = useState<SortOption>('relevance');
-    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+    const [sortBy] = useState<SortOption>('relevance');
+    const [sortOrder] = useState<'asc' | 'desc'>('desc');
     const [showFilters, setShowFilters] = useState(false);
     const [showExportModal, setShowExportModal] = useState(false);
-    const [showBulkActions, setShowBulkActions] = useState(false);
 
     // Advanced features state
     const [favorites, setFavorites] = useState<MediaItem[]>([]);
     const [collections, setCollections] = useState<MediaCollection[]>([]);
     const [selectedCollection, setSelectedCollection] =
         useState<MediaCollection | null>(null);
-    const [templateSuggestions, setTemplateSuggestions] = useState<MediaItem[]>(
-        []
-    );
     const [bulkSelectedItems, setBulkSelectedItems] = useState<Set<string>>(
         new Set()
     );
@@ -103,27 +96,11 @@ export const AdvancedMediaSearchModal: React.FC<
             }
         };
 
-        const loadTemplateSuggestions = async () => {
-            if (!eventCategory) return;
-
-            try {
-                const suggestions =
-                    await eventTemplateMediaService.autoPopulateEventMedia(
-                        `${eventCategory.toLowerCase()}-template`,
-                        6
-                    );
-                setTemplateSuggestions(suggestions);
-            } catch (error) {
-                console.error('Failed to load template suggestions:', error);
-            }
-        };
-
         if (isOpen) {
             loadFavorites();
             loadCollections();
-            loadTemplateSuggestions();
         }
-    }, [isOpen, eventCategory, eventTitle, eventDescription]);
+    }, [isOpen]);
 
     const loadFavorites = useCallback(async () => {
         try {
@@ -147,34 +124,6 @@ export const AdvancedMediaSearchModal: React.FC<
             console.error('Failed to load collections:', error);
         }
     }, []);
-
-    // Handle favorites
-    const toggleFavorite = useCallback(
-        async (item: MediaItem) => {
-            try {
-                const isFav = await mediaFavoritesService.isFavorite(
-                    item.id,
-                    item.providerId
-                );
-
-                if (isFav) {
-                    await mediaFavoritesService.removeFromFavorites(
-                        item.id,
-                        item.providerId
-                    );
-                } else {
-                    await mediaFavoritesService.addToFavorites(item, [
-                        eventCategory || 'general',
-                    ]);
-                }
-
-                await loadFavorites();
-            } catch (error) {
-                console.error('Failed to toggle favorite:', error);
-            }
-        },
-        [eventCategory]
-    );
 
     // Handle collections
     const addToCollection = useCallback(
@@ -203,7 +152,7 @@ export const AdvancedMediaSearchModal: React.FC<
                 console.error('Failed to add to collection:', error);
             }
         },
-        [eventTitle, eventCategory]
+        [eventTitle, eventCategory, loadCollections]
     );
 
     // Handle bulk selection
@@ -219,15 +168,6 @@ export const AdvancedMediaSearchModal: React.FC<
             return newSet;
         });
     }, []);
-
-    const selectAllVisible = useCallback(() => {
-        if (!state.results) return;
-
-        const allKeys = state.results.items.map(
-            (item) => `${item.providerId}-${item.id}`
-        );
-        setBulkSelectedItems(new Set(allKeys));
-    }, [state.results]);
 
     const clearBulkSelection = useCallback(() => {
         setBulkSelectedItems(new Set());
@@ -284,23 +224,6 @@ export const AdvancedMediaSearchModal: React.FC<
         }
     }, [clearBulkSelection, getBulkSelectedItems]);
 
-    const isBulkSelected = useCallback(
-        (item: MediaItem): boolean => {
-            return bulkSelectedItems.has(`${item.providerId}-${item.id}`);
-        },
-        [bulkSelectedItems]
-    );
-
-    const isItemFavorite = useCallback(
-        (item: MediaItem): boolean => {
-            return favorites.some(
-                (fav) =>
-                    fav.id === item.id && fav.providerId === item.providerId
-            );
-        },
-        [favorites]
-    );
-
     // Sort and filter items
     const getSortedItems = useCallback(
         (items: MediaItem[]): MediaItem[] => {
@@ -334,7 +257,7 @@ export const AdvancedMediaSearchModal: React.FC<
             return (
                 <div className='flex h-64 items-center justify-center'>
                     <div className='text-center'>
-                        <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
+                        <div className='mx-auto mb-4 size-8 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
                         <p
                             className={`font-inter text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
                         >
@@ -512,14 +435,17 @@ export const AdvancedMediaSearchModal: React.FC<
                             >
                                 <div className='mb-2 aspect-square overflow-hidden rounded bg-gray-100'>
                                     {collection.coverImage ? (
-                                        <img
-                                            src={
-                                                collection.coverImage
-                                                    .thumbnailUrl
-                                            }
-                                            alt={collection.name}
-                                            className='h-full w-full object-cover'
-                                        />
+                                        <>
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img
+                                                src={
+                                                    collection.coverImage
+                                                        ?.thumbnailUrl
+                                                }
+                                                alt={collection.name}
+                                                className='size-full object-cover'
+                                            />
+                                        </>
                                     ) : (
                                         <div className='flex h-full items-center justify-center'>
                                             <Folder className='size-8 text-gray-400' />
@@ -664,8 +590,8 @@ export const AdvancedMediaSearchModal: React.FC<
                                         placeholder='Search for images...'
                                         className={`w-full rounded-xl border py-3 pl-10 pr-4 font-inter transition-colors focus:outline-none focus:ring-2 focus:ring-revlr-primary-blue/20 ${
                                             theme === 'dark'
-                                                ? 'border-revlr-dark-border bg-revlr-dark-card text-white placeholder-gray-400'
-                                                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                                                ? 'border-revlr-dark-border bg-revlr-dark-card text-white placeholder:text-gray-400'
+                                                : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-500'
                                         }`}
                                     />
                                 </div>
@@ -801,10 +727,11 @@ export const AdvancedMediaSearchModal: React.FC<
                                                 }
                                                 className='aspect-square overflow-hidden rounded-lg border-2 border-transparent hover:border-revlr-primary-blue'
                                             >
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                                 <img
                                                     src={item.thumbnailUrl}
                                                     alt={item.title}
-                                                    className='h-full w-full object-cover'
+                                                    className='size-full object-cover'
                                                 />
                                             </button>
                                         ))}

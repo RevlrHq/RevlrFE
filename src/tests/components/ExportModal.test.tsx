@@ -1,32 +1,47 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ExportModal, type ExportOptions } from '@/components/ExportModal';
+import { ExportModal } from '@/components/ExportModal';
 import { getExportFields } from '@/lib/constants/exportFields';
 
 // Mock the UI components
 jest.mock('@/components/ui/dialog', () => ({
-    Dialog: ({ children, open }: any) =>
-        open ? <div data-testid='dialog'>{children}</div> : null,
-    DialogContent: ({ children }: any) => (
+    Dialog: ({
+        children,
+        open,
+    }: {
+        children: React.ReactNode;
+        open: boolean;
+    }) => (open ? <div data-testid='dialog'>{children}</div> : null),
+    DialogContent: ({ children }: { children: React.ReactNode }) => (
         <div data-testid='dialog-content'>{children}</div>
     ),
-    DialogHeader: ({ children }: any) => (
+    DialogHeader: ({ children }: { children: React.ReactNode }) => (
         <div data-testid='dialog-header'>{children}</div>
     ),
-    DialogTitle: ({ children }: any) => (
+    DialogTitle: ({ children }: { children: React.ReactNode }) => (
         <h2 data-testid='dialog-title'>{children}</h2>
     ),
-    DialogDescription: ({ children }: any) => (
+    DialogDescription: ({ children }: { children: React.ReactNode }) => (
         <p data-testid='dialog-description'>{children}</p>
     ),
-    DialogFooter: ({ children }: any) => (
+    DialogFooter: ({ children }: { children: React.ReactNode }) => (
         <div data-testid='dialog-footer'>{children}</div>
     ),
 }));
 
 jest.mock('@/components/ui/button', () => ({
-    Button: ({ children, onClick, disabled, ...props }: any) => (
+    Button: ({
+        children,
+        onClick,
+        disabled,
+        ...props
+    }: {
+        children: React.ReactNode;
+        onClick?: () => void;
+        disabled?: boolean;
+        [key: string]: unknown;
+    }) => (
         <button onClick={onClick} disabled={disabled} {...props}>
             {children}
         </button>
@@ -34,13 +49,23 @@ jest.mock('@/components/ui/button', () => ({
 }));
 
 jest.mock('@/components/ui/progress', () => ({
-    Progress: ({ value }: any) => (
+    Progress: ({ value }: { value: number }) => (
         <div data-testid='progress' data-value={value} />
     ),
 }));
 
 jest.mock('@/components/ui/checkbox', () => ({
-    Checkbox: ({ checked, onCheckedChange, disabled, id }: any) => (
+    Checkbox: ({
+        checked,
+        onCheckedChange,
+        disabled,
+        id,
+    }: {
+        checked: boolean;
+        onCheckedChange?: (checked: boolean) => void;
+        disabled?: boolean;
+        id: string;
+    }) => (
         <input
             type='checkbox'
             checked={checked}
@@ -52,20 +77,40 @@ jest.mock('@/components/ui/checkbox', () => ({
 }));
 
 jest.mock('@/components/ui/label', () => ({
-    Label: ({ children, htmlFor }: any) => (
-        <label htmlFor={htmlFor}>{children}</label>
-    ),
+    Label: ({
+        children,
+        htmlFor,
+    }: {
+        children: React.ReactNode;
+        htmlFor?: string;
+    }) => <label htmlFor={htmlFor}>{children}</label>,
 }));
 
 jest.mock('@/components/ui/radio-group', () => ({
-    RadioGroup: ({ children, value, onValueChange }: any) => (
+    RadioGroup: ({
+        children,
+        value,
+        onValueChange,
+    }: {
+        children: React.ReactNode;
+        value: string;
+        onValueChange: (value: string) => void;
+    }) => (
         <div data-testid='radio-group' data-value={value}>
             {React.Children.map(children, (child) =>
-                React.cloneElement(child, { onValueChange })
+                React.cloneElement(child as React.ReactElement, {
+                    onValueChange,
+                })
             )}
         </div>
     ),
-    RadioGroupItem: ({ value, onValueChange }: any) => (
+    RadioGroupItem: ({
+        value,
+        onValueChange,
+    }: {
+        value: string;
+        onValueChange?: (value: string) => void;
+    }) => (
         <input
             type='radio'
             value={value}
@@ -301,8 +346,6 @@ describe('ExportModal', () => {
     });
 
     it('prevents export with no fields selected', async () => {
-        const user = userEvent.setup();
-
         // Create props with no required fields
         const propsWithNoRequired = {
             ...defaultProps,
@@ -329,7 +372,6 @@ describe('ExportModal', () => {
     });
 
     it('prevents closing during export', async () => {
-        const user = userEvent.setup();
         mockOnExport.mockImplementation(
             () => new Promise((resolve) => setTimeout(resolve, 100))
         );

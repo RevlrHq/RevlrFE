@@ -303,13 +303,20 @@ describe('useEventPerformanceAnalytics', () => {
     });
 
     it('should set loading state correctly during fetch', async () => {
-        let resolvePromise: (value: any) => void;
+        let resolvePromise: (value: unknown) => void;
         const promise = new Promise((resolve) => {
             resolvePromise = resolve;
         });
 
         mockOrganizerService.getApiOrganizerEventsTopPerforming.mockReturnValue(
-            promise as any
+            promise as Promise<{
+                success: boolean;
+                data: unknown;
+                message: string | null;
+                statusCode: number;
+                errors: unknown;
+                timestamp: string;
+            }>
         );
 
         const { result } = renderHook(() => useEventPerformanceAnalytics());

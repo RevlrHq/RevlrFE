@@ -3,7 +3,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { WifiOff, Wifi, AlertCircle } from 'lucide-react';
+import { WifiOff, Wifi } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
@@ -39,16 +39,18 @@ export const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
     // Show reconnected message
     if (showReconnected && isOnline) {
         return (
-            <Alert className={`border-green-500 bg-green-50 text-green-800 ${className}`}>
-                <Wifi className="h-4 w-4 text-green-600" />
-                <AlertDescription className="flex items-center justify-between">
+            <Alert
+                className={`border-green-500 bg-green-50 text-green-800 ${className}`}
+            >
+                <Wifi className='size-4 text-green-600' />
+                <AlertDescription className='flex items-center justify-between'>
                     <span>Connection restored! You're back online.</span>
                     {onRetryConnection && (
                         <Button
                             onClick={onRetryConnection}
-                            variant="outline"
-                            size="sm"
-                            className="ml-2"
+                            variant='outline'
+                            size='sm'
+                            className='ml-2'
                         >
                             Refresh Data
                         </Button>
@@ -61,20 +63,21 @@ export const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
     // Show offline message
     if (!isOnline) {
         return (
-            <Alert variant="destructive" className={className}>
-                <WifiOff className="h-4 w-4" />
-                <AlertDescription className="flex items-center justify-between">
+            <Alert variant='destructive' className={className}>
+                <WifiOff className='size-4' />
+                <AlertDescription className='flex items-center justify-between'>
                     <div>
-                        <div className="font-medium">You're offline</div>
-                        <div className="text-sm opacity-90">
-                            Some features may not work properly. Check your internet connection.
+                        <div className='font-medium'>You're offline</div>
+                        <div className='text-sm opacity-90'>
+                            Some features may not work properly. Check your
+                            internet connection.
                         </div>
                     </div>
                     <Button
                         onClick={() => window.location.reload()}
-                        variant="outline"
-                        size="sm"
-                        className="ml-2"
+                        variant='outline'
+                        size='sm'
+                        className='ml-2'
                     >
                         Retry
                     </Button>
@@ -86,11 +89,11 @@ export const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
     // Show online status if requested
     if (showWhenOnline) {
         return (
-            <Alert className={`border-green-500 bg-green-50 text-green-800 ${className}`}>
-                <Wifi className="h-4 w-4 text-green-600" />
-                <AlertDescription>
-                    Connected
-                </AlertDescription>
+            <Alert
+                className={`border-green-500 bg-green-50 text-green-800 ${className}`}
+            >
+                <Wifi className='size-4 text-green-600' />
+                <AlertDescription>Connected</AlertDescription>
             </Alert>
         );
     }
@@ -103,9 +106,11 @@ export const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
  */
 export const useOfflineAwareFetch = () => {
     const isOnline = useOnlineStatus();
-    const [offlineData, setOfflineData] = useState<Map<string, any>>(new Map());
+    const [offlineData, setOfflineData] = useState<Map<string, unknown>>(
+        new Map()
+    );
 
-    const fetchWithOfflineSupport = async <T>(
+    const fetchWithOfflineSupport = async <T,>(
         key: string,
         fetchFn: () => Promise<T>,
         fallbackData?: T
@@ -115,19 +120,21 @@ export const useOfflineAwareFetch = () => {
             if (offlineData.has(key)) {
                 return offlineData.get(key);
             }
-            
+
             // Return fallback data if provided
             if (fallbackData !== undefined) {
                 return fallbackData;
             }
-            
-            throw new Error('No internet connection and no cached data available');
+
+            throw new Error(
+                'No internet connection and no cached data available'
+            );
         }
 
         try {
             const data = await fetchFn();
             // Cache the data for offline use
-            setOfflineData(prev => new Map(prev).set(key, data));
+            setOfflineData((prev) => new Map(prev).set(key, data));
             return data;
         } catch (error) {
             // If online but fetch fails, try to return cached data
@@ -140,7 +147,7 @@ export const useOfflineAwareFetch = () => {
 
     const clearOfflineCache = (key?: string) => {
         if (key) {
-            setOfflineData(prev => {
+            setOfflineData((prev) => {
                 const newMap = new Map(prev);
                 newMap.delete(key);
                 return newMap;

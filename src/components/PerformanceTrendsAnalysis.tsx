@@ -28,7 +28,6 @@ import { EventSummaryView } from '@/lib/api';
 import {
     formatCurrency,
     formatNumber,
-    formatPercentage,
     getChartColors,
     getBaseChartOptions,
 } from '@/lib/utils/chartConfig';
@@ -50,10 +49,6 @@ interface PerformanceTrendsAnalysisProps {
     loading?: boolean;
     isDark?: boolean;
     className?: string;
-    timeRange?: {
-        startDate?: string;
-        endDate?: string;
-    };
 }
 
 interface TrendMetric {
@@ -76,13 +71,7 @@ interface MonthlyPerformance {
 
 export const PerformanceTrendsAnalysis: React.FC<
     PerformanceTrendsAnalysisProps
-> = ({
-    events,
-    loading = false,
-    isDark = false,
-    className = '',
-    timeRange,
-}) => {
+> = ({ events, loading = false, isDark = false, className = '' }) => {
     // Group events by month for trend analysis
     const monthlyPerformance = useMemo((): MonthlyPerformance[] => {
         if (!events || events.length === 0) return [];
@@ -101,10 +90,6 @@ export const PerformanceTrendsAnalysis: React.FC<
 
             const date = new Date(event.startDate);
             const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-            const monthLabel = date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-            });
 
             const existing = monthlyData.get(monthKey) || {
                 revenue: 0,
@@ -186,7 +171,7 @@ export const PerformanceTrendsAnalysis: React.FC<
                         : revenueChange < -5
                           ? 'down'
                           : 'neutral',
-                icon: <TrendingUp className='h-4 w-4' />,
+                icon: <TrendingUp className='size-4' />,
                 color:
                     revenueChange > 5
                         ? 'text-green-600'
@@ -204,7 +189,7 @@ export const PerformanceTrendsAnalysis: React.FC<
                         : registrationChange < -5
                           ? 'down'
                           : 'neutral',
-                icon: <Target className='h-4 w-4' />,
+                icon: <Target className='size-4' />,
                 color:
                     registrationChange > 5
                         ? 'text-green-600'
@@ -222,7 +207,7 @@ export const PerformanceTrendsAnalysis: React.FC<
                         : eventCountChange < 0
                           ? 'down'
                           : 'neutral',
-                icon: <Calendar className='h-4 w-4' />,
+                icon: <Calendar className='size-4' />,
                 color:
                     eventCountChange > 0
                         ? 'text-green-600'
@@ -240,7 +225,7 @@ export const PerformanceTrendsAnalysis: React.FC<
                         : avgRevenueChange < -5
                           ? 'down'
                           : 'neutral',
-                icon: <BarChart3 className='h-4 w-4' />,
+                icon: <BarChart3 className='size-4' />,
                 color:
                     avgRevenueChange > 5
                         ? 'text-green-600'
@@ -328,8 +313,8 @@ export const PerformanceTrendsAnalysis: React.FC<
                     },
                     ticks: {
                         ...baseOptions.scales?.y?.ticks,
-                        callback: function (value: any) {
-                            return formatCurrency(value);
+                        callback: function (value: string | number) {
+                            return formatCurrency(Number(value));
                         },
                     },
                 },
@@ -416,7 +401,7 @@ export const PerformanceTrendsAnalysis: React.FC<
     if (!events || events.length === 0) {
         return (
             <div className={`py-8 text-center ${className}`}>
-                <BarChart3 className='mx-auto mb-4 h-12 w-12 opacity-50' />
+                <BarChart3 className='mx-auto mb-4 size-12 opacity-50' />
                 <p className='text-muted-foreground'>
                     No event data available for trend analysis.
                 </p>
@@ -431,7 +416,7 @@ export const PerformanceTrendsAnalysis: React.FC<
     if (monthlyPerformance.length < 2) {
         return (
             <div className={`py-8 text-center ${className}`}>
-                <Activity className='mx-auto mb-4 h-12 w-12 opacity-50' />
+                <Activity className='mx-auto mb-4 size-12 opacity-50' />
                 <p className='text-muted-foreground'>
                     Insufficient data for trend analysis.
                 </p>
@@ -460,13 +445,13 @@ export const PerformanceTrendsAnalysis: React.FC<
                             </div>
                             <div className='flex items-center text-xs text-muted-foreground'>
                                 {metric.trend === 'up' && (
-                                    <TrendingUp className='mr-1 h-3 w-3 text-green-500' />
+                                    <TrendingUp className='mr-1 size-3 text-green-500' />
                                 )}
                                 {metric.trend === 'down' && (
-                                    <TrendingDown className='mr-1 h-3 w-3 text-red-500' />
+                                    <TrendingDown className='mr-1 size-3 text-red-500' />
                                 )}
                                 {metric.trend === 'neutral' && (
-                                    <Activity className='mr-1 h-3 w-3 text-gray-500' />
+                                    <Activity className='mr-1 size-3 text-gray-500' />
                                 )}
                                 <span
                                     className={
@@ -494,7 +479,7 @@ export const PerformanceTrendsAnalysis: React.FC<
                     <Card>
                         <CardHeader>
                             <CardTitle className='flex items-center gap-2'>
-                                <TrendingUp className='h-5 w-5' />
+                                <TrendingUp className='size-5' />
                                 Revenue Trends
                             </CardTitle>
                         </CardHeader>
@@ -514,7 +499,7 @@ export const PerformanceTrendsAnalysis: React.FC<
                     <Card>
                         <CardHeader>
                             <CardTitle className='flex items-center gap-2'>
-                                <BarChart3 className='h-5 w-5' />
+                                <BarChart3 className='size-5' />
                                 Activity Trends
                             </CardTitle>
                         </CardHeader>
@@ -534,7 +519,7 @@ export const PerformanceTrendsAnalysis: React.FC<
             <Card>
                 <CardHeader>
                     <CardTitle className='flex items-center gap-2'>
-                        <Calendar className='h-5 w-5' />
+                        <Calendar className='size-5' />
                         Monthly Performance Summary
                     </CardTitle>
                 </CardHeader>

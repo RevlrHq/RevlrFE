@@ -99,7 +99,7 @@ const EventTablePagination: React.FC<EventTablePaginationProps> = ({
                     disabled={pageNumber <= 1}
                     className='flex items-center gap-1'
                 >
-                    <ChevronLeft className='h-4 w-4' />
+                    <ChevronLeft className='size-4' />
                     Previous
                 </Button>
 
@@ -117,7 +117,7 @@ const EventTablePagination: React.FC<EventTablePaginationProps> = ({
                                     }
                                     size='sm'
                                     onClick={() => onPageChange(page as number)}
-                                    className='h-8 w-8 p-0'
+                                    className='size-8 p-0'
                                 >
                                     {page}
                                 </Button>
@@ -134,7 +134,7 @@ const EventTablePagination: React.FC<EventTablePaginationProps> = ({
                     className='flex items-center gap-1'
                 >
                     Next
-                    <ChevronRight className='h-4 w-4' />
+                    <ChevronRight className='size-4' />
                 </Button>
             </div>
         </div>

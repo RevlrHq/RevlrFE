@@ -26,10 +26,6 @@ import {
     Grid3X3,
     List,
     Settings,
-    Volume2,
-    VolumeX,
-    Sun,
-    Moon,
     Contrast,
     Type,
     Zap,
@@ -539,8 +535,8 @@ export const MobileMediaSearchModal: React.FC<MobileMediaSearchModalProps> = ({
                                 placeholder='Search for images...'
                                 className={`w-full rounded-xl border py-3 pl-10 pr-20 font-inter text-base transition-colors focus:outline-none focus:ring-2 focus:ring-revlr-primary-blue/20 ${
                                     theme === 'dark'
-                                        ? 'border-revlr-dark-border bg-revlr-dark-card text-white placeholder-gray-400'
-                                        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+                                        ? 'border-revlr-dark-border bg-revlr-dark-card text-white placeholder:text-gray-400'
+                                        : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-500'
                                 }`}
                                 disabled={isProcessing}
                                 {...accessibility.getAriaAttributes(
@@ -612,7 +608,7 @@ export const MobileMediaSearchModal: React.FC<MobileMediaSearchModalProps> = ({
                         {/* Voice Search Status */}
                         {voiceSearch.isListening && (
                             <div className='mt-2 flex items-center space-x-2 text-sm text-red-500'>
-                                <div className='h-2 w-2 animate-pulse rounded-full bg-red-500' />
+                                <div className='size-2 animate-pulse rounded-full bg-red-500' />
                                 <span>
                                     Listening... {voiceSearch.interimTranscript}
                                 </span>
@@ -640,7 +636,7 @@ export const MobileMediaSearchModal: React.FC<MobileMediaSearchModalProps> = ({
                         {state.isLoading && !state.results && (
                             <div className='flex h-full items-center justify-center'>
                                 <div className='text-center'>
-                                    <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-revlr-primary-blue' />
+                                    <div className='mx-auto mb-4 size-8 animate-spin rounded-full border-b-2 border-revlr-primary-blue' />
                                     <p
                                         className={`font-inter text-sm ${
                                             theme === 'dark'
@@ -1049,7 +1045,7 @@ export const MobileMediaSearchModal: React.FC<MobileMediaSearchModalProps> = ({
                                 >
                                     {isProcessing ? (
                                         <>
-                                            <div className='h-4 w-4 animate-spin rounded-full border-b-2 border-white' />
+                                            <div className='size-4 animate-spin rounded-full border-b-2 border-white' />
                                             <span>
                                                 {Math.round(processingProgress)}
                                                 %
@@ -1195,7 +1191,7 @@ export const MobileMediaSearchModal: React.FC<MobileMediaSearchModalProps> = ({
                 {bottomSheetState !== 'closed' && (
                     <div
                         ref={bottomSheetRef}
-                        className={`absolute bottom-0 left-0 right-0 z-20 transform transition-transform duration-300 ${
+                        className={`absolute inset-x-0 bottom-0 z-20 transition-transform duration-300${
                             bottomSheetState === 'full'
                                 ? 'translate-y-0'
                                 : bottomSheetState === 'half'
@@ -1268,7 +1264,7 @@ export const MobileMediaSearchModal: React.FC<MobileMediaSearchModalProps> = ({
                                         )}
                                     >
                                         <span
-                                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                            className={`inline-block size-4 rounded-full bg-white transition-transform${
                                                 accessibility.state
                                                     .isHighContrast
                                                     ? 'translate-x-6'
@@ -1324,7 +1320,7 @@ export const MobileMediaSearchModal: React.FC<MobileMediaSearchModalProps> = ({
                                         )}
                                     >
                                         <span
-                                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                            className={`inline-block size-4 rounded-full bg-white transition-transform${
                                                 accessibility.state
                                                     .isReducedMotion
                                                     ? 'translate-x-6'

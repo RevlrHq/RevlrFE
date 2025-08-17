@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { EventPerformanceAnalytics } from '@/components/EventPerformanceAnalytics';
 import { OrganizerService } from '@/lib/api';
@@ -14,21 +14,21 @@ jest.mock('@/lib/api', () => ({
 
 // Mock Chart.js components
 jest.mock('react-chartjs-2', () => ({
-    Line: ({ data, options }: any) => (
+    Line: ({ data, options }: { data: unknown; options: unknown }) => (
         <div
             data-testid='line-chart'
             data-chart-data={JSON.stringify(data)}
             data-chart-options={JSON.stringify(options)}
         />
     ),
-    Bar: ({ data, options }: any) => (
+    Bar: ({ data, options }: { data: unknown; options: unknown }) => (
         <div
             data-testid='bar-chart'
             data-chart-data={JSON.stringify(data)}
             data-chart-options={JSON.stringify(options)}
         />
     ),
-    Doughnut: ({ data, options }: any) => (
+    Doughnut: ({ data, options }: { data: unknown; options: unknown }) => (
         <div
             data-testid='doughnut-chart'
             data-chart-data={JSON.stringify(data)}

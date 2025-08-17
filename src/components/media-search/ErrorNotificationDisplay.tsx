@@ -51,14 +51,14 @@ export const ErrorNotificationDisplay: React.FC<
     const getNotificationIcon = (type: ErrorNotification['type']) => {
         switch (type) {
             case 'error':
-                return <AlertCircle className='h-5 w-5 text-red-500' />;
+                return <AlertCircle className='size-5 text-red-500' />;
             case 'warning':
-                return <AlertTriangle className='h-5 w-5 text-yellow-500' />;
+                return <AlertTriangle className='size-5 text-yellow-500' />;
             case 'success':
-                return <CheckCircle className='h-5 w-5 text-green-500' />;
+                return <CheckCircle className='size-5 text-green-500' />;
             case 'info':
             default:
-                return <Info className='h-5 w-5 text-blue-500' />;
+                return <Info className='size-5 text-blue-500' />;
         }
     };
 
@@ -80,10 +80,10 @@ export const ErrorNotificationDisplay: React.FC<
 
     const getNetworkIcon = (notification: ErrorNotification) => {
         if (notification.id === 'offline-notification') {
-            return <WifiOff className='h-5 w-5 text-red-500' />;
+            return <WifiOff className='size-5 text-red-500' />;
         }
         if (notification.id === 'online-notification') {
-            return <Wifi className='h-5 w-5 text-green-500' />;
+            return <Wifi className='size-5 text-green-500' />;
         }
         return null;
     };
@@ -100,7 +100,7 @@ export const ErrorNotificationDisplay: React.FC<
                 return (
                     <div
                         key={notification.id}
-                        className={`transform rounded-lg p-4 transition-all duration-300 ease-in-out ${getNotificationStyles(
+                        className={`rounded-lg p-4 transition-all duration-300 ease-in-out${getNotificationStyles(
                             notification.type
                         )}`}
                         role='alert'
@@ -111,7 +111,7 @@ export const ErrorNotificationDisplay: React.FC<
                         }
                     >
                         <div className='flex items-start'>
-                            <div className='flex-shrink-0'>
+                            <div className='shrink-0'>
                                 {networkIcon ||
                                     getNotificationIcon(notification.type)}
                             </div>
@@ -174,7 +174,7 @@ export const ErrorNotificationDisplay: React.FC<
 
                             {/* Dismiss button */}
                             {notification.metadata?.canDismiss !== false && (
-                                <div className='ml-4 flex-shrink-0'>
+                                <div className='ml-4 shrink-0'>
                                     <button
                                         onClick={() =>
                                             onDismiss(notification.id)
@@ -182,7 +182,7 @@ export const ErrorNotificationDisplay: React.FC<
                                         className='inline-flex text-gray-400 transition-colors hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300'
                                         aria-label={`Dismiss ${notification.title}`}
                                     >
-                                        <X className='h-4 w-4' />
+                                        <X className='size-4' />
                                     </button>
                                 </div>
                             )}
@@ -306,9 +306,9 @@ export const NetworkStatusIndicator: React.FC<{
             aria-live='polite'
         >
             {networkStatus === 'offline' ? (
-                <WifiOff className='h-4 w-4' />
+                <WifiOff className='size-4' />
             ) : (
-                <Wifi className='h-4 w-4' />
+                <Wifi className='size-4' />
             )}
             <span>
                 {networkStatus === 'offline'
@@ -319,11 +319,20 @@ export const NetworkStatusIndicator: React.FC<{
     );
 };
 
+interface ServiceHealth {
+    isHealthy: boolean;
+    totalProviders: number;
+    healthyProviders: number;
+    disabledProviders?: number;
+    circuitBreakerStatus?: Record<string, string>;
+    errorRate?: number;
+}
+
 /**
  * Service health indicator component
  */
 export const ServiceHealthIndicator: React.FC<{
-    health: any;
+    health: ServiceHealth | null | undefined;
     className?: string;
 }> = ({ health, className = '' }) => {
     if (!health || health.isHealthy) {
@@ -347,7 +356,7 @@ export const ServiceHealthIndicator: React.FC<{
             aria-live='polite'
         >
             <div
-                className={`h-2 w-2 rounded-full ${getHealthColor().replace('text-', 'bg-')}`}
+                className={`size-2 rounded-full ${getHealthColor().replace('text-', 'bg-')}`}
             />
             <span className={getHealthColor()}>
                 {health.healthyProviders} of {health.totalProviders} services

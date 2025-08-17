@@ -15,7 +15,7 @@ interface FocusState {
 
 export function useFocusManagement({
     restoreOnUnmount = true,
-    trapFocus = false,
+    // trapFocus = false,
     autoFocus = false,
     announceChanges = true,
 }: FocusManagementOptions = {}) {
@@ -185,7 +185,7 @@ export function useFocusManagement({
             container.setAttribute('data-focus-trap', 'true');
 
             // Store cleanup function
-            (container as any).__focusTrapCleanup = () => {
+            (container as unknown).__focusTrapCleanup = () => {
                 container.removeEventListener('keydown', handleKeyDown);
                 container.removeAttribute('data-focus-trap');
             };
@@ -205,9 +205,9 @@ export function useFocusManagement({
         if (!container || !stateRef.current.isTrapped) return;
 
         // Call cleanup function if it exists
-        if ((container as any).__focusTrapCleanup) {
-            (container as any).__focusTrapCleanup();
-            delete (container as any).__focusTrapCleanup;
+        if ((container as HTMLElement).__focusTrapCleanup) {
+            (container as HTMLElement).__focusTrapCleanup();
+            delete (container as HTMLElement).__focusTrapCleanup;
         }
 
         stateRef.current.isTrapped = false;

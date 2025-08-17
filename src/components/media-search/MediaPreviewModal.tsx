@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { useTheme } from '@/lib/ThemeContext';
 import { MediaItem } from '@/types/media-search';
 import { EventCreationData } from '@/types/event-creation';
 import { LicenseInfoDisplay } from './LicenseInfoDisplay';
@@ -11,10 +10,7 @@ import {
     ZoomIn,
     ZoomOut,
     RotateCw,
-    Download,
     Info,
-    Heart,
-    Share2,
     ExternalLink,
     Check,
     Plus,
@@ -48,7 +44,6 @@ export const MediaPreviewModal: React.FC<MediaPreviewModalProps> = ({
     maxSelections = 10,
     currentSelectionCount = 0,
 }) => {
-    const { theme } = useTheme();
     const [zoom, setZoom] = useState(1);
     const [rotation, setRotation] = useState(0);
     const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -59,6 +54,33 @@ export const MediaPreviewModal: React.FC<MediaPreviewModalProps> = ({
     >('metadata');
     const imageRef = useRef<HTMLImageElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // Zoom and rotation handlers
+    const handleZoomIn = useCallback(() => {
+        setZoom((prev) => Math.min(prev * 1.2, 5));
+    }, []);
+
+    const handleZoomOut = useCallback(() => {
+        setZoom((prev) => Math.max(prev / 1.2, 0.1));
+    }, []);
+
+    const handleRotate = useCallback(() => {
+        setRotation((prev) => (prev + 90) % 360);
+    }, []);
+
+    const handleResetView = useCallback(() => {
+        setZoom(1);
+        setRotation(0);
+    }, []);
+
+    // Selection handlers
+    const handleToggleSelection = useCallback(() => {
+        if (isSelected) {
+            onDeselect?.();
+        } else {
+            onSelect();
+        }
+    }, [isSelected, onSelect, onDeselect]);
 
     // Handle keyboard shortcuts
     useEffect(() => {
@@ -102,7 +124,16 @@ export const MediaPreviewModal: React.FC<MediaPreviewModalProps> = ({
 
         document.addEventListener('keydown', handleKeyDown);
         return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [disabled, onClose, isSelected, zoom, rotation, showMetadata]);
+    }, [
+        disabled,
+        onClose,
+        showMetadata,
+        handleToggleSelection,
+        handleZoomIn,
+        handleZoomOut,
+        handleRotate,
+        handleResetView,
+    ]);
 
     // Image loading handlers
     const handleImageLoad = useCallback(() => {
@@ -115,87 +146,13 @@ export const MediaPreviewModal: React.FC<MediaPreviewModalProps> = ({
         setIsImageLoaded(false);
     }, []);
 
-    // Zoom and rotation handlers
-    const handleZoomIn = useCallback(() => {
-        setZoom((prev) => Math.min(prev * 1.2, 5));
-    }, []);
-
-    const handleZoomOut = useCallback(() => {
-        setZoom((prev) => Math.max(prev / 1.2, 0.1));
-    }, []);
-
-    const handleRotate = useCallback(() => {
-        setRotation((prev) => (prev + 90) % 360);
-    }, []);
-
-    const handleResetView = useCallback(() => {
-        setZoom(1);
-        setRotation(0);
-    }, []);
-
-    // Selection handlers
-    const handleToggleSelection = useCallback(() => {
-        if (isSelected) {
-            onDeselect?.();
-        } else {
-            onSelect();
-        }
-    }, [isSelected, onSelect, onDeselect]);
-
-    // Format file size
-    const formatFileSize = useCallback((bytes?: number) => {
-        if (!bytes) return 'Unknown';
-        const sizes = ['B', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(1024));
-        return `${Math.round((bytes / Math.pow(1024, i)) * 100) / 100} ${sizes[i]}`;
-    }, []);
-
-    // Get aspect ratio
-    const getAspectRatio = useCallback(() => {
-        if (!item.width || !item.height) return 'Unknown';
-        const gcd = (a: number, b: number): number =>
-            b === 0 ? a : gcd(b, a % b);
-        const divisor = gcd(item.width, item.height);
-        return `${item.width / divisor}:${item.height / divisor}`;
-    }, [item.width, item.height]);
-
-    // Get provider info
-    const getProviderInfo = useCallback(() => {
-        switch (item.providerId.toLowerCase()) {
-            case 'unsplash':
-                return {
-                    name: 'Unsplash',
-                    color: 'bg-black',
-                    website: 'https://unsplash.com',
-                };
-            case 'pexels':
-                return {
-                    name: 'Pexels',
-                    color: 'bg-green-600',
-                    website: 'https://pexels.com',
-                };
-            case 'pixabay':
-                return {
-                    name: 'Pixabay',
-                    color: 'bg-blue-600',
-                    website: 'https://pixabay.com',
-                };
-            default:
-                return {
-                    name: item.providerId,
-                    color: 'bg-gray-600',
-                    website: '#',
-                };
-        }
-    }, [item.providerId]);
-
     // Check if selection is at limit
     const isAtSelectionLimit =
         currentSelectionCount >= maxSelections && !isSelected;
 
     return (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4'>
-            <div className='relative flex h-full max-h-[95vh] w-full max-w-7xl overflow-hidden rounded-xl bg-white dark:bg-revlr-dark-card'>
+            <div className='relative flex size-full max-h-[95vh] max-w-7xl overflow-hidden rounded-xl bg-white dark:bg-revlr-dark-card'>
                 {/* Close button */}
                 <button
                     onClick={onClose}
@@ -214,7 +171,7 @@ export const MediaPreviewModal: React.FC<MediaPreviewModalProps> = ({
                     {/* Loading state */}
                     {!isImageLoaded && !isImageError && (
                         <div className='flex items-center justify-center'>
-                            <div className='h-8 w-8 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
+                            <div className='size-8 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
                         </div>
                     )}
 
@@ -235,6 +192,7 @@ export const MediaPreviewModal: React.FC<MediaPreviewModalProps> = ({
 
                     {/* Main image */}
                     {!isImageError && (
+                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img
                             ref={imageRef}
                             src={item.previewUrl}
@@ -339,7 +297,12 @@ export const MediaPreviewModal: React.FC<MediaPreviewModalProps> = ({
                                     <button
                                         key={tab.id}
                                         onClick={() =>
-                                            setActiveTab(tab.id as any)
+                                            setActiveTab(
+                                                tab.id as
+                                                    | 'metadata'
+                                                    | 'context'
+                                                    | 'attribution'
+                                            )
                                         }
                                         className={`flex-1 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
                                             activeTab === tab.id
@@ -629,10 +592,11 @@ const EventContextPreview: React.FC<EventContextPreviewProps> = ({
                 <div className='overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-revlr-dark-border dark:bg-revlr-dark-bg'>
                     {/* Event image */}
                     <div className='relative aspect-video overflow-hidden bg-gray-100 dark:bg-revlr-dark-border'>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             src={item.thumbnailUrl}
                             alt={item.title}
-                            className='h-full w-full object-cover'
+                            className='size-full object-cover'
                         />
                         {/* Attribution overlay if required */}
                         {item.attribution.required && (
@@ -891,7 +855,7 @@ const AttributionPanel: React.FC<AttributionPanelProps> = ({
                                         key={index}
                                         className='flex items-start space-x-2'
                                     >
-                                        <AlertTriangle className='mt-0.5 size-4 flex-shrink-0 text-orange-500' />
+                                        <AlertTriangle className='mt-0.5 size-4 shrink-0 text-orange-500' />
                                         <span className='text-sm text-gray-600 dark:text-gray-300'>
                                             {restriction}
                                         </span>
@@ -910,6 +874,7 @@ const AttributionPanel: React.FC<AttributionPanelProps> = ({
                     </h4>
                     <div className='flex items-center space-x-3'>
                         {item.photographer.avatarUrl && (
+                            /* eslint-disable-next-line @next/next/no-img-element */
                             <img
                                 src={item.photographer.avatarUrl}
                                 alt={item.photographer.name}

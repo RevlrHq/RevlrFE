@@ -172,6 +172,7 @@ describe('ErrorLogger', () => {
         });
 
         it('should log to console in development', () => {
+            const originalEnv = process.env.NODE_ENV;
             process.env.NODE_ENV = 'development';
 
             const error = new Error('Test error');
@@ -180,9 +181,12 @@ describe('ErrorLogger', () => {
             expect(consoleMock.group).toHaveBeenCalledWith('🚨 Error [MEDIUM]');
             expect(consoleMock.error).toHaveBeenCalledWith('Error:', error);
             expect(consoleMock.groupEnd).toHaveBeenCalled();
+
+            process.env.NODE_ENV = originalEnv;
         });
 
         it('should not log to console in production', () => {
+            const originalEnv = process.env.NODE_ENV;
             process.env.NODE_ENV = 'production';
 
             const error = new Error('Test error');
@@ -193,6 +197,8 @@ describe('ErrorLogger', () => {
                 'Error logged to monitoring service:',
                 expect.any(String)
             );
+
+            process.env.NODE_ENV = originalEnv;
         });
     });
 

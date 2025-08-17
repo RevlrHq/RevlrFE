@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useMediaSearch } from '@/hooks/useMediaSearch';
 import type { MediaItem } from '@/types/media-search';
 
@@ -106,9 +107,11 @@ export function MediaSearchTestComponent() {
                                 key={`${item.providerId}-${item.id}`}
                                 className='rounded border p-2'
                             >
-                                <img
+                                <Image
                                     src={item.thumbnailUrl}
                                     alt={item.title}
+                                    width={200}
+                                    height={128}
                                     className='mb-2 h-32 w-full rounded object-cover'
                                 />
                                 <div className='text-xs'>
@@ -156,16 +159,18 @@ export function MediaSearchTestComponent() {
                                 key={`selected-${item.providerId}-${item.id}`}
                                 className='relative'
                             >
-                                <img
+                                <Image
                                     src={item.thumbnailUrl}
                                     alt={item.title}
-                                    className='h-16 w-16 rounded object-cover'
+                                    width={64}
+                                    height={64}
+                                    className='size-16 rounded object-cover'
                                 />
                                 <button
                                     onClick={() =>
                                         actions.deselectItem(item.id)
                                     }
-                                    className='absolute -right-1 -top-1 h-5 w-5 rounded-full bg-red-500 text-xs text-white'
+                                    className='absolute -right-1 -top-1 size-5 rounded-full bg-red-500 text-xs text-white'
                                 >
                                     ×
                                 </button>

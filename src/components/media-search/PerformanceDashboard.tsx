@@ -175,7 +175,7 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
                         className='dark:hover:bg-revlr-dark-hover rounded-lg p-2 transition-colors hover:bg-gray-100'
                     >
                         <svg
-                            className='h-6 w-6'
+                            className='size-6'
                             fill='none'
                             stroke='currentColor'
                             viewBox='0 0 24 24'
@@ -262,7 +262,7 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
                                             >
                                                 <div className='flex items-center'>
                                                     <svg
-                                                        className='mr-2 h-5 w-5 text-red-500'
+                                                        className='mr-2 size-5 text-red-500'
                                                         fill='currentColor'
                                                         viewBox='0 0 20 20'
                                                     >
@@ -295,7 +295,7 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
                                     <div className='mb-3 flex items-center justify-between'>
                                         <div className='flex items-center'>
                                             <div
-                                                className={`mr-3 h-3 w-3 rounded-full ${
+                                                className={`mr-3 size-3 rounded-full ${
                                                     provider.isHealthy
                                                         ? 'bg-green-500'
                                                         : 'bg-red-500'

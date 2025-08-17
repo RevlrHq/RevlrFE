@@ -9,7 +9,7 @@
  */
 
 import { execSync } from 'child_process';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { writeFileSync } from 'fs';
 import { join } from 'path';
 
 interface TestResult {
@@ -85,11 +85,12 @@ class AccessibilityTestRunner {
 
             this.parseJestOutput(output);
             console.log('✅ Jest accessibility tests completed\n');
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.log(
                 '⚠️  Some Jest tests failed, continuing with other tests...\n'
             );
-            this.parseJestOutput(error.stdout || '');
+            const errorOutput = (error as { stdout?: string }).stdout || '';
+            this.parseJestOutput(errorOutput);
         }
     }
 
@@ -101,15 +102,15 @@ class AccessibilityTestRunner {
 
         try {
             // Run specific axe tests
-            const output = execSync(
+            execSync(
                 'npx jest src/tests/accessibility/dashboard-accessibility.test.tsx --testNamePattern="should not have any accessibility violations" --verbose',
                 { encoding: 'utf8', stdio: 'pipe' }
             );
 
             console.log('✅ Axe-core tests completed\n');
-        } catch (error: any) {
+        } catch {
             console.log('⚠️  Some axe-core tests failed\n');
-            this.logAxeViolations(error.stdout || '');
+            this.logAxeViolations();
         }
     }
 
@@ -120,13 +121,13 @@ class AccessibilityTestRunner {
         console.log('⌨️  Running keyboard navigation tests...');
 
         try {
-            const output = execSync(
+            execSync(
                 'npx jest src/tests/accessibility/accessibility-hooks.test.tsx --testNamePattern="Keyboard Navigation" --verbose',
                 { encoding: 'utf8', stdio: 'pipe' }
             );
 
             console.log('✅ Keyboard navigation tests completed\n');
-        } catch (error: any) {
+        } catch {
             console.log('⚠️  Some keyboard navigation tests failed\n');
         }
     }
@@ -138,13 +139,13 @@ class AccessibilityTestRunner {
         console.log('🔊 Running screen reader tests...');
 
         try {
-            const output = execSync(
+            execSync(
                 'npx jest src/tests/accessibility/accessibility-hooks.test.tsx --testNamePattern="Screen Reader" --verbose',
                 { encoding: 'utf8', stdio: 'pipe' }
             );
 
             console.log('✅ Screen reader tests completed\n');
-        } catch (error: any) {
+        } catch {
             console.log('⚠️  Some screen reader tests failed\n');
         }
     }
@@ -156,13 +157,13 @@ class AccessibilityTestRunner {
         console.log('🎨 Running color contrast tests...');
 
         try {
-            const output = execSync(
+            execSync(
                 'npx jest src/tests/accessibility/dashboard-accessibility.test.tsx --testNamePattern="Color and Contrast" --verbose',
                 { encoding: 'utf8', stdio: 'pipe' }
             );
 
             console.log('✅ Color contrast tests completed\n');
-        } catch (error: any) {
+        } catch {
             console.log('⚠️  Some color contrast tests failed\n');
         }
     }
@@ -207,8 +208,8 @@ class AccessibilityTestRunner {
     /**
      * Log axe violations
      */
-    private logAxeViolations(output: string): void {
-        const violations = this.extractAxeViolations(output);
+    private logAxeViolations(): void {
+        const violations = this.extractAxeViolations();
 
         if (violations.length > 0) {
             console.log('🚨 Accessibility violations found:');
@@ -225,7 +226,7 @@ class AccessibilityTestRunner {
     /**
      * Extract axe violations from output
      */
-    private extractAxeViolations(output: string): Array<{
+    private extractAxeViolations(): Array<{
         rule: string;
         impact: string;
         description: string;

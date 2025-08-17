@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { jest } from '@jest/globals';
-import EnhancedEventTable from '../../components/EnhancedEventTable';
+import EventTable from '../../components/EventTable';
 
 // Simple mock setup
 jest.mock('../../lib/api', () => ({
@@ -23,7 +23,10 @@ jest.mock('../../lib/api', () => ({
 }));
 
 jest.mock('../../lib/ThemeContext', () => ({
-    useTheme: () => ({ theme: 'light' }),
+    useTheme: jest.fn(() => ({ theme: 'light' })),
+    ThemeProvider: ({ children }: { children: React.ReactNode }) => (
+        <div>{children}</div>
+    ),
 }));
 
 // Mock the child components to avoid complex rendering issues
@@ -55,9 +58,9 @@ jest.mock('../../components/EventTableModals', () => {
     };
 });
 
-describe('EnhancedEventTable - Simple Integration', () => {
+describe('EventTable - Simple Integration', () => {
     it('renders without crashing', () => {
-        render(<EnhancedEventTable />);
+        render(<EventTable />);
 
         // Check for basic elements
         expect(
@@ -73,7 +76,7 @@ describe('EnhancedEventTable - Simple Integration', () => {
         const mockOnEventEdit = jest.fn();
 
         render(
-            <EnhancedEventTable
+            <EventTable
                 onEventView={mockOnEventView}
                 onEventEdit={mockOnEventEdit}
                 showActions={true}
@@ -90,7 +93,7 @@ describe('EnhancedEventTable - Simple Integration', () => {
 
     it('renders with disabled features', () => {
         render(
-            <EnhancedEventTable
+            <EventTable
                 showActions={false}
                 showBulkActions={false}
                 showExport={false}

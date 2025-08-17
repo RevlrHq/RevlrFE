@@ -1,4 +1,4 @@
-# EnhancedEventTable Component
+# EventTable Component
 
 A comprehensive, feature-rich event management table component that provides advanced functionality for organizers to manage their events efficiently.
 
@@ -37,17 +37,17 @@ A comprehensive, feature-rich event management table component that provides adv
 ### Basic Usage
 
 ```tsx
-import EnhancedEventTable from './components/EnhancedEventTable';
+import EventTable from './components/EventTable';
 
 function EventManagement() {
-    return <EnhancedEventTable />;
+    return <EventTable />;
 }
 ```
 
 ### Advanced Usage
 
 ```tsx
-import EnhancedEventTable from './components/EnhancedEventTable';
+import EventTable from './components/EventTable';
 
 function EventManagement() {
     const handleEventView = (eventId: string) => {
@@ -61,7 +61,7 @@ function EventManagement() {
     };
 
     return (
-        <EnhancedEventTable
+        <EventTable
             onEventView={handleEventView}
             onEventEdit={handleEventEdit}
             showActions={true}

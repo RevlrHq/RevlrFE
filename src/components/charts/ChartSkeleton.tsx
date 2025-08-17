@@ -31,7 +31,7 @@ export const ChartSkeleton: React.FC<ChartSkeletonProps> = ({
                 style={{ height }}
             >
                 <div className='text-center'>
-                    <div className='mx-auto mb-2 h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent'></div>
+                    <div className='mx-auto mb-2 size-8 animate-spin rounded-full border-2 border-primary border-t-transparent'></div>
                     <div className='text-sm text-muted-foreground'>
                         Loading chart data...
                     </div>
@@ -41,11 +41,11 @@ export const ChartSkeleton: React.FC<ChartSkeletonProps> = ({
             {/* Legend skeleton */}
             <div className='mt-4 flex justify-center space-x-4'>
                 <div className='flex items-center space-x-2'>
-                    <div className='h-3 w-3 rounded-full bg-muted'></div>
+                    <div className='size-3 rounded-full bg-muted'></div>
                     <div className='h-3 w-16 rounded bg-muted'></div>
                 </div>
                 <div className='flex items-center space-x-2'>
-                    <div className='h-3 w-3 rounded-full bg-muted'></div>
+                    <div className='size-3 rounded-full bg-muted'></div>
                     <div className='h-3 w-20 rounded bg-muted'></div>
                 </div>
             </div>

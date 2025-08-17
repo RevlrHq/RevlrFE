@@ -18,7 +18,7 @@ jest.mock('chart.js', () => ({
 }));
 
 jest.mock('react-chartjs-2', () => ({
-    Line: jest.fn(({ data, options }) => (
+    Line: jest.fn(() => (
         <div
             data-testid='line-chart'
             data-chart-type='line'
@@ -94,7 +94,12 @@ describe('RevenueChart', () => {
         const incompleteData = [
             { year: 2024, month: 1, monthName: 'January' }, // Missing revenue
             { year: 2024, month: 2, monthName: 'February', revenue: 5000 },
-            { year: 2024, month: 3, monthName: 'March', revenue: null as any }, // Null revenue
+            {
+                year: 2024,
+                month: 3,
+                monthName: 'March',
+                revenue: null as number | null,
+            }, // Null revenue
         ];
 
         render(<RevenueChart data={incompleteData} />);
@@ -126,7 +131,7 @@ describe('RevenueChart', () => {
     });
 
     it('handles null data gracefully', () => {
-        render(<RevenueChart data={null as any} />);
+        render(<RevenueChart data={null as never} />);
 
         expect(
             screen.getByText('No revenue data available')
@@ -134,7 +139,7 @@ describe('RevenueChart', () => {
     });
 
     it('handles undefined data gracefully', () => {
-        render(<RevenueChart data={undefined as any} />);
+        render(<RevenueChart data={undefined as never} />);
 
         expect(
             screen.getByText('No revenue data available')

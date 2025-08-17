@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import {
     useUnsplashAuth,
@@ -55,9 +56,9 @@ function ScopesDisplay({
                     key={scope}
                     className='inline-flex items-center rounded-full border bg-gray-50 px-2 py-1 text-xs text-gray-700'
                 >
-                    {scope === 'read_user' && <User className='mr-1 h-3 w-3' />}
+                    {scope === 'read_user' && <User className='mr-1 size-3' />}
                     {scope === 'write_likes' && (
-                        <Heart className='mr-1 h-3 w-3' />
+                        <Heart className='mr-1 size-3' />
                     )}
                     {scope}
                 </span>
@@ -181,7 +182,7 @@ export function UnsplashAuthButton({
                 disabled
                 className={className}
             >
-                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                <Loader2 className='mr-2 size-4 animate-spin' />
                 Connecting...
             </Button>
         );
@@ -205,10 +206,12 @@ export function UnsplashAuthButton({
                         <div className='flex items-center justify-between'>
                             <div className='flex items-center space-x-3'>
                                 {authState.user.avatarUrl && (
-                                    <img
+                                    <Image
                                         src={authState.user.avatarUrl}
                                         alt={authState.user.name}
-                                        className='h-10 w-10 rounded-full'
+                                        width={40}
+                                        height={40}
+                                        className='size-10 rounded-full'
                                     />
                                 )}
                                 <div>
@@ -221,7 +224,7 @@ export function UnsplashAuthButton({
                                 </div>
                             </div>
                             <span className='inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-800'>
-                                <Camera className='mr-1 h-3 w-3' />
+                                <Camera className='mr-1 size-3' />
                                 Unsplash
                             </span>
                         </div>
@@ -242,7 +245,7 @@ export function UnsplashAuthButton({
                                         )
                                     }
                                 >
-                                    <ExternalLink className='mr-1 h-3 w-3' />
+                                    <ExternalLink className='mr-1 size-3' />
                                     Profile
                                 </Button>
                             )}
@@ -251,7 +254,7 @@ export function UnsplashAuthButton({
                                 size='sm'
                                 onClick={handleLogout}
                             >
-                                <LogOut className='mr-1 h-3 w-3' />
+                                <LogOut className='mr-1 size-3' />
                                 Disconnect
                             </Button>
                         </div>
@@ -263,11 +266,11 @@ export function UnsplashAuthButton({
         return (
             <div className='flex items-center space-x-2'>
                 <span className='inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-800'>
-                    <Camera className='mr-1 h-3 w-3' />
+                    <Camera className='mr-1 size-3' />
                     Connected to Unsplash
                 </span>
                 <Button variant='outline' size='sm' onClick={handleLogout}>
-                    <LogOut className='mr-1 h-3 w-3' />
+                    <LogOut className='mr-1 size-3' />
                     Disconnect
                 </Button>
             </div>
@@ -281,7 +284,7 @@ export function UnsplashAuthButton({
             onClick={handleLogin}
             className={className}
         >
-            <Camera className='mr-2 h-4 w-4' />
+            <Camera className='mr-2 size-4' />
             Connect to Unsplash
         </Button>
     );
@@ -340,7 +343,7 @@ export function UnsplashAuthStatus() {
 
     return (
         <Alert>
-            <Camera className='h-4 w-4' />
+            <Camera className='size-4' />
             <AuthStatusDisplay hasScope={hasScope} authState={authState} />
         </Alert>
     );

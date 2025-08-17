@@ -158,7 +158,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
                                         }`}
                                     >
                                         <span
-                                            className={`mt-1.5 size-1.5 flex-shrink-0 rounded-full ${
+                                            className={`mt-1.5 size-1.5 shrink-0 rounded-full ${
                                                 theme === 'dark'
                                                     ? 'bg-gray-500'
                                                     : 'bg-gray-400'

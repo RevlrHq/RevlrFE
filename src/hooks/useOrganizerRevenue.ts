@@ -136,6 +136,7 @@ export const useOrganizerRevenue = (
         try {
             await Promise.all([fetchMonthlyRevenue(), fetchEventRevenue()]);
         } catch (err) {
+            console.log(err);
             // Errors are handled in individual fetch functions
         } finally {
             setLoading(false);

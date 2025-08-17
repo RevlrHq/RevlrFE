@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { useTheme } from '@src/lib/ThemeContext';
 
 interface OrganizerDetailsProps {
@@ -170,9 +171,11 @@ export const OrganizerDetails: React.FC<OrganizerDetailsProps> = ({
                                 }`}
                             >
                                 {organizerLogo ? (
-                                    <img
+                                    <Image
                                         src={organizerLogo}
                                         alt='Organizer Logo'
+                                        width={64}
+                                        height={64}
                                         className='size-full rounded-xl object-cover'
                                     />
                                 ) : (

@@ -119,7 +119,15 @@ export const VirtualizedMediaGrid: React.FC<VirtualizedMediaGridProps> = ({
 
     // Handle scroll for infinite loading
     const handleScroll = useCallback(
-        ({ scrollTop, scrollHeight, clientHeight }: any) => {
+        ({
+            scrollTop,
+            scrollHeight,
+            clientHeight,
+        }: {
+            scrollTop: number;
+            scrollHeight: number;
+            clientHeight: number;
+        }) => {
             if (!onLoadMore || !hasMore || isLoading) return;
 
             // Trigger load more when scrolled to 80% of content
@@ -195,7 +203,7 @@ export const VirtualizedMediaGrid: React.FC<VirtualizedMediaGridProps> = ({
                 style={{ minHeight: '400px' }}
             >
                 <div className='flex h-full items-center justify-center'>
-                    <div className='h-6 w-6 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
+                    <div className='size-6 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
                 </div>
             </div>
         );
@@ -243,7 +251,7 @@ export const VirtualizedMediaGrid: React.FC<VirtualizedMediaGridProps> = ({
             {isLoading && items.length > 0 && (
                 <div className='flex justify-center py-4'>
                     <div className='flex items-center space-x-2'>
-                        <div className='h-4 w-4 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
+                        <div className='size-4 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
                         <span
                             className={`font-inter text-sm ${
                                 theme === 'dark'

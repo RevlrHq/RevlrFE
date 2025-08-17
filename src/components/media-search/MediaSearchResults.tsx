@@ -6,7 +6,7 @@ import { MediaItem } from '@/types/media-search';
 import { MediaCard } from './MediaCard';
 import { MediaGridSkeleton } from './MediaGridSkeleton';
 import { EmptyState } from './EmptyState';
-import { Search, AlertCircle, Wifi, WifiOff } from 'lucide-react';
+import { AlertCircle, WifiOff } from 'lucide-react';
 
 interface MediaSearchResultsProps {
     items: MediaItem[];
@@ -235,7 +235,7 @@ export const MediaSearchResults: React.FC<MediaSearchResultsProps> = ({
                 >
                     {isLoadingMore && (
                         <div className='text-center'>
-                            <div className='mx-auto mb-2 h-6 w-6 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
+                            <div className='mx-auto mb-2 size-6 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
                             <p
                                 className={`font-inter text-sm ${
                                     theme === 'dark'

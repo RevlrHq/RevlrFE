@@ -87,7 +87,7 @@ describe('useDataExport', () => {
                 })
             );
 
-            let exportPromise: Promise<any>;
+            let exportPromise: Promise<{ success: boolean; error?: string }>;
 
             act(() => {
                 exportPromise = result.current.exportEvents(mockEvents, {

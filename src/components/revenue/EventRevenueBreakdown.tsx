@@ -47,7 +47,7 @@ type SortOrder = 'asc' | 'desc';
 export const EventRevenueBreakdown: React.FC<EventRevenueBreakdownProps> = ({
     data,
     loading,
-    isDark = false,
+    // isDark = false,
 }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<SortField>('totalRevenue');
@@ -57,7 +57,7 @@ export const EventRevenueBreakdown: React.FC<EventRevenueBreakdownProps> = ({
     const processedData = useMemo(() => {
         if (!data) return [];
 
-        let filtered = data.filter((event) =>
+        const filtered = data.filter((event) =>
             event.eventTitle?.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
@@ -228,9 +228,9 @@ export const EventRevenueBreakdown: React.FC<EventRevenueBreakdownProps> = ({
             {children}
             {sortField === field &&
                 (sortOrder === 'asc' ? (
-                    <SortAsc className='ml-1 h-3 w-3' />
+                    <SortAsc className='ml-1 size-3' />
                 ) : (
-                    <SortDesc className='ml-1 h-3 w-3' />
+                    <SortDesc className='ml-1 size-3' />
                 ))}
         </Button>
     );
@@ -240,7 +240,7 @@ export const EventRevenueBreakdown: React.FC<EventRevenueBreakdownProps> = ({
             {/* Controls */}
             <div className='flex items-center justify-between gap-4'>
                 <div className='relative max-w-sm flex-1'>
-                    <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground' />
+                    <Search className='absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground' />
                     <Input
                         placeholder='Search events...'
                         value={searchTerm}
@@ -256,7 +256,7 @@ export const EventRevenueBreakdown: React.FC<EventRevenueBreakdownProps> = ({
                         loading || !processedData || processedData.length === 0
                     }
                 >
-                    <Download className='mr-2 h-4 w-4' />
+                    <Download className='mr-2 size-4' />
                     Export CSV
                 </Button>
             </div>
@@ -266,7 +266,7 @@ export const EventRevenueBreakdown: React.FC<EventRevenueBreakdownProps> = ({
                 <Card>
                     <CardHeader className='pb-2'>
                         <CardTitle className='flex items-center text-sm font-medium'>
-                            <DollarSign className='mr-2 h-4 w-4' />
+                            <DollarSign className='mr-2 size-4' />
                             Total Revenue
                         </CardTitle>
                     </CardHeader>
@@ -292,7 +292,7 @@ export const EventRevenueBreakdown: React.FC<EventRevenueBreakdownProps> = ({
                 <Card>
                     <CardHeader className='pb-2'>
                         <CardTitle className='flex items-center text-sm font-medium'>
-                            <Clock className='mr-2 h-4 w-4' />
+                            <Clock className='mr-2 size-4' />
                             Pending Revenue
                         </CardTitle>
                     </CardHeader>
@@ -322,7 +322,7 @@ export const EventRevenueBreakdown: React.FC<EventRevenueBreakdownProps> = ({
                 <Card>
                     <CardHeader className='pb-2'>
                         <CardTitle className='flex items-center text-sm font-medium'>
-                            <Users className='mr-2 h-4 w-4' />
+                            <Users className='mr-2 size-4' />
                             Total Registrations
                         </CardTitle>
                     </CardHeader>
@@ -350,7 +350,7 @@ export const EventRevenueBreakdown: React.FC<EventRevenueBreakdownProps> = ({
                 <Card>
                     <CardHeader className='pb-2'>
                         <CardTitle className='flex items-center text-sm font-medium'>
-                            <TrendingUp className='mr-2 h-4 w-4' />
+                            <TrendingUp className='mr-2 size-4' />
                             Avg Conversion
                         </CardTitle>
                     </CardHeader>

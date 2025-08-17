@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -18,8 +18,9 @@ import {
     getBaseChartOptions,
     getChartColors,
     formatCurrency,
-    revenueTooltipFormatter,
 } from '@/lib/utils/chartConfig';
+import { useMobileOptimizations } from '@/hooks/useMobileOptimizations';
+import ResponsiveChartContainer from '../ResponsiveChartContainer';
 
 // Register Chart.js components
 ChartJS.register(
@@ -39,6 +40,9 @@ interface RevenueChartProps {
     height?: number;
     showEventCount?: boolean;
     className?: string;
+    enableFullscreen?: boolean;
+    enableExport?: boolean;
+    onExport?: () => void;
 }
 
 export const RevenueChart: React.FC<RevenueChartProps> = ({
@@ -47,7 +51,22 @@ export const RevenueChart: React.FC<RevenueChartProps> = ({
     height = 300,
     showEventCount = false,
     className = '',
+    enableFullscreen = true,
+    enableExport = true,
+    onExport,
 }) => {
+    const { isMobile, getResponsiveValue } = useMobileOptimizations();
+    const [chartHeight, setChartHeight] = useState(height);
+
+    // Adjust height for mobile
+    useEffect(() => {
+        const responsiveHeight = getResponsiveValue(
+            Math.min(height, 250), // Mobile: max 250px
+            Math.min(height, 350), // Tablet: max 350px
+            height // Desktop: original height
+        );
+        setChartHeight(responsiveHeight);
+    }, [height, getResponsiveValue]);
     const chartData = useMemo(() => {
         if (!data || !Array.isArray(data)) {
             return null;
@@ -104,25 +123,47 @@ export const RevenueChart: React.FC<RevenueChartProps> = ({
 
         return {
             ...baseOptions,
+            responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 ...baseOptions.plugins,
                 title: {
-                    display: true,
+                    display: !isMobile, // Hide title on mobile to save space
                     text: 'Revenue Trends',
                     color: getChartColors(isDark).foreground,
                     font: {
-                        size: 16,
+                        size: isMobile ? 14 : 16,
                         weight: '600',
                         family: 'Inter, sans-serif',
                     },
                     padding: {
-                        bottom: 20,
+                        bottom: isMobile ? 10 : 20,
+                    },
+                },
+                legend: {
+                    display: true,
+                    position: isMobile ? 'bottom' : 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: isMobile ? 10 : 20,
+                        font: {
+                            size: isMobile ? 12 : 14,
+                        },
                     },
                 },
                 tooltip: {
                     ...baseOptions.plugins?.tooltip,
+                    titleFont: {
+                        size: isMobile ? 12 : 14,
+                    },
+                    bodyFont: {
+                        size: isMobile ? 11 : 13,
+                    },
                     callbacks: {
-                        label: (context: any) => {
+                        label: (context: {
+                            dataset: { label?: string };
+                            parsed: { y: number };
+                        }) => {
                             const label = context.dataset.label || '';
                             const value = context.parsed.y;
 
@@ -136,24 +177,40 @@ export const RevenueChart: React.FC<RevenueChartProps> = ({
             },
             scales: {
                 ...baseOptions.scales,
+                x: {
+                    ...baseOptions.scales?.x,
+                    ticks: {
+                        ...baseOptions.scales?.x?.ticks,
+                        maxRotation: isMobile ? 45 : 0,
+                        minRotation: isMobile ? 45 : 0,
+                        font: {
+                            size: isMobile ? 10 : 12,
+                        },
+                    },
+                },
                 y: {
                     ...baseOptions.scales?.y,
                     type: 'linear' as const,
                     display: true,
                     position: 'left' as const,
                     title: {
-                        display: true,
+                        display: !isMobile, // Hide axis title on mobile
                         text: 'Revenue ($)',
                         color: getChartColors(isDark).muted,
                         font: {
-                            size: 12,
+                            size: isMobile ? 10 : 12,
                             weight: '500',
                         },
                     },
                     ticks: {
                         ...baseOptions.scales?.y?.ticks,
-                        callback: function (value: any) {
-                            return formatCurrency(value);
+                        font: {
+                            size: isMobile ? 10 : 12,
+                        },
+                        callback: function (value: number) {
+                            return isMobile
+                                ? formatCurrency(value).replace('₦', '₦')
+                                : formatCurrency(value);
                         },
                     },
                 },
@@ -185,13 +242,13 @@ export const RevenueChart: React.FC<RevenueChartProps> = ({
                 }),
             },
         };
-    }, [isDark, showEventCount]);
+    }, [isDark, showEventCount, isMobile]);
 
     if (!data || !Array.isArray(data) || data.length === 0 || !chartData) {
         return (
             <div
                 className={`flex items-center justify-center rounded-lg border bg-card ${className}`}
-                style={{ height }}
+                style={{ height: chartHeight }}
                 role='img'
                 aria-label='No revenue data available'
             >
@@ -205,19 +262,24 @@ export const RevenueChart: React.FC<RevenueChartProps> = ({
     }
 
     return (
-        <div
-            className={`rounded-lg border bg-card p-4 ${className}`}
-            role='img'
-            aria-label={`Revenue chart showing ${data.length} months of data`}
+        <ResponsiveChartContainer
+            title='Revenue Trends'
+            subtitle={`${data.length} months of data`}
+            className={className}
+            enableFullscreen={enableFullscreen}
+            enableExport={enableExport}
+            onExport={onExport}
+            minHeight={isMobile ? 200 : 250}
+            maxHeight={isMobile ? 400 : 600}
         >
-            <div style={{ height }}>
+            <div style={{ height: chartHeight }}>
                 <Line
                     data={chartData}
                     options={options}
                     aria-label='Revenue trends line chart'
                 />
             </div>
-        </div>
+        </ResponsiveChartContainer>
     );
 };
 

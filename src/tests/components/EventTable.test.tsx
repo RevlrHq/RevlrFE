@@ -1,9 +1,9 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { jest } from '@jest/globals';
-import EnhancedEventTable from '../../components/EnhancedEventTable';
-import { OrganizerService, EventSummaryView, EventStatus } from '../../lib/api';
+import EventTable from '../../components/EventTable';
+import { OrganizerService, EventSummaryView } from '../../lib/api';
 import { useTheme } from '../../lib/ThemeContext';
 
 // Mock the dependencies
@@ -17,6 +17,9 @@ jest.mock('../../lib/api', () => ({
 
 jest.mock('../../lib/ThemeContext', () => ({
     useTheme: jest.fn(),
+    ThemeProvider: ({ children }: { children: React.ReactNode }) => (
+        <div>{children}</div>
+    ),
 }));
 
 const mockOrganizerService = OrganizerService as jest.Mocked<
@@ -76,7 +79,7 @@ const mockApiResponse = {
     message: null,
 };
 
-describe('EnhancedEventTable', () => {
+describe('EventTable', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockUseTheme.mockReturnValue({ theme: 'light' });
@@ -87,7 +90,7 @@ describe('EnhancedEventTable', () => {
 
     describe('Basic Rendering', () => {
         it('renders the component with default props', async () => {
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             expect(
                 screen.getByPlaceholderText('Search events...')
@@ -103,7 +106,7 @@ describe('EnhancedEventTable', () => {
         });
 
         it('renders loading state initially', () => {
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             // Should show skeleton loaders
             expect(screen.getAllByTestId('skeleton')).toHaveLength(10); // Default page size
@@ -119,7 +122,7 @@ describe('EnhancedEventTable', () => {
                 errorResponse
             );
 
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(
@@ -145,7 +148,7 @@ describe('EnhancedEventTable', () => {
                 emptyResponse
             );
 
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(screen.getByText('No events found')).toBeInTheDocument();
@@ -158,7 +161,7 @@ describe('EnhancedEventTable', () => {
 
     describe('Event Display', () => {
         it('displays event information correctly', async () => {
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 // Check event titles
@@ -180,7 +183,7 @@ describe('EnhancedEventTable', () => {
         });
 
         it('formats currency correctly', async () => {
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(screen.getByText('₦25,000')).toBeInTheDocument();
@@ -189,7 +192,7 @@ describe('EnhancedEventTable', () => {
         });
 
         it('formats dates correctly', async () => {
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(screen.getByText('Jan 15, 2024')).toBeInTheDocument();
@@ -201,7 +204,7 @@ describe('EnhancedEventTable', () => {
     describe('Search and Filtering', () => {
         it('handles search input', async () => {
             const user = userEvent.setup();
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             const searchInput = screen.getByPlaceholderText('Search events...');
             await user.type(searchInput, 'Test Event 1');
@@ -219,7 +222,7 @@ describe('EnhancedEventTable', () => {
 
         it('opens filters modal', async () => {
             const user = userEvent.setup();
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             const filtersButton = screen.getByText('Filters');
             await user.click(filtersButton);
@@ -232,7 +235,7 @@ describe('EnhancedEventTable', () => {
 
         it('applies filters correctly', async () => {
             const user = userEvent.setup();
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             // Open filters modal
             await user.click(screen.getByText('Filters'));
@@ -257,7 +260,7 @@ describe('EnhancedEventTable', () => {
 
         it('clears filters', async () => {
             const user = userEvent.setup();
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             // First set a search term
             const searchInput = screen.getByPlaceholderText('Search events...');
@@ -274,7 +277,7 @@ describe('EnhancedEventTable', () => {
     describe('Sorting', () => {
         it('handles column sorting', async () => {
             const user = userEvent.setup();
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(screen.getByText('Event')).toBeInTheDocument();
@@ -298,7 +301,7 @@ describe('EnhancedEventTable', () => {
 
         it('toggles sort direction', async () => {
             const user = userEvent.setup();
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(screen.getByText('Event')).toBeInTheDocument();
@@ -337,7 +340,7 @@ describe('EnhancedEventTable', () => {
     describe('Pagination', () => {
         it('handles page size change', async () => {
             const user = userEvent.setup();
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(screen.getByDisplayValue('10')).toBeInTheDocument();
@@ -372,7 +375,7 @@ describe('EnhancedEventTable', () => {
                 multiPageResponse
             );
 
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(screen.getByText('Next')).toBeInTheDocument();
@@ -396,7 +399,7 @@ describe('EnhancedEventTable', () => {
     describe('Bulk Actions', () => {
         it('handles event selection', async () => {
             const user = userEvent.setup();
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(screen.getByText('Test Event 1')).toBeInTheDocument();
@@ -412,7 +415,7 @@ describe('EnhancedEventTable', () => {
 
         it('handles select all', async () => {
             const user = userEvent.setup();
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(screen.getByText('Test Event 1')).toBeInTheDocument();
@@ -427,7 +430,7 @@ describe('EnhancedEventTable', () => {
 
         it('opens bulk actions modal', async () => {
             const user = userEvent.setup();
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(screen.getByText('Test Event 1')).toBeInTheDocument();
@@ -449,7 +452,7 @@ describe('EnhancedEventTable', () => {
     describe('Export Functionality', () => {
         it('opens export modal', async () => {
             const user = userEvent.setup();
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await user.click(screen.getByText('Export'));
 
@@ -482,7 +485,7 @@ describe('EnhancedEventTable', () => {
                 value: mockRemoveChild,
             });
 
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await user.click(screen.getByText('Export'));
 
@@ -514,7 +517,7 @@ describe('EnhancedEventTable', () => {
             const mockOnEventView = jest.fn();
             const user = userEvent.setup();
 
-            render(<EnhancedEventTable onEventView={mockOnEventView} />);
+            render(<EventTable onEventView={mockOnEventView} />);
 
             await waitFor(() => {
                 expect(screen.getByText('Test Event 1')).toBeInTheDocument();
@@ -545,7 +548,7 @@ describe('EnhancedEventTable', () => {
             const mockOnEventEdit = jest.fn();
             const user = userEvent.setup();
 
-            render(<EnhancedEventTable onEventEdit={mockOnEventEdit} />);
+            render(<EventTable onEventEdit={mockOnEventEdit} />);
 
             await waitFor(() => {
                 expect(screen.getByText('Test Event 1')).toBeInTheDocument();
@@ -575,7 +578,7 @@ describe('EnhancedEventTable', () => {
         it('opens duplicate modal', async () => {
             const user = userEvent.setup();
 
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(screen.getByText('Test Event 1')).toBeInTheDocument();
@@ -617,9 +620,11 @@ describe('EnhancedEventTable', () => {
                 value: 500,
             });
 
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             // Mobile view should show cards instead of table
+            render(<EventTable />);
+
             // This would require more complex testing setup to properly test responsive behavior
             expect(
                 screen.getByPlaceholderText('Search events...')
@@ -631,7 +636,7 @@ describe('EnhancedEventTable', () => {
         it('applies dark theme styles', () => {
             mockUseTheme.mockReturnValue({ theme: 'dark' });
 
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             const searchInput = screen.getByPlaceholderText('Search events...');
             expect(searchInput).toHaveClass('bg-revlr-dark-card');
@@ -640,7 +645,7 @@ describe('EnhancedEventTable', () => {
         it('applies light theme styles', () => {
             mockUseTheme.mockReturnValue({ theme: 'light' });
 
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             const searchInput = screen.getByPlaceholderText('Search events...');
             expect(searchInput).toHaveClass('bg-white');
@@ -653,7 +658,7 @@ describe('EnhancedEventTable', () => {
                 new Error('Network error')
             );
 
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(
@@ -669,7 +674,7 @@ describe('EnhancedEventTable', () => {
                 new Error('Bulk action failed')
             );
 
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(screen.getByText('Test Event 1')).toBeInTheDocument();
@@ -692,7 +697,7 @@ describe('EnhancedEventTable', () => {
 
     describe('Accessibility', () => {
         it('has proper ARIA labels', async () => {
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             await waitFor(() => {
                 expect(
@@ -709,7 +714,7 @@ describe('EnhancedEventTable', () => {
 
         it('supports keyboard navigation', async () => {
             const user = userEvent.setup();
-            render(<EnhancedEventTable />);
+            render(<EventTable />);
 
             // Tab through interactive elements
             await user.tab();
@@ -724,7 +729,7 @@ describe('EnhancedEventTable', () => {
 });
 
 // Integration tests
-describe('EnhancedEventTable Integration', () => {
+describe('EventTable Integration', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockUseTheme.mockReturnValue({ theme: 'light' });
@@ -736,7 +741,7 @@ describe('EnhancedEventTable Integration', () => {
             mockApiResponse
         );
 
-        render(<EnhancedEventTable />);
+        render(<EventTable />);
 
         // Wait for initial load
         await waitFor(() => {
@@ -784,7 +789,7 @@ describe('EnhancedEventTable Integration', () => {
             }
         );
 
-        render(<EnhancedEventTable />);
+        render(<EventTable />);
 
         await waitFor(() => {
             expect(screen.getByText('Test Event 1')).toBeInTheDocument();

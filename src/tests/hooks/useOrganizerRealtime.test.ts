@@ -1,4 +1,4 @@
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { useOrganizerRealtime } from '@/hooks/useOrganizerRealtime';
 import { useSignalRStore } from '@/lib/signalR';
 import { useToast } from '@/hooks/use-toast';
@@ -19,7 +19,13 @@ const mockUseSignalRStore = useSignalRStore as jest.MockedFunction<
 const mockUseToast = useToast as jest.MockedFunction<typeof useToast>;
 
 describe('useOrganizerRealtime', () => {
-    let mockConnection: any;
+    let mockConnection: {
+        on: jest.Mock;
+        off: jest.Mock;
+        invoke: jest.Mock;
+        onclose: jest.Mock;
+        onreconnected: jest.Mock;
+    };
     let mockToast: jest.Mock;
 
     beforeEach(() => {
@@ -140,9 +146,7 @@ describe('useOrganizerRealtime', () => {
             const mockCallback = jest.fn();
 
             act(() => {
-                const unsubscribe =
-                    result.current.onDashboardUpdate(mockCallback);
-                // Store unsubscribe for cleanup if needed
+                result.current.onDashboardUpdate(mockCallback);
             });
 
             const dashboardUpdate: DashboardMetricUpdate = {
@@ -170,8 +174,8 @@ describe('useOrganizerRealtime', () => {
             const statusUpdate: EventStatusUpdate = {
                 eventId: 'event-1',
                 eventTitle: 'Test Event',
-                oldStatus: 'Draft' as any,
-                newStatus: 'Published' as any,
+                oldStatus: 'Draft',
+                newStatus: 'Published',
                 timestamp: new Date().toISOString(),
             };
 
@@ -196,8 +200,8 @@ describe('useOrganizerRealtime', () => {
             const statusUpdate: EventStatusUpdate = {
                 eventId: 'event-1',
                 eventTitle: 'Test Event',
-                oldStatus: 'Draft' as any,
-                newStatus: 'Published' as any,
+                oldStatus: 'Draft',
+                newStatus: 'Published',
                 timestamp: new Date().toISOString(),
             };
 
@@ -235,7 +239,7 @@ describe('useOrganizerRealtime', () => {
                     attendeeLastName: 'Doe',
                     attendeeEmail: 'john@example.com',
                     amountPaid: 50,
-                } as any,
+                },
                 timestamp: new Date().toISOString(),
             };
 

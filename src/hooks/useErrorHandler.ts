@@ -61,7 +61,7 @@ export const useErrorHandler = (
     });
 
     const isOnline = useOnlineStatus();
-    const lastOperationRef = useRef<(() => Promise<any>) | null>(null);
+    const lastOperationRef = useRef<(() => Promise<unknown>) | null>(null);
 
     const handleError = useCallback(
         (error: Error, context?: string) => {

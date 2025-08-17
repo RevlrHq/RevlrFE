@@ -138,7 +138,7 @@ describe('chartConfig utilities', () => {
         it('formats tooltip item with y value as currency', () => {
             const tooltipItem = {
                 parsed: { y: 1234.56 },
-            } as any;
+            } as { parsed: { y: number } };
 
             expect(revenueTooltipFormatter(tooltipItem)).toBe('$1,235');
         });
@@ -146,7 +146,7 @@ describe('chartConfig utilities', () => {
         it('formats tooltip item with direct parsed value as currency', () => {
             const tooltipItem = {
                 parsed: 1234.56,
-            } as any;
+            } as { parsed: number };
 
             expect(revenueTooltipFormatter(tooltipItem)).toBe('$1,235');
         });
@@ -154,7 +154,7 @@ describe('chartConfig utilities', () => {
         it('handles missing or invalid values', () => {
             const tooltipItem = {
                 parsed: { x: 1 },
-            } as any;
+            } as { parsed: { x: number } };
 
             expect(revenueTooltipFormatter(tooltipItem)).toBe('$0');
         });
@@ -162,7 +162,7 @@ describe('chartConfig utilities', () => {
         it('handles non-numeric values', () => {
             const tooltipItem = {
                 parsed: { y: 'invalid' },
-            } as any;
+            } as { parsed: { y: unknown } };
 
             expect(revenueTooltipFormatter(tooltipItem)).toBe('$0');
         });
@@ -172,7 +172,7 @@ describe('chartConfig utilities', () => {
         it('formats tooltip item with y value as number', () => {
             const tooltipItem = {
                 parsed: { y: 1234 },
-            } as any;
+            } as { parsed: { y: number } };
 
             expect(countTooltipFormatter(tooltipItem)).toBe('1,234');
         });
@@ -180,7 +180,7 @@ describe('chartConfig utilities', () => {
         it('formats tooltip item with direct parsed value as number', () => {
             const tooltipItem = {
                 parsed: 1234,
-            } as any;
+            } as { parsed: number };
 
             expect(countTooltipFormatter(tooltipItem)).toBe('1,234');
         });
@@ -188,7 +188,7 @@ describe('chartConfig utilities', () => {
         it('handles missing or invalid values', () => {
             const tooltipItem = {
                 parsed: { x: 1 },
-            } as any;
+            } as { parsed: { x: number } };
 
             expect(countTooltipFormatter(tooltipItem)).toBe('0');
         });
@@ -196,7 +196,7 @@ describe('chartConfig utilities', () => {
         it('handles non-numeric values', () => {
             const tooltipItem = {
                 parsed: { y: 'invalid' },
-            } as any;
+            } as { parsed: { y: unknown } };
 
             expect(countTooltipFormatter(tooltipItem)).toBe('0');
         });

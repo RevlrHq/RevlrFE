@@ -23,14 +23,9 @@ import {
     BarChart3,
     Clock,
     CheckCircle,
-    AlertCircle,
 } from 'lucide-react';
 import { OrganizerRevenueReportRequest, RevenueStatistics } from '@/lib/api';
-import {
-    formatCurrency,
-    formatNumber,
-    formatPercentage,
-} from '@/lib/utils/chartConfig';
+import { formatCurrency } from '@/lib/utils/chartConfig';
 
 interface CustomReportGeneratorProps {
     onGenerateReport: (request: OrganizerRevenueReportRequest) => Promise<void>;
@@ -174,7 +169,7 @@ export const CustomReportGenerator: React.FC<CustomReportGeneratorProps> = ({
                 <Card>
                     <CardHeader>
                         <CardTitle className='flex items-center'>
-                            <FileText className='mr-2 h-5 w-5' />
+                            <FileText className='mr-2 size-5' />
                             Custom Report Generator
                         </CardTitle>
                         <CardDescription>
@@ -328,12 +323,12 @@ export const CustomReportGenerator: React.FC<CustomReportGeneratorProps> = ({
                         >
                             {isGenerating ? (
                                 <>
-                                    <div className='mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
+                                    <div className='mr-2 size-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
                                     Generating Report...
                                 </>
                             ) : (
                                 <>
-                                    <BarChart3 className='mr-2 h-4 w-4' />
+                                    <BarChart3 className='mr-2 size-4' />
                                     Generate Report
                                 </>
                             )}
@@ -345,7 +340,7 @@ export const CustomReportGenerator: React.FC<CustomReportGeneratorProps> = ({
                 <Card>
                     <CardHeader>
                         <CardTitle className='flex items-center'>
-                            <DollarSign className='mr-2 h-5 w-5' />
+                            <DollarSign className='mr-2 size-5' />
                             Report Results
                         </CardTitle>
                         <CardDescription>
@@ -363,7 +358,7 @@ export const CustomReportGenerator: React.FC<CustomReportGeneratorProps> = ({
                         ) : reportGenerated && revenueStatistics ? (
                             <div className='space-y-4'>
                                 <Alert>
-                                    <CheckCircle className='h-4 w-4' />
+                                    <CheckCircle className='size-4' />
                                     <AlertDescription>
                                         Report generated successfully! Review
                                         the summary below.
@@ -474,13 +469,13 @@ export const CustomReportGenerator: React.FC<CustomReportGeneratorProps> = ({
                                     variant='outline'
                                     className='w-full'
                                 >
-                                    <Download className='mr-2 h-4 w-4' />
+                                    <Download className='mr-2 size-4' />
                                     Export Report (CSV)
                                 </Button>
                             </div>
                         ) : (
                             <div className='py-8 text-center'>
-                                <FileText className='mx-auto mb-4 h-12 w-12 text-muted-foreground' />
+                                <FileText className='mx-auto mb-4 size-12 text-muted-foreground' />
                                 <p className='text-sm text-muted-foreground'>
                                     Configure your report parameters and click
                                     "Generate Report" to create a custom revenue
@@ -534,7 +529,7 @@ export const CustomReportGenerator: React.FC<CustomReportGeneratorProps> = ({
                             }}
                             className='flex h-auto flex-col items-start p-4'
                         >
-                            <Calendar className='mb-2 h-5 w-5' />
+                            <Calendar className='mb-2 size-5' />
                             <div className='text-left'>
                                 <div className='font-medium'>Last Month</div>
                                 <div className='text-xs text-muted-foreground'>
@@ -566,7 +561,7 @@ export const CustomReportGenerator: React.FC<CustomReportGeneratorProps> = ({
                             }}
                             className='flex h-auto flex-col items-start p-4'
                         >
-                            <BarChart3 className='mb-2 h-5 w-5' />
+                            <BarChart3 className='mb-2 size-5' />
                             <div className='text-left'>
                                 <div className='font-medium'>Quarterly</div>
                                 <div className='text-xs text-muted-foreground'>
@@ -589,7 +584,7 @@ export const CustomReportGenerator: React.FC<CustomReportGeneratorProps> = ({
                             }}
                             className='flex h-auto flex-col items-start p-4'
                         >
-                            <Clock className='mb-2 h-5 w-5' />
+                            <Clock className='mb-2 size-5' />
                             <div className='text-left'>
                                 <div className='font-medium'>Pending Only</div>
                                 <div className='text-xs text-muted-foreground'>

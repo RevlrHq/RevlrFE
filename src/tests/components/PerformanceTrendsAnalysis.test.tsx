@@ -6,19 +6,11 @@ import { EventSummaryView } from '@/lib/api';
 
 // Mock Chart.js components
 jest.mock('react-chartjs-2', () => ({
-    Line: ({ data, options }: any) => (
-        <div
-            data-testid='line-chart'
-            data-chart-data={JSON.stringify(data)}
-            data-chart-options={JSON.stringify(options)}
-        />
+    Line: ({ data }: { data: unknown }) => (
+        <div data-testid='line-chart' data-chart-data={JSON.stringify(data)} />
     ),
-    Bar: ({ data, options }: any) => (
-        <div
-            data-testid='bar-chart'
-            data-chart-data={JSON.stringify(data)}
-            data-chart-options={JSON.stringify(options)}
-        />
+    Bar: ({ data }: { data: unknown }) => (
+        <div data-testid='bar-chart' data-chart-data={JSON.stringify(data)} />
     ),
 }));
 

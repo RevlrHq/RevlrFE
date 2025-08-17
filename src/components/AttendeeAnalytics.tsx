@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useTheme } from '../lib/ThemeContext';
 import { useAttendeeAnalytics } from '../hooks/useAttendeeAnalytics';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
@@ -25,7 +24,6 @@ interface AttendeeAnalyticsProps {
 const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
     className = '',
 }) => {
-    const { theme } = useTheme();
     const { analytics, loading, error, refetch } = useAttendeeAnalytics();
 
     const formatCurrency = (amount: number | undefined) => {
@@ -57,7 +55,7 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
                         {error}
                     </p>
                     <Button onClick={refetch} variant='outline'>
-                        <RefreshCw className='mr-2 h-4 w-4' />
+                        <RefreshCw className='mr-2 size-4' />
                         Try Again
                     </Button>
                 </div>
@@ -79,7 +77,7 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
                 <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4'>
                     {Array.from({ length: 4 }).map((_, index) => (
                         <Card key={index} className='p-6'>
-                            <Skeleton className='mb-4 h-6 w-6' />
+                            <Skeleton className='mb-4 size-6' />
                             <Skeleton className='mb-2 h-8 w-16' />
                             <Skeleton className='h-4 w-24' />
                         </Card>
@@ -110,7 +108,7 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
                                     key={index}
                                     className='flex items-center space-x-3'
                                 >
-                                    <Skeleton className='h-10 w-10 rounded-full' />
+                                    <Skeleton className='size-10 rounded-full' />
                                     <div className='flex-1'>
                                         <Skeleton className='mb-1 h-4 w-32' />
                                         <Skeleton className='h-3 w-24' />
@@ -129,7 +127,7 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
         return (
             <div className={`p-6 ${className}`}>
                 <div className='py-8 text-center'>
-                    <Users className='mx-auto mb-4 h-12 w-12 text-gray-400' />
+                    <Users className='mx-auto mb-4 size-12 text-gray-400' />
                     <p className='text-gray-600 dark:text-gray-400'>
                         No analytics data available
                     </p>
@@ -151,7 +149,7 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
                     </p>
                 </div>
                 <Button variant='outline' onClick={refetch}>
-                    <RefreshCw className='mr-2 h-4 w-4' />
+                    <RefreshCw className='mr-2 size-4' />
                     Refresh
                 </Button>
             </div>
@@ -161,7 +159,7 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
                 <Card className='p-6'>
                     <div className='flex items-center'>
                         <div className='rounded-lg bg-blue-100 p-2 dark:bg-blue-900'>
-                            <Users className='h-6 w-6 text-blue-600 dark:text-blue-400' />
+                            <Users className='size-6 text-blue-600 dark:text-blue-400' />
                         </div>
                         <div className='ml-4'>
                             <p className='text-sm font-medium text-gray-600 dark:text-gray-400'>
@@ -177,7 +175,7 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
                 <Card className='p-6'>
                     <div className='flex items-center'>
                         <div className='rounded-lg bg-green-100 p-2 dark:bg-green-900'>
-                            <UserPlus className='h-6 w-6 text-green-600 dark:text-green-400' />
+                            <UserPlus className='size-6 text-green-600 dark:text-green-400' />
                         </div>
                         <div className='ml-4'>
                             <p className='text-sm font-medium text-gray-600 dark:text-gray-400'>
@@ -193,7 +191,7 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
                 <Card className='p-6'>
                     <div className='flex items-center'>
                         <div className='rounded-lg bg-purple-100 p-2 dark:bg-purple-900'>
-                            <RotateCcw className='h-6 w-6 text-purple-600 dark:text-purple-400' />
+                            <RotateCcw className='size-6 text-purple-600 dark:text-purple-400' />
                         </div>
                         <div className='ml-4'>
                             <p className='text-sm font-medium text-gray-600 dark:text-gray-400'>
@@ -209,7 +207,7 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
                 <Card className='p-6'>
                     <div className='flex items-center'>
                         <div className='rounded-lg bg-yellow-100 p-2 dark:bg-yellow-900'>
-                            <DollarSign className='h-6 w-6 text-yellow-600 dark:text-yellow-400' />
+                            <DollarSign className='size-6 text-yellow-600 dark:text-yellow-400' />
                         </div>
                         <div className='ml-4'>
                             <p className='text-sm font-medium text-gray-600 dark:text-gray-400'>
@@ -233,7 +231,7 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
                         <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
                             Attendee Segments
                         </h3>
-                        <TrendingUp className='h-5 w-5 text-gray-400' />
+                        <TrendingUp className='size-5 text-gray-400' />
                     </div>
 
                     {analytics.attendeeSegments &&
@@ -282,7 +280,7 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
                         </div>
                     ) : (
                         <div className='py-8 text-center'>
-                            <Users className='mx-auto mb-2 h-8 w-8 text-gray-400' />
+                            <Users className='mx-auto mb-2 size-8 text-gray-400' />
                             <p className='text-gray-500 dark:text-gray-400'>
                                 No segment data available
                             </p>
@@ -296,7 +294,7 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
                         <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
                             Top Attendees
                         </h3>
-                        <Award className='h-5 w-5 text-gray-400' />
+                        <Award className='size-5 text-gray-400' />
                     </div>
 
                     {analytics.topAttendees &&
@@ -307,8 +305,8 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
                                     key={attendee.attendeeId}
                                     className='flex items-center space-x-3'
                                 >
-                                    <div className='flex-shrink-0'>
-                                        <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600'>
+                                    <div className='shrink-0'>
+                                        <div className='flex size-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600'>
                                             <span className='text-sm font-medium text-white'>
                                                 #{index + 1}
                                             </span>
@@ -319,20 +317,20 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
                                             {attendee.name}
                                         </p>
                                         <div className='flex items-center text-xs text-gray-500 dark:text-gray-400'>
-                                            <Mail className='mr-1 h-3 w-3' />
+                                            <Mail className='mr-1 size-3' />
                                             <span className='truncate'>
                                                 {attendee.email}
                                             </span>
                                         </div>
                                     </div>
-                                    <div className='flex-shrink-0 text-right'>
+                                    <div className='shrink-0 text-right'>
                                         <p className='text-sm font-medium text-gray-900 dark:text-white'>
                                             {formatCurrency(
                                                 attendee.totalSpent
                                             )}
                                         </p>
                                         <div className='flex items-center text-xs text-gray-500 dark:text-gray-400'>
-                                            <Calendar className='mr-1 h-3 w-3' />
+                                            <Calendar className='mr-1 size-3' />
                                             {formatNumber(
                                                 attendee.eventsAttended
                                             )}{' '}
@@ -344,7 +342,7 @@ const AttendeeAnalytics: React.FC<AttendeeAnalyticsProps> = ({
                         </div>
                     ) : (
                         <div className='py-8 text-center'>
-                            <Award className='mx-auto mb-2 h-8 w-8 text-gray-400' />
+                            <Award className='mx-auto mb-2 size-8 text-gray-400' />
                             <p className='text-gray-500 dark:text-gray-400'>
                                 No top attendees data available
                             </p>

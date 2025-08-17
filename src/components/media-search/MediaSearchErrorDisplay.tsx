@@ -350,13 +350,13 @@ export const MediaSearchErrorDisplay: React.FC<
     const getIcon = (severity: string) => {
         switch (severity) {
             case 'error':
-                return <AlertCircle className='h-5 w-5 text-red-500' />;
+                return <AlertCircle className='size-5 text-red-500' />;
             case 'warning':
-                return <AlertTriangle className='h-5 w-5 text-yellow-500' />;
+                return <AlertTriangle className='size-5 text-yellow-500' />;
             case 'info':
-                return <Info className='h-5 w-5 text-blue-500' />;
+                return <Info className='size-5 text-blue-500' />;
             default:
-                return <AlertCircle className='h-5 w-5 text-gray-500' />;
+                return <AlertCircle className='size-5 text-gray-500' />;
         }
     };
 
@@ -416,7 +416,7 @@ export const MediaSearchErrorDisplay: React.FC<
             >
                 <div className='flex items-center space-x-3'>
                     <div className='animate-spin'>
-                        <RefreshCw className='h-5 w-5 text-blue-500' />
+                        <RefreshCw className='size-5 text-blue-500' />
                     </div>
                     <div>
                         <h3
@@ -456,7 +456,7 @@ export const MediaSearchErrorDisplay: React.FC<
                                 className={`ml-2 rounded-full p-1 hover:bg-black/10 ${theme === 'dark' ? 'text-gray-400 hover:text-gray-300' : 'text-gray-500 hover:text-gray-700'}`}
                                 aria-label='Dismiss error'
                             >
-                                <X className='h-4 w-4' />
+                                <X className='size-4' />
                             </button>
                         )}
                     </div>
@@ -482,7 +482,7 @@ export const MediaSearchErrorDisplay: React.FC<
                         <div
                             className={`mt-2 flex items-center space-x-1 text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
                         >
-                            <Clock className='h-3 w-3' />
+                            <Clock className='size-3' />
                             <span>
                                 Retry available in {retryCountdown} seconds
                             </span>
@@ -508,13 +508,13 @@ export const MediaSearchErrorDisplay: React.FC<
                                     } disabled:cursor-not-allowed disabled:opacity-50`}
                                 >
                                     {action.action === 'retry' && (
-                                        <RefreshCw className='h-3 w-3' />
+                                        <RefreshCw className='size-3' />
                                     )}
                                     {action.action === 'configure' && (
-                                        <Settings className='h-3 w-3' />
+                                        <Settings className='size-3' />
                                     )}
                                     {action.action === 'learn_more' && (
-                                        <ExternalLink className='h-3 w-3' />
+                                        <ExternalLink className='size-3' />
                                     )}
                                     <span>{action.label}</span>
                                 </button>
@@ -530,9 +530,9 @@ export const MediaSearchErrorDisplay: React.FC<
                                 className={`flex items-center space-x-1 text-xs ${theme === 'dark' ? 'text-gray-400 hover:text-gray-300' : 'text-gray-600 hover:text-gray-700'}`}
                             >
                                 {showDetails ? (
-                                    <ChevronUp className='h-3 w-3' />
+                                    <ChevronUp className='size-3' />
                                 ) : (
-                                    <ChevronDown className='h-3 w-3' />
+                                    <ChevronDown className='size-3' />
                                 )}
                                 <span>
                                     {showDetails ? 'Hide' : 'Show'} details

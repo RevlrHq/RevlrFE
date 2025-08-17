@@ -3,8 +3,8 @@ import {
     OrganizerService,
     EventSummaryView,
     EventPerformanceView,
-    StandardResponseOfListOfEventSummaryView,
-    StandardResponseOfEventPerformanceView,
+    // StandardResponseOfListOfEventSummaryView,
+    // StandardResponseOfEventPerformanceView,
 } from '../lib/api';
 
 export interface EventPerformanceFilters {

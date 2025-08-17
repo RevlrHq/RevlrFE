@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Calendar, Image as ImageIcon } from 'lucide-react';
 
 interface LazyImageProps {
@@ -36,7 +37,6 @@ const LazyImage: React.FC<LazyImageProps> = ({
     priority = false,
     sizes,
 }) => {
-    const [isLoaded, setIsLoaded] = useState(false);
     const [isInView, setIsInView] = useState(priority);
     const [hasError, setHasError] = useState(false);
     const [currentSrc, setCurrentSrc] = useState<string | null>(
@@ -80,7 +80,6 @@ const LazyImage: React.FC<LazyImageProps> = ({
 
     // Handle image load
     const handleLoad = useCallback(() => {
-        setIsLoaded(true);
         setHasError(false);
         onLoad?.();
     }, [onLoad]);
@@ -96,16 +95,6 @@ const LazyImage: React.FC<LazyImageProps> = ({
         }
     }, [fallbackSrc, currentSrc, onError]);
 
-    // Default placeholder
-    const defaultPlaceholder = (
-        <div
-            className={`flex items-center justify-center bg-gray-200 dark:bg-gray-700 ${className}`}
-            style={{ width, height }}
-        >
-            <ImageIcon className='h-8 w-8 text-gray-400' />
-        </div>
-    );
-
     // Error state
     if (hasError && !fallbackSrc) {
         return (
@@ -114,7 +103,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
                 style={{ width, height }}
             >
                 <div className='text-center'>
-                    <ImageIcon className='mx-auto h-8 w-8 text-gray-400' />
+                    <ImageIcon className='mx-auto size-8 text-gray-400' />
                     <p className='mt-2 text-xs text-gray-500'>Failed to load</p>
                 </div>
             </div>
@@ -127,28 +116,33 @@ const LazyImage: React.FC<LazyImageProps> = ({
             style={{ width, height }}
         >
             {/* Placeholder */}
-            {!isLoaded && (placeholder || defaultPlaceholder)}
+            {!currentSrc &&
+                (placeholder || (
+                    <div
+                        className={`flex items-center justify-center bg-gray-200 dark:bg-gray-700 ${className}`}
+                        style={{ width, height }}
+                    >
+                        <ImageIcon className='size-8 text-gray-400' />
+                    </div>
+                ))}
 
             {/* Actual image */}
             {currentSrc && (
-                <img
+                <Image
                     ref={imgRef}
                     src={currentSrc}
                     alt={alt}
-                    className={`transition-opacity duration-300 ${
-                        isLoaded ? 'opacity-100' : 'opacity-0'
-                    } ${className}`}
+                    width={width || 0}
+                    height={height || 0}
+                    className={`transition-opacity duration-300 ${className}`}
                     style={{
                         width: '100%',
                         height: '100%',
                         objectFit,
-                        position: isLoaded ? 'static' : 'absolute',
-                        top: 0,
-                        left: 0,
                     }}
                     onLoad={handleLoad}
                     onError={handleError}
-                    loading={priority ? 'eager' : 'lazy'}
+                    priority={priority}
                     sizes={sizes}
                 />
             )}
@@ -182,7 +176,7 @@ export const EventThumbnail: React.FC<EventThumbnailProps> = ({
         <div
             className={`flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 ${sizeClasses[size]}`}
         >
-            <Calendar className='h-6 w-6 text-gray-400' />
+            <Calendar className='size-6 text-gray-400' />
         </div>
     );
 
@@ -229,7 +223,7 @@ export const EventBanner: React.FC<EventBannerProps> = ({
             className={`flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 ${aspectClasses[aspectRatio]}`}
         >
             <div className='text-center'>
-                <ImageIcon className='mx-auto h-12 w-12 text-gray-400' />
+                <ImageIcon className='mx-auto size-12 text-gray-400' />
                 <p className='mt-2 text-sm text-gray-500'>No image</p>
             </div>
         </div>
@@ -271,7 +265,7 @@ export const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
     priority = false,
 }) => {
     const [currentSrc, setCurrentSrc] = useState(srcSet.small);
-    const [isLoaded, setIsLoaded] = useState(false);
+    const [setIsLoaded] = useState(false);
 
     useEffect(() => {
         if (priority) {
@@ -319,16 +313,15 @@ export const BlurImage: React.FC<BlurImageProps> = ({
     className = '',
     priority = false,
 }) => {
-    const [isLoaded, setIsLoaded] = useState(false);
-
     return (
         <div className={`relative overflow-hidden ${className}`}>
             {/* Blur placeholder */}
-            {blurDataURL && !isLoaded && (
-                <img
+            {blurDataURL && (
+                <Image
                     src={blurDataURL}
                     alt=''
-                    className='absolute inset-0 h-full w-full scale-110 object-cover blur-sm'
+                    fill
+                    className='absolute inset-0 scale-110 object-cover blur-sm'
                     aria-hidden='true'
                 />
             )}
@@ -337,11 +330,10 @@ export const BlurImage: React.FC<BlurImageProps> = ({
             <LazyImage
                 src={src}
                 alt={alt}
-                className={`transition-all duration-700 ${
-                    isLoaded ? 'scale-100 blur-0' : 'scale-110 blur-sm'
-                }`}
+                className='scale-100 blur-0 transition-all duration-700'
                 priority={priority}
-                onLoad={() => setIsLoaded(true)}
+                width={400}
+                height={300}
             />
         </div>
     );

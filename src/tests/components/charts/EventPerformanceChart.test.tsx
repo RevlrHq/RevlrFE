@@ -16,7 +16,7 @@ jest.mock('chart.js', () => ({
 }));
 
 jest.mock('react-chartjs-2', () => ({
-    Bar: jest.fn(({ data, options }) => (
+    Bar: jest.fn(() => (
         <div
             data-testid='bar-chart'
             data-chart-type='bar'
@@ -126,7 +126,11 @@ describe('EventPerformanceChart', () => {
         const incompleteData = [
             { ...mockData[0], revenue: undefined, title: 'Event 1' },
             { ...mockData[1], revenue: 5000, title: 'Event 2' },
-            { ...mockData[2], revenue: null as any, title: 'Event 3' },
+            {
+                ...mockData[2],
+                revenue: null as number | null,
+                title: 'Event 3',
+            },
         ];
 
         render(<EventPerformanceChart data={incompleteData} />);
@@ -137,7 +141,7 @@ describe('EventPerformanceChart', () => {
     });
 
     it('handles null data gracefully', () => {
-        render(<EventPerformanceChart data={null as any} />);
+        render(<EventPerformanceChart data={null as never} />);
 
         expect(
             screen.getByText('No event performance data available')
@@ -145,7 +149,7 @@ describe('EventPerformanceChart', () => {
     });
 
     it('handles undefined data gracefully', () => {
-        render(<EventPerformanceChart data={undefined as any} />);
+        render(<EventPerformanceChart data={undefined as never} />);
 
         expect(
             screen.getByText('No event performance data available')

@@ -19,7 +19,6 @@ import {
     DollarSign,
     Calendar,
     BarChart3,
-    Download,
     RefreshCw,
     AlertCircle,
 } from 'lucide-react';
@@ -101,11 +100,11 @@ export const RevenueReporting: React.FC<RevenueReportingProps> = ({
         return (
             <div className={`space-y-4 ${className}`}>
                 <Alert variant='destructive'>
-                    <AlertCircle className='h-4 w-4' />
+                    <AlertCircle className='size-4' />
                     <AlertDescription>{error}</AlertDescription>
                 </Alert>
                 <Button onClick={handleRefresh} variant='outline'>
-                    <RefreshCw className='mr-2 h-4 w-4' />
+                    <RefreshCw className='mr-2 size-4' />
                     Retry
                 </Button>
             </div>
@@ -132,7 +131,7 @@ export const RevenueReporting: React.FC<RevenueReportingProps> = ({
                         disabled={loading}
                     >
                         <RefreshCw
-                            className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`}
+                            className={`mr-2 size-4 ${loading ? 'animate-spin' : ''}`}
                         />
                         Refresh
                     </Button>
@@ -146,7 +145,7 @@ export const RevenueReporting: React.FC<RevenueReportingProps> = ({
                         <CardTitle className='text-sm font-medium'>
                             Total Revenue
                         </CardTitle>
-                        <DollarSign className='h-4 w-4 text-muted-foreground' />
+                        <DollarSign className='size-4 text-muted-foreground' />
                     </CardHeader>
                     <CardContent>
                         {loading ? (
@@ -174,7 +173,7 @@ export const RevenueReporting: React.FC<RevenueReportingProps> = ({
                         <CardTitle className='text-sm font-medium'>
                             This Month
                         </CardTitle>
-                        <Calendar className='h-4 w-4 text-muted-foreground' />
+                        <Calendar className='size-4 text-muted-foreground' />
                     </CardHeader>
                     <CardContent>
                         {loading ? (
@@ -189,9 +188,9 @@ export const RevenueReporting: React.FC<RevenueReportingProps> = ({
                                 {revenueMetrics && (
                                     <div className='flex items-center text-xs'>
                                         {revenueMetrics.isGrowthPositive ? (
-                                            <TrendingUp className='mr-1 h-3 w-3 text-green-500' />
+                                            <TrendingUp className='mr-1 size-3 text-green-500' />
                                         ) : (
-                                            <TrendingDown className='mr-1 h-3 w-3 text-red-500' />
+                                            <TrendingDown className='mr-1 size-3 text-red-500' />
                                         )}
                                         <span
                                             className={
@@ -221,7 +220,7 @@ export const RevenueReporting: React.FC<RevenueReportingProps> = ({
                         <CardTitle className='text-sm font-medium'>
                             Pending Revenue
                         </CardTitle>
-                        <BarChart3 className='h-4 w-4 text-muted-foreground' />
+                        <BarChart3 className='size-4 text-muted-foreground' />
                     </CardHeader>
                     <CardContent>
                         {loading ? (
@@ -246,7 +245,7 @@ export const RevenueReporting: React.FC<RevenueReportingProps> = ({
                         <CardTitle className='text-sm font-medium'>
                             Refunded
                         </CardTitle>
-                        <TrendingDown className='h-4 w-4 text-muted-foreground' />
+                        <TrendingDown className='size-4 text-muted-foreground' />
                     </CardHeader>
                     <CardContent>
                         {loading ? (
@@ -332,7 +331,7 @@ export const RevenueReporting: React.FC<RevenueReportingProps> = ({
                                                     <div className='flex items-center gap-2'>
                                                         <Badge
                                                             variant='outline'
-                                                            className='flex h-6 w-6 items-center justify-center p-0 text-xs'
+                                                            className='flex size-6 items-center justify-center p-0 text-xs'
                                                         >
                                                             {index + 1}
                                                         </Badge>

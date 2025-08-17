@@ -126,7 +126,10 @@ export const EventPerformanceChart: React.FC<EventPerformanceChartProps> = ({
                 tooltip: {
                     ...baseOptions.plugins?.tooltip,
                     callbacks: {
-                        label: (context: any) => {
+                        label: (context: {
+                            dataset: { label?: string };
+                            parsed: { x: number };
+                        }) => {
                             const label = context.dataset.label || '';
                             const value = context.parsed.x;
 
@@ -164,7 +167,7 @@ export const EventPerformanceChart: React.FC<EventPerformanceChartProps> = ({
                     },
                     ticks: {
                         ...baseOptions.scales?.x?.ticks,
-                        callback: function (value: any) {
+                        callback: function (value: number) {
                             if (metric === 'revenue' || metric === 'both') {
                                 return formatCurrency(value);
                             }
@@ -205,7 +208,7 @@ export const EventPerformanceChart: React.FC<EventPerformanceChartProps> = ({
                                 size: 11,
                                 family: 'Inter, sans-serif',
                             },
-                            callback: function (value: any) {
+                            callback: function (value: number) {
                                 return formatNumber(value);
                             },
                         },

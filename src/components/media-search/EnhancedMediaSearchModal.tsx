@@ -427,7 +427,7 @@ export const EnhancedMediaSearchModal: React.FC<
                         {state.isLoading && !state.results && (
                             <div className='flex h-64 items-center justify-center'>
                                 <div className='text-center'>
-                                    <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
+                                    <div className='mx-auto mb-4 size-8 animate-spin rounded-full border-b-2 border-revlr-primary-blue'></div>
                                     <p
                                         className={`font-inter text-sm ${
                                             theme === 'dark'
@@ -606,7 +606,7 @@ export const EnhancedMediaSearchModal: React.FC<
                                 >
                                     {isProcessing ? (
                                         <div className='flex items-center justify-center space-x-2'>
-                                            <div className='h-4 w-4 animate-spin rounded-full border-b-2 border-white'></div>
+                                            <div className='size-4 animate-spin rounded-full border-b-2 border-white'></div>
                                             <span>
                                                 Processing...{' '}
                                                 {Math.round(processingProgress)}
@@ -678,7 +678,7 @@ const MediaCard: React.FC<MediaCardProps> = ({
 
             {/* Overlay with actions */}
             <div className='absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100'>
-                <div className='absolute bottom-2 left-2 right-2'>
+                <div className='absolute inset-x-2 bottom-2'>
                     <p className='truncate font-inter text-xs text-white'>
                         {item.title}
                     </p>

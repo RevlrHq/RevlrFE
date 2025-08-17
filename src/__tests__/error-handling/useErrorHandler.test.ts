@@ -125,10 +125,12 @@ describe('useErrorHandler', () => {
 
     describe('Retry Functionality', () => {
         it('should retry failed operations', async () => {
-            const {
-                RetryMechanism,
-            } = require('@/lib/error-handling/RetryMechanism');
-            RetryMechanism.retry.mockResolvedValue({ success: true });
+            const { RetryMechanism } = await import(
+                '@/lib/error-handling/RetryMechanism'
+            );
+            (RetryMechanism.retry as jest.Mock).mockResolvedValue({
+                success: true,
+            });
 
             const { result } = renderHook(() => useErrorHandler());
             const testError = new Error('Test error');
@@ -149,11 +151,11 @@ describe('useErrorHandler', () => {
         });
 
         it('should handle retry failures', async () => {
-            const {
-                RetryMechanism,
-            } = require('@/lib/error-handling/RetryMechanism');
+            const { RetryMechanism } = await import(
+                '@/lib/error-handling/RetryMechanism'
+            );
             const retryError = new Error('Retry failed');
-            RetryMechanism.retry.mockRejectedValue(retryError);
+            (RetryMechanism.retry as jest.Mock).mockRejectedValue(retryError);
 
             const { result } = renderHook(() => useErrorHandler());
             const testError = new Error('Test error');
@@ -181,10 +183,10 @@ describe('useErrorHandler', () => {
             });
 
             // Simulate failed retries
-            const {
-                RetryMechanism,
-            } = require('@/lib/error-handling/RetryMechanism');
-            RetryMechanism.retry.mockRejectedValue(testError);
+            const { RetryMechanism } = await import(
+                '@/lib/error-handling/RetryMechanism'
+            );
+            (RetryMechanism.retry as jest.Mock).mockRejectedValue(testError);
 
             await act(async () => {
                 await result.current.retry();
@@ -199,8 +201,10 @@ describe('useErrorHandler', () => {
     });
 
     describe('Error Logging Integration', () => {
-        it('should log errors with context', () => {
-            const { errorLogger } = require('@/lib/error-handling/ErrorLogger');
+        it('should log errors with context', async () => {
+            const { errorLogger } = await import(
+                '@/lib/error-handling/ErrorLogger'
+            );
             const { result } = renderHook(() =>
                 useErrorHandler({ component: 'TestComponent' })
             );
@@ -239,10 +243,12 @@ describe('useErrorHandler', () => {
             const { result } = renderHook(() => useErrorHandler({ onRetry }));
             const testError = new Error('Test error');
 
-            const {
-                RetryMechanism,
-            } = require('@/lib/error-handling/RetryMechanism');
-            RetryMechanism.retry.mockResolvedValue({ success: true });
+            const { RetryMechanism } = await import(
+                '@/lib/error-handling/RetryMechanism'
+            );
+            (RetryMechanism.retry as jest.Mock).mockResolvedValue({
+                success: true,
+            });
 
             act(() => {
                 result.current.handleError(testError);
@@ -262,10 +268,10 @@ describe('useErrorHandler', () => {
             );
             const testError = new Error('Test error');
 
-            const {
-                RetryMechanism,
-            } = require('@/lib/error-handling/RetryMechanism');
-            RetryMechanism.retry.mockRejectedValue(testError);
+            const { RetryMechanism } = await import(
+                '@/lib/error-handling/RetryMechanism'
+            );
+            (RetryMechanism.retry as jest.Mock).mockRejectedValue(testError);
 
             act(() => {
                 result.current.handleError(testError);
@@ -292,10 +298,12 @@ describe('useErrorHandler', () => {
             );
             const testError = new Error('Test error');
 
-            const {
-                RetryMechanism,
-            } = require('@/lib/error-handling/RetryMechanism');
-            RetryMechanism.retry.mockResolvedValue({ success: true });
+            const { RetryMechanism } = await import(
+                '@/lib/error-handling/RetryMechanism'
+            );
+            (RetryMechanism.retry as jest.Mock).mockResolvedValue({
+                success: true,
+            });
 
             act(() => {
                 result.current.handleError(testError);
@@ -329,8 +337,10 @@ describe('useApiErrorHandler', () => {
         expect(result.current.hasError).toBe(true);
     });
 
-    it('should use default component name when not provided', () => {
-        const { errorLogger } = require('@/lib/error-handling/ErrorLogger');
+    it('should use default component name when not provided', async () => {
+        const { errorLogger } = await import(
+            '@/lib/error-handling/ErrorLogger'
+        );
         const { result } = renderHook(() => useApiErrorHandler());
         const testError = new Error('API error');
 

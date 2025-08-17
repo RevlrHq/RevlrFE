@@ -40,59 +40,55 @@ interface ExportConfig {
 
 interface EventTableModalsProps {
     showFilters: boolean;
-    setShowFilters: (show: boolean) => void;
+    onCloseFilters: () => void;
     showBulkActionsModal: boolean;
-    setShowBulkActionsModal: (show: boolean) => void;
+    onCloseBulkActions: () => void;
     showExportModal: boolean;
-    setShowExportModal: (show: boolean) => void;
+    onCloseExport: () => void;
     showDuplicateModal: boolean;
-    setShowDuplicateModal: (show: boolean) => void;
+    onCloseDuplicate: () => void;
     filters: EventTableFilters;
-    handleFilterChange: (key: keyof EventTableFilters, value: any) => void;
-    clearFilters: () => void;
+    onFilterChange: (key: keyof EventTableFilters, value: unknown) => void;
+    onClearFilters: () => void;
     bulkActionConfig: BulkActionConfig;
-    setBulkActionConfig: React.Dispatch<React.SetStateAction<BulkActionConfig>>;
-    handleBulkAction: () => void;
-    selectedEvents: Set<string>;
+    onBulkActionConfigChange: React.Dispatch<
+        React.SetStateAction<BulkActionConfig>
+    >;
+    onBulkAction: () => void;
+    selectedEventsCount: number;
     exportConfig: ExportConfig;
-    setExportConfig: React.Dispatch<React.SetStateAction<ExportConfig>>;
-    handleExport: () => void;
-    handleDuplicateEvent: (data: EventDuplicationRequest) => void;
-    duplicateEventId: string | null;
-    setDuplicateEventId: (id: string | null) => void;
+    onExportConfigChange: React.Dispatch<React.SetStateAction<ExportConfig>>;
+    onExport: () => void;
+    onDuplicateEvent: (data: EventDuplicationRequest) => void;
     loading: boolean;
-    theme: string;
 }
 
 const EventTableModals: React.FC<EventTableModalsProps> = ({
     showFilters,
-    setShowFilters,
+    onCloseFilters,
     showBulkActionsModal,
-    setShowBulkActionsModal,
+    onCloseBulkActions,
     showExportModal,
-    setShowExportModal,
+    onCloseExport,
     showDuplicateModal,
-    setShowDuplicateModal,
+    onCloseDuplicate,
     filters,
-    handleFilterChange,
-    clearFilters,
+    onFilterChange,
+    onClearFilters,
     bulkActionConfig,
-    setBulkActionConfig,
-    handleBulkAction,
-    selectedEvents,
+    onBulkActionConfigChange,
+    onBulkAction,
+    selectedEventsCount,
     exportConfig,
-    setExportConfig,
-    handleExport,
-    handleDuplicateEvent,
-    duplicateEventId,
-    setDuplicateEventId,
+    onExportConfigChange,
+    onExport,
+    onDuplicateEvent,
     loading,
-    theme,
 }) => {
     return (
         <>
             {/* Filters Modal */}
-            <Dialog open={showFilters} onOpenChange={setShowFilters}>
+            <Dialog open={showFilters} onOpenChange={onCloseFilters}>
                 <DialogContent className='max-w-2xl'>
                     <DialogHeader>
                         <DialogTitle>Filter Events</DialogTitle>
@@ -109,7 +105,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                             <select
                                 value={filters.status}
                                 onChange={(e) =>
-                                    handleFilterChange('status', e.target.value)
+                                    onFilterChange('status', e.target.value)
                                 }
                                 className={`w-full rounded-lg border px-3 py-2 ${
                                     theme === 'dark'
@@ -132,10 +128,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                             <select
                                 value={filters.category}
                                 onChange={(e) =>
-                                    handleFilterChange(
-                                        'category',
-                                        e.target.value
-                                    )
+                                    onFilterChange('category', e.target.value)
                                 }
                                 className={`w-full rounded-lg border px-3 py-2 ${
                                     theme === 'dark'
@@ -162,10 +155,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                                 type='date'
                                 value={filters.startDate}
                                 onChange={(e) =>
-                                    handleFilterChange(
-                                        'startDate',
-                                        e.target.value
-                                    )
+                                    onFilterChange('startDate', e.target.value)
                                 }
                                 className={`w-full rounded-lg border px-3 py-2 ${
                                     theme === 'dark'
@@ -183,10 +173,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                                 type='date'
                                 value={filters.endDate}
                                 onChange={(e) =>
-                                    handleFilterChange(
-                                        'endDate',
-                                        e.target.value
-                                    )
+                                    onFilterChange('endDate', e.target.value)
                                 }
                                 className={`w-full rounded-lg border px-3 py-2 ${
                                     theme === 'dark'
@@ -207,7 +194,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                                         : filters.isVirtual.toString()
                                 }
                                 onChange={(e) =>
-                                    handleFilterChange(
+                                    onFilterChange(
                                         'isVirtual',
                                         e.target.value === ''
                                             ? null
@@ -237,7 +224,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                                         : filters.hasRegistrations.toString()
                                 }
                                 onChange={(e) =>
-                                    handleFilterChange(
+                                    onFilterChange(
                                         'hasRegistrations',
                                         e.target.value === ''
                                             ? null
@@ -266,7 +253,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                                 type='number'
                                 value={filters.minRevenue || ''}
                                 onChange={(e) =>
-                                    handleFilterChange(
+                                    onFilterChange(
                                         'minRevenue',
                                         e.target.value
                                             ? Number(e.target.value)
@@ -290,7 +277,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                                 type='number'
                                 value={filters.maxRevenue || ''}
                                 onChange={(e) =>
-                                    handleFilterChange(
+                                    onFilterChange(
                                         'maxRevenue',
                                         e.target.value
                                             ? Number(e.target.value)
@@ -308,12 +295,10 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                     </div>
 
                     <DialogFooter>
-                        <Button variant='outline' onClick={clearFilters}>
+                        <Button variant='outline' onClick={onClearFilters}>
                             Clear All
                         </Button>
-                        <Button onClick={() => setShowFilters(false)}>
-                            Apply Filters
-                        </Button>
+                        <Button onClick={onCloseFilters}>Apply Filters</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
@@ -321,14 +306,14 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
             {/* Bulk Actions Modal */}
             <Dialog
                 open={showBulkActionsModal}
-                onOpenChange={setShowBulkActionsModal}
+                onOpenChange={onCloseBulkActions}
             >
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Bulk Actions</DialogTitle>
                         <DialogDescription>
-                            Apply actions to {selectedEvents.size} selected
-                            event{selectedEvents.size !== 1 ? 's' : ''}
+                            Apply actions to {selectedEventsCount} selected
+                            event{selectedEventsCount !== 1 ? 's' : ''}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -340,7 +325,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                             <select
                                 value={bulkActionConfig.action}
                                 onChange={(e) =>
-                                    setBulkActionConfig((prev) => ({
+                                    onBulkActionConfigChange((prev) => ({
                                         ...prev,
                                         action: Number(e.target.value),
                                     }))
@@ -365,7 +350,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                                 <select
                                     value={bulkActionConfig.newStatus || ''}
                                     onChange={(e) =>
-                                        setBulkActionConfig((prev) => ({
+                                        onBulkActionConfigChange((prev) => ({
                                             ...prev,
                                             newStatus: Number(e.target.value),
                                         }))
@@ -392,7 +377,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                             <textarea
                                 value={bulkActionConfig.reason || ''}
                                 onChange={(e) =>
-                                    setBulkActionConfig((prev) => ({
+                                    onBulkActionConfigChange((prev) => ({
                                         ...prev,
                                         reason: e.target.value,
                                     }))
@@ -409,13 +394,10 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                     </div>
 
                     <DialogFooter>
-                        <Button
-                            variant='outline'
-                            onClick={() => setShowBulkActionsModal(false)}
-                        >
+                        <Button variant='outline' onClick={onCloseBulkActions}>
                             Cancel
                         </Button>
-                        <Button onClick={handleBulkAction} disabled={loading}>
+                        <Button onClick={onBulkAction} disabled={loading}>
                             {loading ? 'Processing...' : 'Apply Action'}
                         </Button>
                     </DialogFooter>
@@ -423,7 +405,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
             </Dialog>
 
             {/* Export Modal */}
-            <Dialog open={showExportModal} onOpenChange={setShowExportModal}>
+            <Dialog open={showExportModal} onOpenChange={onCloseExport}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Export Events</DialogTitle>
@@ -440,7 +422,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                             <select
                                 value={exportConfig.format}
                                 onChange={(e) =>
-                                    setExportConfig((prev) => ({
+                                    onExportConfigChange((prev) => ({
                                         ...prev,
                                         format: e.target.value as
                                             | 'csv'
@@ -500,23 +482,27 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                                             )}
                                             onCheckedChange={(checked) => {
                                                 if (checked) {
-                                                    setExportConfig((prev) => ({
-                                                        ...prev,
-                                                        includeFields: [
-                                                            ...prev.includeFields,
-                                                            field.key,
-                                                        ],
-                                                    }));
+                                                    onExportConfigChange(
+                                                        (prev) => ({
+                                                            ...prev,
+                                                            includeFields: [
+                                                                ...prev.includeFields,
+                                                                field.key,
+                                                            ],
+                                                        })
+                                                    );
                                                 } else {
-                                                    setExportConfig((prev) => ({
-                                                        ...prev,
-                                                        includeFields:
-                                                            prev.includeFields.filter(
-                                                                (f) =>
-                                                                    f !==
-                                                                    field.key
-                                                            ),
-                                                    }));
+                                                    onExportConfigChange(
+                                                        (prev) => ({
+                                                            ...prev,
+                                                            includeFields:
+                                                                prev.includeFields.filter(
+                                                                    (f) =>
+                                                                        f !==
+                                                                        field.key
+                                                                ),
+                                                        })
+                                                    );
                                                 }
                                             }}
                                         />
@@ -530,14 +516,11 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                     </div>
 
                     <DialogFooter>
-                        <Button
-                            variant='outline'
-                            onClick={() => setShowExportModal(false)}
-                        >
+                        <Button variant='outline' onClick={onCloseExport}>
                             Cancel
                         </Button>
                         <Button
-                            onClick={handleExport}
+                            onClick={onExport}
                             disabled={
                                 loading ||
                                 exportConfig.includeFields.length === 0
@@ -550,10 +533,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
             </Dialog>
 
             {/* Duplicate Event Modal */}
-            <Dialog
-                open={showDuplicateModal}
-                onOpenChange={setShowDuplicateModal}
-            >
+            <Dialog open={showDuplicateModal} onOpenChange={onCloseDuplicate}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Duplicate Event</DialogTitle>
@@ -563,13 +543,9 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
                     </DialogHeader>
 
                     <DuplicateEventForm
-                        onSubmit={handleDuplicateEvent}
-                        onCancel={() => {
-                            setShowDuplicateModal(false);
-                            setDuplicateEventId(null);
-                        }}
+                        onSubmit={onDuplicateEvent}
+                        onCancel={onCloseDuplicate}
                         loading={loading}
-                        theme={theme}
                     />
                 </DialogContent>
             </Dialog>
@@ -582,14 +558,12 @@ interface DuplicateEventFormProps {
     onSubmit: (data: EventDuplicationRequest) => void;
     onCancel: () => void;
     loading: boolean;
-    theme: string;
 }
 
 const DuplicateEventForm: React.FC<DuplicateEventFormProps> = ({
     onSubmit,
     onCancel,
     loading,
-    theme,
 }) => {
     const [formData, setFormData] = useState<EventDuplicationRequest>({
         newTitle: '',

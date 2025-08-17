@@ -2,11 +2,11 @@ import Image from 'next/image';
 import { EventView } from '../../../lib/services/models/EventView';
 import { getEventLocation, getEventImage } from '../../../lib/utils/eventUtils';
 
-interface EnhancedEventHeaderProps {
+interface EventHeaderProps {
     event: EventView;
 }
 
-const EnhancedEventHeader = ({ event }: EnhancedEventHeaderProps) => {
+const EventHeader = ({ event }: EventHeaderProps) => {
     const eventLocation = getEventLocation(event);
     const eventImage = getEventImage(event);
 
@@ -286,4 +286,4 @@ const EnhancedEventHeader = ({ event }: EnhancedEventHeaderProps) => {
     );
 };
 
-export default EnhancedEventHeader;
+export default EventHeader;

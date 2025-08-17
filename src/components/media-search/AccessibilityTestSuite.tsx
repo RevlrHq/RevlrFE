@@ -380,7 +380,7 @@ export const AccessibilityTestSuite: React.FC<AccessibilityTestSuiteProps> = ({
         let hasVisibleFocus = true;
         let details = '';
 
-        focusableElements.forEach((el, index) => {
+        focusableElements.forEach((el) => {
             const htmlEl = el as HTMLElement;
             htmlEl.focus();
 
@@ -460,10 +460,11 @@ export const AccessibilityTestSuite: React.FC<AccessibilityTestSuiteProps> = ({
         };
     };
 
-    const testKeyboardShortcuts = async (
-        element: HTMLElement
-    ): Promise<{ status: AccessibilityTest['status']; details?: string }> => {
-        // const interactiveElements = element.querySelectorAll(
+    const testKeyboardShortcuts = async (): Promise<{
+        status: AccessibilityTest['status'];
+        details?: string;
+    }> => {
+        // const interactiveElements = _element.querySelectorAll(
         //     'button, [role="button"], input, select, textarea'
         // );
         // Check for keyboard handlers - simplified for build
@@ -493,7 +494,7 @@ export const AccessibilityTestSuite: React.FC<AccessibilityTestSuiteProps> = ({
         let missingLabels = 0;
         let details = '';
 
-        interactiveElements.forEach((el, index) => {
+        interactiveElements.forEach((el) => {
             const hasAriaLabel = el.hasAttribute('aria-label');
             const hasAriaLabelledBy = el.hasAttribute('aria-labelledby');
             const hasTitle = el.hasAttribute('title');
@@ -590,10 +591,10 @@ export const AccessibilityTestSuite: React.FC<AccessibilityTestSuiteProps> = ({
         );
         let lowContrastCount = 0;
 
-        textElements.forEach((el) => {
-            const computedStyle = window.getComputedStyle(el);
-            const color = computedStyle.color;
-            const _backgroundColor = computedStyle.backgroundColor;
+        textElements.forEach((_el) => {
+            const computedStyle = window.getComputedStyle(_el);
+            void computedStyle.color;
+            void computedStyle.backgroundColor;
 
             // Simple heuristic - this would need proper contrast calculation in real implementation
             if (color === 'rgb(128, 128, 128)' || color.includes('gray')) {
@@ -633,8 +634,8 @@ export const AccessibilityTestSuite: React.FC<AccessibilityTestSuiteProps> = ({
         );
         let relativeUnitsCount = 0;
 
-        textElements.forEach((el) => {
-            const computedStyle = window.getComputedStyle(el);
+        textElements.forEach((_el) => {
+            const computedStyle = window.getComputedStyle(_el);
             const fontSize = computedStyle.fontSize;
 
             if (
@@ -657,9 +658,10 @@ export const AccessibilityTestSuite: React.FC<AccessibilityTestSuiteProps> = ({
         };
     };
 
-    const testHighContrast = async (
-        element: HTMLElement
-    ): Promise<{ status: AccessibilityTest['status']; details?: string }> => {
+    const testHighContrast = async (): Promise<{
+        status: AccessibilityTest['status'];
+        details?: string;
+    }> => {
         const supportsHighContrast = window.matchMedia(
             '(prefers-contrast: high)'
         ).matches;
@@ -713,9 +715,10 @@ export const AccessibilityTestSuite: React.FC<AccessibilityTestSuiteProps> = ({
         };
     };
 
-    const testMotionActuation = async (
-        _element: HTMLElement
-    ): Promise<{ status: AccessibilityTest['status']; details?: string }> => {
+    const testMotionActuation = async (): Promise<{
+        status: AccessibilityTest['status'];
+        details?: string;
+    }> => {
         // This would require checking for motion-based controls
         return {
             status: 'info',
@@ -741,9 +744,10 @@ export const AccessibilityTestSuite: React.FC<AccessibilityTestSuiteProps> = ({
         };
     };
 
-    const testTimeoutWarnings = async (
-        _element: HTMLElement
-    ): Promise<{ status: AccessibilityTest['status']; details?: string }> => {
+    const testTimeoutWarnings = async (): Promise<{
+        status: AccessibilityTest['status'];
+        details?: string;
+    }> => {
         // This would require checking for timeout implementations
         return {
             status: 'info',
@@ -909,7 +913,7 @@ export const AccessibilityTestSuite: React.FC<AccessibilityTestSuiteProps> = ({
                         >
                             {isRunning ? (
                                 <>
-                                    <div className='h-4 w-4 animate-spin rounded-full border-b-2 border-white' />
+                                    <div className='size-4 animate-spin rounded-full border-b-2 border-white' />
                                     <span>Running Tests...</span>
                                 </>
                             ) : (
@@ -960,7 +964,7 @@ export const AccessibilityTestSuite: React.FC<AccessibilityTestSuiteProps> = ({
                     {/* Statistics */}
                     <div className='mt-4 flex flex-wrap gap-4'>
                         <div className='flex items-center space-x-2'>
-                            <div className='h-3 w-3 rounded-full bg-green-500' />
+                            <div className='size-3 rounded-full bg-green-500' />
                             <span
                                 className={`font-inter text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
                             >
@@ -968,7 +972,7 @@ export const AccessibilityTestSuite: React.FC<AccessibilityTestSuiteProps> = ({
                             </span>
                         </div>
                         <div className='flex items-center space-x-2'>
-                            <div className='h-3 w-3 rounded-full bg-red-500' />
+                            <div className='size-3 rounded-full bg-red-500' />
                             <span
                                 className={`font-inter text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
                             >
@@ -976,7 +980,7 @@ export const AccessibilityTestSuite: React.FC<AccessibilityTestSuiteProps> = ({
                             </span>
                         </div>
                         <div className='flex items-center space-x-2'>
-                            <div className='h-3 w-3 rounded-full bg-yellow-500' />
+                            <div className='size-3 rounded-full bg-yellow-500' />
                             <span
                                 className={`font-inter text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
                             >
@@ -984,7 +988,7 @@ export const AccessibilityTestSuite: React.FC<AccessibilityTestSuiteProps> = ({
                             </span>
                         </div>
                         <div className='flex items-center space-x-2'>
-                            <div className='h-3 w-3 rounded-full bg-gray-500' />
+                            <div className='size-3 rounded-full bg-gray-500' />
                             <span
                                 className={`font-inter text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}
                             >

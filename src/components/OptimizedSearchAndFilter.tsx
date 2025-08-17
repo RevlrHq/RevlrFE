@@ -2,7 +2,6 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { useDebouncedValue, useAdvancedDebounce } from '../hooks/useDebounce';
-import { useTheme } from '../lib/ThemeContext';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import {
@@ -21,7 +20,6 @@ import {
     Users,
     Tag,
     MapPin,
-    Clock,
     RefreshCw,
 } from 'lucide-react';
 
@@ -61,7 +59,6 @@ const OptimizedSearchAndFilter: React.FC<OptimizedSearchAndFilterProps> = ({
     showAdvancedFilters = true,
     className = '',
 }) => {
-    const { theme } = useTheme();
     const [showFilters, setShowFilters] = useState(false);
     const [localSearchTerm, setLocalSearchTerm] = useState(filters.searchTerm);
 
@@ -86,9 +83,9 @@ const OptimizedSearchAndFilter: React.FC<OptimizedSearchAndFilterProps> = ({
 
     // Optimized filter change handler
     const handleFilterChange = useCallback(
-        (key: keyof SearchFilters, value: any) => {
+        (key: keyof SearchFilters, value: string | number | boolean | null) => {
             if (key === 'searchTerm') {
-                setLocalSearchTerm(value);
+                setLocalSearchTerm(value as string);
             } else {
                 debouncedFilterChange({ [key]: value });
             }
@@ -140,13 +137,13 @@ const OptimizedSearchAndFilter: React.FC<OptimizedSearchAndFilterProps> = ({
             <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
                 {/* Search input */}
                 <div className='relative max-w-md flex-1'>
-                    <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400' />
+                    <Search className='absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400' />
                     <Input
                         type='text'
                         placeholder={placeholder}
                         value={localSearchTerm}
                         onChange={(e) => setLocalSearchTerm(e.target.value)}
-                        className='pl-10 pr-10'
+                        className='px-10'
                         disabled={isLoading}
                     />
                     {localSearchTerm && (
@@ -155,10 +152,10 @@ const OptimizedSearchAndFilter: React.FC<OptimizedSearchAndFilterProps> = ({
                                 setLocalSearchTerm('');
                                 handleFilterChange('searchTerm', '');
                             }}
-                            className='absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-400 hover:text-gray-600'
+                            className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600'
                             disabled={isLoading}
                         >
-                            <X className='h-4 w-4' />
+                            <X className='size-4' />
                         </button>
                     )}
                 </div>
@@ -177,7 +174,7 @@ const OptimizedSearchAndFilter: React.FC<OptimizedSearchAndFilterProps> = ({
                                     className='flex items-center gap-2'
                                     disabled={isLoading}
                                 >
-                                    <Filter className='h-4 w-4' />
+                                    <Filter className='size-4' />
                                     Filters
                                     {activeFilterCount > 0 && (
                                         <span className='ml-1 rounded-full bg-blue-500 px-2 py-0.5 text-xs text-white'>
@@ -208,7 +205,7 @@ const OptimizedSearchAndFilter: React.FC<OptimizedSearchAndFilterProps> = ({
                             className='flex items-center gap-2'
                         >
                             <RefreshCw
-                                className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
+                                className={`size-4 ${isLoading ? 'animate-spin' : ''}`}
                             />
                             Refresh
                         </Button>
@@ -222,7 +219,7 @@ const OptimizedSearchAndFilter: React.FC<OptimizedSearchAndFilterProps> = ({
                             disabled={isLoading}
                             className='flex items-center gap-2'
                         >
-                            <X className='h-4 w-4' />
+                            <X className='size-4' />
                             Clear All
                         </Button>
                     )}
@@ -303,14 +300,16 @@ const OptimizedSearchAndFilter: React.FC<OptimizedSearchAndFilterProps> = ({
 // Advanced filters component
 interface AdvancedFiltersProps {
     filters: SearchFilters;
-    onFilterChange: (key: keyof SearchFilters, value: any) => void;
+    onFilterChange: (
+        key: keyof SearchFilters,
+        value: string | number | boolean | null
+    ) => void;
     onClearFilter: (key: keyof SearchFilters) => void;
 }
 
 const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
     filters,
     onFilterChange,
-    onClearFilter,
 }) => {
     return (
         <div className='space-y-6'>
@@ -318,7 +317,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 <div>
                     <label className='mb-2 block text-sm font-medium'>
-                        <Tag className='mr-2 inline h-4 w-4' />
+                        <Tag className='mr-2 inline size-4' />
                         Event Status
                     </label>
                     <select
@@ -338,7 +337,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
                 <div>
                     <label className='mb-2 block text-sm font-medium'>
-                        <Tag className='mr-2 inline h-4 w-4' />
+                        <Tag className='mr-2 inline size-4' />
                         Category
                     </label>
                     <Input
@@ -356,7 +355,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 <div>
                     <label className='mb-2 block text-sm font-medium'>
-                        <Calendar className='mr-2 inline h-4 w-4' />
+                        <Calendar className='mr-2 inline size-4' />
                         Start Date From
                     </label>
                     <Input
@@ -370,7 +369,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
                 <div>
                     <label className='mb-2 block text-sm font-medium'>
-                        <Calendar className='mr-2 inline h-4 w-4' />
+                        <Calendar className='mr-2 inline size-4' />
                         Start Date To
                     </label>
                     <Input
@@ -387,7 +386,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 <div>
                     <label className='mb-2 block text-sm font-medium'>
-                        <DollarSign className='mr-2 inline h-4 w-4' />
+                        <DollarSign className='mr-2 inline size-4' />
                         Minimum Revenue
                     </label>
                     <Input
@@ -405,7 +404,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
                 <div>
                     <label className='mb-2 block text-sm font-medium'>
-                        <DollarSign className='mr-2 inline h-4 w-4' />
+                        <DollarSign className='mr-2 inline size-4' />
                         Maximum Revenue
                     </label>
                     <Input
@@ -426,7 +425,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 <div>
                     <label className='mb-2 block text-sm font-medium'>
-                        <Users className='mr-2 inline h-4 w-4' />
+                        <Users className='mr-2 inline size-4' />
                         Minimum Registrations
                     </label>
                     <Input
@@ -444,7 +443,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
                 <div>
                     <label className='mb-2 block text-sm font-medium'>
-                        <Users className='mr-2 inline h-4 w-4' />
+                        <Users className='mr-2 inline size-4' />
                         Maximum Registrations
                     </label>
                     <Input
@@ -464,7 +463,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
             {/* Venue */}
             <div>
                 <label className='mb-2 block text-sm font-medium'>
-                    <MapPin className='mr-2 inline h-4 w-4' />
+                    <MapPin className='mr-2 inline size-4' />
                     Venue
                 </label>
                 <Input
@@ -526,7 +525,7 @@ const FilterChip: React.FC<FilterChipProps> = ({ label, onRemove }) => (
             onClick={onRemove}
             className='ml-1 hover:text-blue-600 dark:hover:text-blue-300'
         >
-            <X className='h-3 w-3' />
+            <X className='size-3' />
         </button>
     </span>
 );

@@ -5,32 +5,21 @@ import { useTheme } from '../lib/ThemeContext';
 import { useAuthStore } from '../stores/authStore';
 import { useOrganizerDashboard } from '../hooks/useOrganizerDashboard';
 import { useAccessibility } from '../hooks/useAccessibility';
-import { EventSummaryView, EventStatus } from '../lib/api';
+import { EventStatus } from '../lib/api';
 import Link from 'next/link';
 import {
     Calendar,
     DollarSign,
-    Users,
     TrendingUp,
-    Eye,
-    Clock,
-    MapPin,
     Star,
-    ArrowUpRight,
     Plus,
     Download,
     Bell,
     Settings,
     User,
-    AlertCircle,
     RefreshCw,
-    Menu,
-    X,
-    ChevronDown,
-    Home,
-    BarChart3,
 } from 'lucide-react';
-import { Skeleton, CardSkeleton } from './LoadingStates';
+import { Skeleton } from './LoadingStates';
 import StatisticsOverview from './StatisticsOverview';
 import EventPerformanceAnalytics from './EventPerformanceAnalytics';
 
@@ -58,15 +47,12 @@ const AccessibleDashboard: React.FC<AccessibleDashboardProps> = ({
 
     // Enhanced accessibility
     const {
-        state: accessibilityState,
-        keyboardNavigation,
         focusManagement,
         screenReader,
         announceLoading,
         announceError,
         announceSuccess,
         announceDataChange,
-        announceNavigation,
         createButtonProps,
         getAriaAttributes,
     } = useAccessibility({
@@ -227,23 +213,13 @@ const AccessibleDashboard: React.FC<AccessibleDashboardProps> = ({
         );
     };
 
-    // Handle mobile menu toggle
-    const handleMobileMenuToggle = () => {
-        const newState = !showMobileMenu;
-        setShowMobileMenu(newState);
-        screenReader.announceModal(
-            newState ? 'opened' : 'closed',
-            'Mobile menu'
-        );
-    };
-
     // Handle refresh
     const handleRefresh = async () => {
         announceLoading('Refreshing dashboard data');
         try {
             await refetch();
             announceSuccess('Dashboard data refreshed');
-        } catch (err) {
+        } catch {
             announceError('Failed to refresh dashboard data');
         }
     };

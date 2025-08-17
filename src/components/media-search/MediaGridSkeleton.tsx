@@ -85,7 +85,7 @@ const MediaCardSkeleton: React.FC<MediaCardSkeletonProps> = ({
                 </div>
 
                 {/* Bottom info skeleton */}
-                <div className='absolute bottom-2 left-2 right-2'>
+                <div className='absolute inset-x-2 bottom-2'>
                     <div
                         className={`mb-1 h-3 w-3/4 rounded ${
                             theme === 'dark'

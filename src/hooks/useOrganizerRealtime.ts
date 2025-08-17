@@ -1,12 +1,7 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useSignalRStore } from '@/lib/signalR';
 import { useToast } from './use-toast';
-import type {
-    OrganizerDashboardView,
-    EventSummaryView,
-    EventRegistrationSummary,
-    EventStatus,
-} from '@/lib/api';
+import type { EventRegistrationSummary, EventStatus } from '@/lib/api';
 
 // Real-time update types
 export interface DashboardMetricUpdate {
@@ -102,7 +97,7 @@ export const useOrganizerRealtime = (
         organizerId,
         enableNotifications = true,
         enableToasts = true,
-        notificationPriority = 'medium',
+        // notificationPriority = 'medium',
     } = options;
 
     const { connection, isConnected, connect } = useSignalRStore();

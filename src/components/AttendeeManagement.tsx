@@ -1,12 +1,8 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { useTheme } from '../lib/ThemeContext';
 import { AttendeeView } from '../lib/api';
-import {
-    useOrganizerAttendees,
-    AttendeeFilters,
-} from '../hooks/useOrganizerAttendees';
+import { useOrganizerAttendees } from '../hooks/useOrganizerAttendees';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import {
@@ -22,7 +18,6 @@ import {
     RefreshCw,
     Calendar,
     DollarSign,
-    User,
     Mail,
     FileText,
     ChevronLeft,
@@ -44,7 +39,6 @@ interface AttendeeManagementProps {
 const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
     className = '',
 }) => {
-    const { theme } = useTheme();
     const [searchTerm, setSearchTerm] = useState('');
     const [showExportModal, setShowExportModal] = useState(false);
     const [sortBy, setSortBy] = useState<string>('lastRegistration');
@@ -122,11 +116,11 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
 
     const getSortIcon = useCallback(
         (field: string) => {
-            if (sortBy !== field) return <ArrowUpDown className='h-4 w-4' />;
+            if (sortBy !== field) return <ArrowUpDown className='size-4' />;
             return sortOrder === 'asc' ? (
-                <ArrowUp className='h-4 w-4' />
+                <ArrowUp className='size-4' />
             ) : (
-                <ArrowDown className='h-4 w-4' />
+                <ArrowDown className='size-4' />
             );
         },
         [sortBy, sortOrder]
@@ -166,7 +160,7 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
                         {error}
                     </p>
                     <Button onClick={refetch} variant='outline'>
-                        <RefreshCw className='mr-2 h-4 w-4' />
+                        <RefreshCw className='mr-2 size-4' />
                         Try Again
                     </Button>
                 </div>
@@ -191,11 +185,11 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
                         variant='outline'
                         onClick={() => setShowExportModal(true)}
                     >
-                        <Download className='mr-2 h-4 w-4' />
+                        <Download className='mr-2 size-4' />
                         Export
                     </Button>
                     <Button variant='outline' onClick={refetch}>
-                        <RefreshCw className='mr-2 h-4 w-4' />
+                        <RefreshCw className='mr-2 size-4' />
                         Refresh
                     </Button>
                 </div>
@@ -204,7 +198,7 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
             {/* Search and Stats */}
             <div className='flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center'>
                 <div className='relative max-w-md flex-1'>
-                    <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400' />
+                    <Search className='absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400' />
                     <Input
                         placeholder='Search attendees...'
                         value={searchTerm}
@@ -314,7 +308,7 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
                                         className='px-6 py-12 text-center'
                                     >
                                         <div className='text-gray-500 dark:text-gray-400'>
-                                            <Users className='mx-auto mb-4 h-12 w-12 opacity-50' />
+                                            <Users className='mx-auto mb-4 size-12 opacity-50' />
                                             <p className='mb-2 text-lg font-medium'>
                                                 No attendees found
                                             </p>
@@ -335,8 +329,8 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
                                         >
                                             <td className='whitespace-nowrap px-6 py-4'>
                                                 <div className='flex items-center'>
-                                                    <div className='h-10 w-10 flex-shrink-0'>
-                                                        <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600'>
+                                                    <div className='size-10 shrink-0'>
+                                                        <div className='flex size-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600'>
                                                             <span className='text-sm font-medium text-white'>
                                                                 {attendee.firstName?.charAt(
                                                                     0
@@ -353,7 +347,7 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
                                                             {attendee.lastName}
                                                         </div>
                                                         <div className='flex items-center text-sm text-gray-500 dark:text-gray-400'>
-                                                            <Mail className='mr-1 h-3 w-3' />
+                                                            <Mail className='mr-1 size-3' />
                                                             {attendee.email}
                                                         </div>
                                                     </div>
@@ -361,7 +355,7 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
                                             </td>
                                             <td className='whitespace-nowrap px-6 py-4'>
                                                 <div className='flex items-center text-sm font-medium text-gray-900 dark:text-white'>
-                                                    <Calendar className='mr-1 h-3 w-3' />
+                                                    <Calendar className='mr-1 size-3' />
                                                     {formatNumber(
                                                         attendee.eventsAttended
                                                     )}
@@ -369,7 +363,7 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
                                             </td>
                                             <td className='whitespace-nowrap px-6 py-4'>
                                                 <div className='flex items-center text-sm font-medium text-gray-900 dark:text-white'>
-                                                    <DollarSign className='mr-1 h-3 w-3' />
+                                                    <DollarSign className='mr-1 size-3' />
                                                     {formatCurrency(
                                                         attendee.totalSpent
                                                     )}
@@ -394,10 +388,10 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
                                                     className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getRankColor(rank)}`}
                                                 >
                                                     {rank === 'VIP' && (
-                                                        <Award className='mr-1 h-3 w-3' />
+                                                        <Award className='mr-1 size-3' />
                                                     )}
                                                     {rank === 'Frequent' && (
-                                                        <TrendingUp className='mr-1 h-3 w-3' />
+                                                        <TrendingUp className='mr-1 size-3' />
                                                     )}
                                                     {rank}
                                                 </span>
@@ -494,9 +488,9 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
                                             handlePageChange(currentPage - 1)
                                         }
                                         disabled={!hasPreviousPage}
-                                        className='relative inline-flex items-center rounded-l-md px-2 py-2'
+                                        className='relative inline-flex items-center rounded-l-md p-2'
                                     >
-                                        <ChevronLeft className='h-5 w-5' />
+                                        <ChevronLeft className='size-5' />
                                     </Button>
 
                                     {Array.from(
@@ -530,9 +524,9 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
                                             handlePageChange(currentPage + 1)
                                         }
                                         disabled={!hasNextPage}
-                                        className='relative inline-flex items-center rounded-r-md px-2 py-2'
+                                        className='relative inline-flex items-center rounded-r-md p-2'
                                     >
-                                        <ChevronRight className='h-5 w-5' />
+                                        <ChevronRight className='size-5' />
                                     </Button>
                                 </nav>
                             </div>
@@ -556,7 +550,7 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
                             className='w-full justify-start'
                             variant='outline'
                         >
-                            <FileText className='mr-2 h-4 w-4' />
+                            <FileText className='mr-2 size-4' />
                             Export as CSV
                         </Button>
                         <Button
@@ -564,7 +558,7 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
                             className='w-full justify-start'
                             variant='outline'
                         >
-                            <FileText className='mr-2 h-4 w-4' />
+                            <FileText className='mr-2 size-4' />
                             Export as Excel
                         </Button>
                         <Button
@@ -572,7 +566,7 @@ const AttendeeManagement: React.FC<AttendeeManagementProps> = ({
                             className='w-full justify-start'
                             variant='outline'
                         >
-                            <FileText className='mr-2 h-4 w-4' />
+                            <FileText className='mr-2 size-4' />
                             Export as PDF
                         </Button>
                     </div>
