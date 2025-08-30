@@ -12,3 +12,4 @@ export type StandardResponseOfEventRegistrationView = {
     errors?: any;
     timestamp?: string;
 };
+

@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 export type EventTicketView = {
     id?: string;
     name?: string;
@@ -14,3 +14,4 @@ export type EventTicketView = {
     dateCreated?: string;
     dateUpdated?: string | null;
 };
+

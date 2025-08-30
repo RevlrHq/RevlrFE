@@ -12,3 +12,4 @@ export type StandardResponseOfPagedCollectionOfEventRegistrationSummary = {
     errors?: any;
     timestamp?: string;
 };
+

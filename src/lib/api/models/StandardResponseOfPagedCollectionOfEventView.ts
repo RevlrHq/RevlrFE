@@ -12,3 +12,4 @@ export type StandardResponseOfPagedCollectionOfEventView = {
     errors?: any;
     timestamp?: string;
 };
+

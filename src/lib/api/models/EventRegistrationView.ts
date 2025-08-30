@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 import type { FinancingApplicationSummary } from './FinancingApplicationSummary';
 export type EventRegistrationView = {
     id?: string;
@@ -27,3 +27,4 @@ export type EventRegistrationView = {
     isNewUserRegistration?: boolean;
     verificationEmailSent?: boolean;
 };
+

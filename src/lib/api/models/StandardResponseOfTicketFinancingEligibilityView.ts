@@ -12,3 +12,4 @@ export type StandardResponseOfTicketFinancingEligibilityView = {
     errors?: any;
     timestamp?: string;
 };
+

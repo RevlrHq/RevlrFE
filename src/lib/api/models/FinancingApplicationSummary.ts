@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 import type { FinancingStatus } from './FinancingStatus';
 import type { PaymentFrequency } from './PaymentFrequency';
 export type FinancingApplicationSummary = {
@@ -32,3 +32,4 @@ export type FinancingApplicationSummary = {
     nextPaymentDueDate?: string | null;
     paymentProgressPercentage?: number;
 };
+

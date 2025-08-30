@@ -12,3 +12,4 @@ export type StandardResponseOfEventCategoriesResponse = {
     errors?: any;
     timestamp?: string;
 };
+

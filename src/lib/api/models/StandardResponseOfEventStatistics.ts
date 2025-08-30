@@ -12,3 +12,4 @@ export type StandardResponseOfEventStatistics = {
     errors?: any;
     timestamp?: string;
 };
+

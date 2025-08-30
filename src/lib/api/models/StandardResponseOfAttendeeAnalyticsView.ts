@@ -12,3 +12,4 @@ export type StandardResponseOfAttendeeAnalyticsView = {
     errors?: any;
     timestamp?: string;
 };
+

@@ -14,7 +14,7 @@ export class RecurringChargeService {
     public static postApiRecurringChargeCharge({
         requestBody,
     }: {
-        requestBody: RecurringChargeRequest;
+        requestBody: RecurringChargeRequest,
     }): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -31,17 +31,17 @@ export class RecurringChargeService {
         email,
         userId,
     }: {
-        email: string;
-        userId?: string;
+        email: string,
+        userId?: string,
     }): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/RecurringCharge/authorizations/{email}',
             path: {
-                email: email,
+                'email': email,
             },
             query: {
-                UserId: userId,
+                'UserId': userId,
             },
         });
     }

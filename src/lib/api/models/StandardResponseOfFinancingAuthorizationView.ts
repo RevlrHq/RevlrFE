@@ -12,3 +12,4 @@ export type StandardResponseOfFinancingAuthorizationView = {
     errors?: any;
     timestamp?: string;
 };
+

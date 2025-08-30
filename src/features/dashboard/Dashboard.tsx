@@ -381,7 +381,7 @@ const Dashboard = () => {
                 );
 
             case 'events':
-                return FEATURE_FLAGS.enhancedEventTable ? (
+                return (
                     <Suspense fallback={<CardSkeleton />}>
                         <EventTable
                             {...commonProps}
@@ -390,17 +390,6 @@ const Dashboard = () => {
                             enableExport={true}
                         />
                     </Suspense>
-                ) : (
-                    <div className='py-12 text-center'>
-                        <Calendar className='mx-auto mb-4 size-12 text-gray-400' />
-                        <h3 className='mb-2 text-lg font-semibold'>
-                            Enhanced Event Management
-                        </h3>
-                        <p className='text-gray-600 dark:text-gray-400'>
-                            This feature is currently being rolled out. Please
-                            check back soon.
-                        </p>
-                    </div>
                 );
 
             case 'registrations':

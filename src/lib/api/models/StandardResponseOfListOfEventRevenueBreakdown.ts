@@ -12,3 +12,4 @@ export type StandardResponseOfListOfEventRevenueBreakdown = {
     errors?: any;
     timestamp?: string;
 };
+

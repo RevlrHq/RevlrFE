@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 export type EventStatistics2 = {
     totalEvents?: number;
     publishedEvents?: number;
@@ -13,3 +13,4 @@ export type EventStatistics2 = {
     totalRevenue?: number;
     pendingRevenue?: number;
 };
+

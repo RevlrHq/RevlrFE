@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 export type TicketPerformance = {
     ticketId?: string;
     ticketName?: string;
@@ -12,3 +12,4 @@ export type TicketPerformance = {
     salesRate?: number;
     revenue?: number;
 };
+

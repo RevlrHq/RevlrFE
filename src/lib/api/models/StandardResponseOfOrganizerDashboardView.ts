@@ -12,3 +12,4 @@ export type StandardResponseOfOrganizerDashboardView = {
     errors?: any;
     timestamp?: string;
 };
+

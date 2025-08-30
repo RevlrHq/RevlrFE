@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 import type { BulkEventAction } from './BulkEventAction';
 import type { NullableOfEventStatus } from './NullableOfEventStatus';
 export type BulkEventActionRequest = {
@@ -10,3 +10,4 @@ export type BulkEventActionRequest = {
     newStatus?: NullableOfEventStatus;
     reason?: string | null;
 };
+

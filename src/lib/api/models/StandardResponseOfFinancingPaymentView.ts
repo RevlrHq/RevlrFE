@@ -12,3 +12,4 @@ export type StandardResponseOfFinancingPaymentView = {
     errors?: any;
     timestamp?: string;
 };
+

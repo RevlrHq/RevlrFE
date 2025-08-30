@@ -1,8 +1,9 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 import type { EventCreationRequest } from '../models/EventCreationRequest';
+import type { EventDraftRequest } from '../models/EventDraftRequest';
 import type { EventRegistrationRequest } from '../models/EventRegistrationRequest';
 import type { EventRegistrationWithFinancingRequest } from '../models/EventRegistrationWithFinancingRequest';
 import type { EventTicketCreationRequest } from '../models/EventTicketCreationRequest';
@@ -27,7 +28,7 @@ export class EventsService {
     public static postApiEvents({
         requestBody,
     }: {
-        requestBody: EventCreationRequest;
+        requestBody: EventCreationRequest,
     }): CancelablePromise<StandardResponseOfEventView> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -67,51 +68,51 @@ export class EventsService {
         city,
         includePastEvents,
     }: {
-        pageNumber?: number;
-        pageSize?: number;
-        sortBy?: string;
-        sortOrder?: string;
-        searchTerm?: string;
-        category?: string;
-        categories?: Array<string>;
-        categoryGroup?: string;
-        categorySearch?: string;
-        startDate?: string;
-        endDate?: string;
-        locationType?: string;
-        minPrice?: number;
-        maxPrice?: number;
-        includeTickets?: boolean;
-        status?: string;
-        organizer?: string;
-        daysFromNow?: number;
-        city?: string;
-        includePastEvents?: boolean;
+        pageNumber?: number,
+        pageSize?: number,
+        sortBy?: string,
+        sortOrder?: string,
+        searchTerm?: string,
+        category?: string,
+        categories?: Array<string>,
+        categoryGroup?: string,
+        categorySearch?: string,
+        startDate?: string,
+        endDate?: string,
+        locationType?: string,
+        minPrice?: number,
+        maxPrice?: number,
+        includeTickets?: boolean,
+        status?: string,
+        organizer?: string,
+        daysFromNow?: number,
+        city?: string,
+        includePastEvents?: boolean,
     }): CancelablePromise<StandardResponseOfPagedCollectionOfEventView> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Events',
             query: {
-                PageNumber: pageNumber,
-                PageSize: pageSize,
-                SortBy: sortBy,
-                SortOrder: sortOrder,
-                SearchTerm: searchTerm,
-                Category: category,
-                Categories: categories,
-                CategoryGroup: categoryGroup,
-                CategorySearch: categorySearch,
-                StartDate: startDate,
-                EndDate: endDate,
-                LocationType: locationType,
-                MinPrice: minPrice,
-                MaxPrice: maxPrice,
-                IncludeTickets: includeTickets,
-                Status: status,
-                Organizer: organizer,
-                DaysFromNow: daysFromNow,
-                City: city,
-                IncludePastEvents: includePastEvents,
+                'PageNumber': pageNumber,
+                'PageSize': pageSize,
+                'SortBy': sortBy,
+                'SortOrder': sortOrder,
+                'SearchTerm': searchTerm,
+                'Category': category,
+                'Categories': categories,
+                'CategoryGroup': categoryGroup,
+                'CategorySearch': categorySearch,
+                'StartDate': startDate,
+                'EndDate': endDate,
+                'LocationType': locationType,
+                'MinPrice': minPrice,
+                'MaxPrice': maxPrice,
+                'IncludeTickets': includeTickets,
+                'Status': status,
+                'Organizer': organizer,
+                'DaysFromNow': daysFromNow,
+                'City': city,
+                'IncludePastEvents': includePastEvents,
             },
             errors: {
                 500: `Internal Server Error`,
@@ -125,7 +126,7 @@ export class EventsService {
     public static postApiEventsDraft({
         requestBody,
     }: {
-        requestBody: EventCreationRequest;
+        requestBody: EventDraftRequest,
     }): CancelablePromise<StandardResponseOfEventView> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -147,14 +148,14 @@ export class EventsService {
         eventId,
         requestBody,
     }: {
-        eventId: string;
-        requestBody: EventCreationRequest;
+        eventId: string,
+        requestBody: EventCreationRequest,
     }): CancelablePromise<StandardResponseOfEventView> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/Events/{eventId}',
             path: {
-                eventId: eventId,
+                'eventId': eventId,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -173,13 +174,13 @@ export class EventsService {
     public static getApiEvents1({
         eventId,
     }: {
-        eventId: string;
+        eventId: string,
     }): CancelablePromise<StandardResponseOfEventView> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Events/{eventId}',
             path: {
-                eventId: eventId,
+                'eventId': eventId,
             },
             errors: {
                 404: `Not Found`,
@@ -194,13 +195,13 @@ export class EventsService {
     public static deleteApiEvents({
         eventId,
     }: {
-        eventId: string;
+        eventId: string,
     }): CancelablePromise<StandardResponseOfboolean> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/api/Events/{eventId}',
             path: {
-                eventId: eventId,
+                'eventId': eventId,
             },
             errors: {
                 401: `Unauthorized`,
@@ -217,14 +218,14 @@ export class EventsService {
         eventId,
         requestBody,
     }: {
-        eventId: string;
-        requestBody: Array<EventTicketCreationRequest>;
+        eventId: string,
+        requestBody: Array<EventTicketCreationRequest>,
     }): CancelablePromise<StandardResponseOfEventView> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/Events/{eventId}/tickets',
             path: {
-                eventId: eventId,
+                'eventId': eventId,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -243,13 +244,13 @@ export class EventsService {
     public static postApiEventsPublish({
         eventId,
     }: {
-        eventId: string;
+        eventId: string,
     }): CancelablePromise<StandardResponseOfEventView> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/Events/{eventId}/publish',
             path: {
-                eventId: eventId,
+                'eventId': eventId,
             },
             errors: {
                 400: `Bad Request`,
@@ -279,7 +280,7 @@ export class EventsService {
     public static postApiEventsRegister({
         requestBody,
     }: {
-        requestBody: EventRegistrationRequest;
+        requestBody: EventRegistrationRequest,
     }): CancelablePromise<StandardResponseOfEventRegistrationView> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -300,7 +301,7 @@ export class EventsService {
     public static postApiEventsCheckFinancingEligibility({
         requestBody,
     }: {
-        requestBody: TicketFinancingEligibilityRequest;
+        requestBody: TicketFinancingEligibilityRequest,
     }): CancelablePromise<StandardResponseOfTicketFinancingEligibilityView> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -321,7 +322,7 @@ export class EventsService {
     public static postApiEventsRegisterWithFinancing({
         requestBody,
     }: {
-        requestBody: EventRegistrationWithFinancingRequest;
+        requestBody: EventRegistrationWithFinancingRequest,
     }): CancelablePromise<StandardResponseOfEventRegistrationView> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -342,13 +343,13 @@ export class EventsService {
     public static getApiEventsRegistrations({
         registrationId,
     }: {
-        registrationId: string;
+        registrationId: string,
     }): CancelablePromise<StandardResponseOfEventRegistrationView> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Events/registrations/{registrationId}',
             path: {
-                registrationId: registrationId,
+                'registrationId': registrationId,
             },
             errors: {
                 404: `Not Found`,
@@ -363,13 +364,13 @@ export class EventsService {
     public static deleteApiEventsRegistrations({
         registrationId,
     }: {
-        registrationId: string;
+        registrationId: string,
     }): CancelablePromise<StandardResponseOfboolean> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/api/Events/registrations/{registrationId}',
             path: {
-                registrationId: registrationId,
+                'registrationId': registrationId,
             },
             errors: {
                 404: `Not Found`,
@@ -388,23 +389,23 @@ export class EventsService {
         sortBy,
         sortOrder,
     }: {
-        eventId: string;
-        pageNumber?: number;
-        pageSize?: number;
-        sortBy?: string;
-        sortOrder?: string;
+        eventId: string,
+        pageNumber?: number,
+        pageSize?: number,
+        sortBy?: string,
+        sortOrder?: string,
     }): CancelablePromise<StandardResponseOfPagedCollectionOfEventRegistrationView> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Events/{eventId}/registrations',
             path: {
-                eventId: eventId,
+                'eventId': eventId,
             },
             query: {
-                PageNumber: pageNumber,
-                PageSize: pageSize,
-                SortBy: sortBy,
-                SortOrder: sortOrder,
+                'PageNumber': pageNumber,
+                'PageSize': pageSize,
+                'SortBy': sortBy,
+                'SortOrder': sortOrder,
             },
             errors: {
                 404: `Not Found`,
@@ -423,21 +424,21 @@ export class EventsService {
         sortBy,
         sortOrder,
     }: {
-        email?: string;
-        pageNumber?: number;
-        pageSize?: number;
-        sortBy?: string;
-        sortOrder?: string;
+        email?: string,
+        pageNumber?: number,
+        pageSize?: number,
+        sortBy?: string,
+        sortOrder?: string,
     }): CancelablePromise<StandardResponseOfPagedCollectionOfEventRegistrationView> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Events/registrations/user',
             query: {
-                email: email,
-                PageNumber: pageNumber,
-                PageSize: pageSize,
-                SortBy: sortBy,
-                SortOrder: sortOrder,
+                'email': email,
+                'PageNumber': pageNumber,
+                'PageSize': pageSize,
+                'SortBy': sortBy,
+                'SortOrder': sortOrder,
             },
             errors: {
                 404: `Not Found`,
@@ -453,17 +454,17 @@ export class EventsService {
         registrationId,
         paystackReference,
     }: {
-        registrationId: string;
-        paystackReference?: string;
+        registrationId: string,
+        paystackReference?: string,
     }): CancelablePromise<StandardResponseOfEventRegistrationView> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/Events/registrations/{registrationId}/payment',
             path: {
-                registrationId: registrationId,
+                'registrationId': registrationId,
             },
             query: {
-                paystackReference: paystackReference,
+                'paystackReference': paystackReference,
             },
             errors: {
                 404: `Not Found`,
@@ -479,15 +480,15 @@ export class EventsService {
         financingApplicationId,
         paymentId,
     }: {
-        financingApplicationId?: string;
-        paymentId?: string;
+        financingApplicationId?: string,
+        paymentId?: string,
     }): CancelablePromise<StandardResponseOfFinancingPaymentView> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/Events/financing/process-payment',
             query: {
-                financingApplicationId: financingApplicationId,
-                paymentId: paymentId,
+                'financingApplicationId': financingApplicationId,
+                'paymentId': paymentId,
             },
             errors: {
                 400: `Bad Request`,
@@ -504,14 +505,14 @@ export class EventsService {
         requestBody,
         eventType,
     }: {
-        requestBody: string;
-        eventType?: string;
+        requestBody: string,
+        eventType?: string,
     }): CancelablePromise<StandardResponseOfFinancingAuthorizationView> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/Events/paystack-webhook',
             query: {
-                eventType: eventType,
+                'eventType': eventType,
             },
             body: requestBody,
             mediaType: 'application/json',

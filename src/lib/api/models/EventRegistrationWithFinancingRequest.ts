@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 import type { AttendeeInfo } from './AttendeeInfo';
 import type { FinancingDetails } from './FinancingDetails';
 export type EventRegistrationWithFinancingRequest = {
@@ -12,3 +12,4 @@ export type EventRegistrationWithFinancingRequest = {
     useFinancing?: boolean;
     financingDetails?: FinancingDetails;
 };
+

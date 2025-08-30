@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 import type { EventStatus } from './EventStatus';
 export type EventDuplicationRequest = {
     sourceEventId?: string;
@@ -12,3 +12,4 @@ export type EventDuplicationRequest = {
     copyImages?: boolean;
     initialStatus?: EventStatus;
 };
+

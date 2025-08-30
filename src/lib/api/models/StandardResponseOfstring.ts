@@ -11,3 +11,4 @@ export type StandardResponseOfstring = {
     errors?: any;
     timestamp?: string;
 };
+

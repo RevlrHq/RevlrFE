@@ -5,10 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from '@src/lib/ThemeContext';
 import { useEventCreation } from '@src/hooks/useEventCreation';
 import { useOnlineStatus } from '@src/hooks/useOnlineStatus';
-import {
-    useKeyboardNavigation,
-    useFocusAnnouncement,
-} from '@src/hooks/useKeyboardNavigation';
+import { useKeyboardNavigation } from '@src/hooks/useKeyboardNavigation';
 import { ImageUpload } from '@src/components/ImageUpload';
 import { TicketManagement } from '@src/components/TicketManagement';
 import { PublishConfirmationModal } from '@src/components/PublishConfirmationModal';
@@ -86,8 +83,7 @@ const CreateEvent = () => {
     const [isMobileView, setIsMobileView] = useState(false);
 
     // Accessibility and keyboard navigation
-    const { announce, announceRef } = useFocusAnnouncement();
-    const { containerRef } = useKeyboardNavigation({
+    const { containerRef, announce, announceRef } = useKeyboardNavigation({
         onNext: () => {
             const nextStepNumber = (currentStep + 1) as EventCreationStep;
             if (canProceedToStep(nextStepNumber)) {

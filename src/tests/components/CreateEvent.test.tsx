@@ -355,8 +355,6 @@ jest.mock('../../components/AnnouncementRegion', () => {
 jest.mock('../../hooks/useKeyboardNavigation', () => ({
     useKeyboardNavigation: () => ({
         containerRef: React.createRef(),
-    }),
-    useFocusAnnouncement: () => ({
         announce: jest.fn(),
         announceRef: React.createRef(),
     }),

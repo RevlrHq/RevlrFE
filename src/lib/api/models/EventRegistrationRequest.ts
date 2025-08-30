@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 import type { AttendeeInfo } from './AttendeeInfo';
 import type { NewUserRegistrationInfo } from './NewUserRegistrationInfo';
 export type EventRegistrationRequest = {
@@ -12,3 +12,4 @@ export type EventRegistrationRequest = {
     isNewUser?: boolean;
     newUserInfo?: NewUserRegistrationInfo;
 };
+

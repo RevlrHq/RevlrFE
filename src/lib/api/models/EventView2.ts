@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 import type { EventSocialLinks } from './EventSocialLinks';
 import type { EventTicketView } from './EventTicketView';
 import type { LocationType } from './LocationType';
@@ -34,3 +34,4 @@ export type EventView2 = {
     dateUpdated?: string | null;
     tickets?: Array<EventTicketView>;
 };
+

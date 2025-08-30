@@ -16,3 +16,4 @@ export type OrganizerDashboardView = {
     recentRegistrations?: Array<EventRegistrationSummary>;
     revenue?: RevenueStatistics;
 };
+

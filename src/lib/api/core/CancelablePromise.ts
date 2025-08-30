@@ -1,8 +1,9 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+/* eslint-disable */
 export class CancelError extends Error {
+
     constructor(message: string) {
         super(message);
         this.name = 'CancelError';
@@ -28,12 +29,12 @@ export class CancelablePromise<T> implements Promise<T> {
     readonly #cancelHandlers: (() => void)[];
     readonly #promise: Promise<T>;
     #resolve?: (value: T | PromiseLike<T>) => void;
-    #reject?: (reason?: unknown) => void;
+    #reject?: (reason?: any) => void;
 
     constructor(
         executor: (
             resolve: (value: T | PromiseLike<T>) => void,
-            reject: (reason?: unknown) => void,
+            reject: (reason?: any) => void,
             onCancel: OnCancel
         ) => void
     ) {
@@ -53,7 +54,7 @@ export class CancelablePromise<T> implements Promise<T> {
                 if (this.#resolve) this.#resolve(value);
             };
 
-            const onReject = (reason?: unknown): void => {
+            const onReject = (reason?: any): void => {
                 if (this.#isResolved || this.#isRejected || this.#isCancelled) {
                     return;
                 }
@@ -85,22 +86,18 @@ export class CancelablePromise<T> implements Promise<T> {
     }
 
     get [Symbol.toStringTag]() {
-        return 'Cancellable Promise';
+        return "Cancellable Promise";
     }
 
     public then<TResult1 = T, TResult2 = never>(
         onFulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
-        onRejected?:
-            | ((reason: unknown) => TResult2 | PromiseLike<TResult2>)
-            | null
+        onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null
     ): Promise<TResult1 | TResult2> {
         return this.#promise.then(onFulfilled, onRejected);
     }
 
     public catch<TResult = never>(
-        onRejected?:
-            | ((reason: unknown) => TResult | PromiseLike<TResult>)
-            | null
+        onRejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null
     ): Promise<T | TResult> {
         return this.#promise.catch(onRejected);
     }

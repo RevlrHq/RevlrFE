@@ -7,3 +7,4 @@ export type EventCategoriesResponse = {
     categories?: Array<EventCategoryInfo>;
     categoryGroups?: Record<string, Array<any>>;
 };
+

@@ -11,3 +11,4 @@ export type StandardResponseOfboolean = {
     errors?: any;
     timestamp?: string;
 };
+

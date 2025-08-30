@@ -12,3 +12,4 @@ export type StandardResponseOfListOfMonthlyRevenue = {
     errors?: any;
     timestamp?: string;
 };
+

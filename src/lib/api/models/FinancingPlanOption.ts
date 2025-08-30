@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 import type { PaymentFrequency } from './PaymentFrequency';
 export type FinancingPlanOption = {
     numberOfInstallments?: number;
@@ -10,3 +10,4 @@ export type FinancingPlanOption = {
     installmentAmount?: number;
     description?: string;
 };
+

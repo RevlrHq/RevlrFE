@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 import type { PaymentFrequency } from './PaymentFrequency';
 export type FinancingDetails = {
     downPayment?: number;
@@ -10,3 +10,4 @@ export type FinancingDetails = {
     firstPaymentDueDate?: string | null;
     notes?: string | null;
 };
+

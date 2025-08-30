@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 import type { RefreshTokenRequest } from '../models/RefreshTokenRequest';
 import type { StandardResponseOfboolean } from '../models/StandardResponseOfboolean';
 import type { StandardResponseOfstring } from '../models/StandardResponseOfstring';
@@ -18,13 +18,13 @@ export class PasswordlessAuthService {
     public static postApiPasswordlessAuthRegister({
         email,
     }: {
-        email?: string;
+        email?: string,
     }): CancelablePromise<StandardResponseOfstring> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/PasswordlessAuth/register',
             query: {
-                email: email,
+                'email': email,
             },
             errors: {
                 400: `Bad Request`,
@@ -39,7 +39,7 @@ export class PasswordlessAuthService {
     public static postApiPasswordlessAuthVerify({
         requestBody,
     }: {
-        requestBody: VerifyAndRegisterUserInput;
+        requestBody: VerifyAndRegisterUserInput,
     }): CancelablePromise<StandardResponseOfUserView> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -59,13 +59,13 @@ export class PasswordlessAuthService {
     public static postApiPasswordlessAuthLoginRequest({
         email,
     }: {
-        email?: string;
+        email?: string,
     }): CancelablePromise<StandardResponseOfstring> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/PasswordlessAuth/login/request',
             query: {
-                email: email,
+                'email': email,
             },
             errors: {
                 400: `Bad Request`,
@@ -81,15 +81,15 @@ export class PasswordlessAuthService {
         token,
         email,
     }: {
-        token?: string;
-        email?: string;
+        token?: string,
+        email?: string,
     }): CancelablePromise<StandardResponseOfUserView> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/PasswordlessAuth/login/validate',
             query: {
-                token: token,
-                email: email,
+                'token': token,
+                'email': email,
             },
             errors: {
                 400: `Bad Request`,
@@ -104,7 +104,7 @@ export class PasswordlessAuthService {
     public static postApiPasswordlessAuthRefresh({
         requestBody,
     }: {
-        requestBody: RefreshTokenRequest;
+        requestBody: RefreshTokenRequest,
     }): CancelablePromise<StandardResponseOfUserView> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -124,7 +124,7 @@ export class PasswordlessAuthService {
     public static postApiPasswordlessAuthRevoke({
         requestBody,
     }: {
-        requestBody: RefreshTokenRequest;
+        requestBody: RefreshTokenRequest,
     }): CancelablePromise<StandardResponseOfboolean> {
         return __request(OpenAPI, {
             method: 'POST',

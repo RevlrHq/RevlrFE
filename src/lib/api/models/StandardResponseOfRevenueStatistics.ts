@@ -12,3 +12,4 @@ export type StandardResponseOfRevenueStatistics = {
     errors?: any;
     timestamp?: string;
 };
+

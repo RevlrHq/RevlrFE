@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 import type { BulkEventActionRequest } from '../models/BulkEventActionRequest';
 import type { EventDuplicationRequest } from '../models/EventDuplicationRequest';
 import type { OrganizerRevenueReportRequest } from '../models/OrganizerRevenueReportRequest';
@@ -59,7 +59,7 @@ export class OrganizerService {
     public static postApiOrganizerRevenueReport({
         requestBody,
     }: {
-        requestBody: OrganizerRevenueReportRequest;
+        requestBody: OrganizerRevenueReportRequest,
     }): CancelablePromise<StandardResponseOfRevenueStatistics> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -93,41 +93,41 @@ export class OrganizerService {
         minRegistrations,
         maxRegistrations,
     }: {
-        pageNumber?: number;
-        pageSize?: number;
-        sortBy?: string;
-        sortOrder?: string;
-        searchTerm?: string;
-        status?: string;
-        category?: string;
-        startDate?: string;
-        endDate?: string;
-        isVirtual?: boolean;
-        hasRegistrations?: boolean;
-        minRevenue?: number;
-        maxRevenue?: number;
-        minRegistrations?: number;
-        maxRegistrations?: number;
+        pageNumber?: number,
+        pageSize?: number,
+        sortBy?: string,
+        sortOrder?: string,
+        searchTerm?: string,
+        status?: string,
+        category?: string,
+        startDate?: string,
+        endDate?: string,
+        isVirtual?: boolean,
+        hasRegistrations?: boolean,
+        minRevenue?: number,
+        maxRevenue?: number,
+        minRegistrations?: number,
+        maxRegistrations?: number,
     }): CancelablePromise<StandardResponseOfPagedCollectionOfEventSummaryView> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Organizer/events',
             query: {
-                PageNumber: pageNumber,
-                PageSize: pageSize,
-                SortBy: sortBy,
-                SortOrder: sortOrder,
-                SearchTerm: searchTerm,
-                Status: status,
-                Category: category,
-                StartDate: startDate,
-                EndDate: endDate,
-                IsVirtual: isVirtual,
-                HasRegistrations: hasRegistrations,
-                MinRevenue: minRevenue,
-                MaxRevenue: maxRevenue,
-                MinRegistrations: minRegistrations,
-                MaxRegistrations: maxRegistrations,
+                'PageNumber': pageNumber,
+                'PageSize': pageSize,
+                'SortBy': sortBy,
+                'SortOrder': sortOrder,
+                'SearchTerm': searchTerm,
+                'Status': status,
+                'Category': category,
+                'StartDate': startDate,
+                'EndDate': endDate,
+                'IsVirtual': isVirtual,
+                'HasRegistrations': hasRegistrations,
+                'MinRevenue': minRevenue,
+                'MaxRevenue': maxRevenue,
+                'MinRegistrations': minRegistrations,
+                'MaxRegistrations': maxRegistrations,
             },
             errors: {
                 401: `Unauthorized`,
@@ -142,7 +142,7 @@ export class OrganizerService {
     public static postApiOrganizerEventsDuplicate({
         requestBody,
     }: {
-        requestBody: EventDuplicationRequest;
+        requestBody: EventDuplicationRequest,
     }): CancelablePromise<StandardResponseOfEventView> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -164,7 +164,7 @@ export class OrganizerService {
     public static postApiOrganizerEventsBulkAction({
         requestBody,
     }: {
-        requestBody: BulkEventActionRequest;
+        requestBody: BulkEventActionRequest,
     }): CancelablePromise<StandardResponseOfboolean> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -186,13 +186,13 @@ export class OrganizerService {
     public static getApiOrganizerEventsPerformance({
         eventId,
     }: {
-        eventId: string;
+        eventId: string,
     }): CancelablePromise<StandardResponseOfEventPerformanceView> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Organizer/events/{eventId}/performance',
             path: {
-                eventId: eventId,
+                'eventId': eventId,
             },
             errors: {
                 401: `Unauthorized`,
@@ -210,17 +210,17 @@ export class OrganizerService {
         startDate = null,
         endDate = null,
     }: {
-        count?: number;
-        startDate?: string;
-        endDate?: string;
+        count?: number,
+        startDate?: string,
+        endDate?: string,
     }): CancelablePromise<StandardResponseOfListOfEventSummaryView> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Organizer/events/top-performing',
             query: {
-                count: count,
-                startDate: startDate,
-                endDate: endDate,
+                'count': count,
+                'startDate': startDate,
+                'endDate': endDate,
             },
             errors: {
                 401: `Unauthorized`,
@@ -246,35 +246,35 @@ export class OrganizerService {
         minAmount,
         maxAmount,
     }: {
-        pageNumber?: number;
-        pageSize?: number;
-        sortBy?: string;
-        sortOrder?: string;
-        searchTerm?: string;
-        eventId?: string;
-        paymentStatus?: string;
-        isFinanced?: boolean;
-        registrationStartDate?: string;
-        registrationEndDate?: string;
-        minAmount?: number;
-        maxAmount?: number;
+        pageNumber?: number,
+        pageSize?: number,
+        sortBy?: string,
+        sortOrder?: string,
+        searchTerm?: string,
+        eventId?: string,
+        paymentStatus?: string,
+        isFinanced?: boolean,
+        registrationStartDate?: string,
+        registrationEndDate?: string,
+        minAmount?: number,
+        maxAmount?: number,
     }): CancelablePromise<StandardResponseOfPagedCollectionOfEventRegistrationSummary> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Organizer/registrations',
             query: {
-                PageNumber: pageNumber,
-                PageSize: pageSize,
-                SortBy: sortBy,
-                SortOrder: sortOrder,
-                SearchTerm: searchTerm,
-                EventId: eventId,
-                PaymentStatus: paymentStatus,
-                IsFinanced: isFinanced,
-                RegistrationStartDate: registrationStartDate,
-                RegistrationEndDate: registrationEndDate,
-                MinAmount: minAmount,
-                MaxAmount: maxAmount,
+                'PageNumber': pageNumber,
+                'PageSize': pageSize,
+                'SortBy': sortBy,
+                'SortOrder': sortOrder,
+                'SearchTerm': searchTerm,
+                'EventId': eventId,
+                'PaymentStatus': paymentStatus,
+                'IsFinanced': isFinanced,
+                'RegistrationStartDate': registrationStartDate,
+                'RegistrationEndDate': registrationEndDate,
+                'MinAmount': minAmount,
+                'MaxAmount': maxAmount,
             },
             errors: {
                 401: `Unauthorized`,
@@ -293,23 +293,23 @@ export class OrganizerService {
         sortBy,
         sortOrder,
     }: {
-        eventId: string;
-        pageNumber?: number;
-        pageSize?: number;
-        sortBy?: string;
-        sortOrder?: string;
+        eventId: string,
+        pageNumber?: number,
+        pageSize?: number,
+        sortBy?: string,
+        sortOrder?: string,
     }): CancelablePromise<StandardResponseOfPagedCollectionOfEventRegistrationView> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Organizer/events/{eventId}/registrations',
             path: {
-                eventId: eventId,
+                'eventId': eventId,
             },
             query: {
-                PageNumber: pageNumber,
-                PageSize: pageSize,
-                SortBy: sortBy,
-                SortOrder: sortOrder,
+                'PageNumber': pageNumber,
+                'PageSize': pageSize,
+                'SortBy': sortBy,
+                'SortOrder': sortOrder,
             },
             errors: {
                 401: `Unauthorized`,
@@ -326,15 +326,15 @@ export class OrganizerService {
         startDate = null,
         endDate = null,
     }: {
-        startDate?: string;
-        endDate?: string;
+        startDate?: string,
+        endDate?: string,
     }): CancelablePromise<StandardResponseOfListOfMonthlyRevenue> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Organizer/reports/monthly-revenue',
             query: {
-                startDate: startDate,
-                endDate: endDate,
+                'startDate': startDate,
+                'endDate': endDate,
             },
             errors: {
                 401: `Unauthorized`,
@@ -350,15 +350,15 @@ export class OrganizerService {
         startDate = null,
         endDate = null,
     }: {
-        startDate?: string;
-        endDate?: string;
+        startDate?: string,
+        endDate?: string,
     }): CancelablePromise<StandardResponseOfListOfEventRevenueBreakdown> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Organizer/reports/event-revenue',
             query: {
-                startDate: startDate,
-                endDate: endDate,
+                'startDate': startDate,
+                'endDate': endDate,
             },
             errors: {
                 401: `Unauthorized`,
@@ -377,21 +377,21 @@ export class OrganizerService {
         sortOrder,
         searchTerm = null,
     }: {
-        pageNumber?: number;
-        pageSize?: number;
-        sortBy?: string;
-        sortOrder?: string;
-        searchTerm?: string;
+        pageNumber?: number,
+        pageSize?: number,
+        sortBy?: string,
+        sortOrder?: string,
+        searchTerm?: string,
     }): CancelablePromise<StandardResponseOfPagedCollectionOfAttendeeView> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/Organizer/attendees',
             query: {
-                PageNumber: pageNumber,
-                PageSize: pageSize,
-                SortBy: sortBy,
-                SortOrder: sortOrder,
-                searchTerm: searchTerm,
+                'PageNumber': pageNumber,
+                'PageSize': pageSize,
+                'SortBy': sortBy,
+                'SortOrder': sortOrder,
+                'searchTerm': searchTerm,
             },
             errors: {
                 401: `Unauthorized`,

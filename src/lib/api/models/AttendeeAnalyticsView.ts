@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 import type { AttendeeSegment } from './AttendeeSegment';
 import type { TopAttendee } from './TopAttendee';
 export type AttendeeAnalyticsView = {
@@ -12,3 +12,4 @@ export type AttendeeAnalyticsView = {
     attendeeSegments?: Array<AttendeeSegment>;
     topAttendees?: Array<TopAttendee>;
 };
+

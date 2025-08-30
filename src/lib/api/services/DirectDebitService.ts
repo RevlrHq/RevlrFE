@@ -15,7 +15,7 @@ export class DirectDebitService {
     public static postApiDirectDebitInitialize({
         requestBody,
     }: {
-        requestBody: InitializeDirectDebitRequest;
+        requestBody: InitializeDirectDebitRequest,
     }): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -31,13 +31,13 @@ export class DirectDebitService {
     public static getApiDirectDebitVerify({
         reference,
     }: {
-        reference: string;
+        reference: string,
     }): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/DirectDebit/verify/{reference}',
             path: {
-                reference: reference,
+                'reference': reference,
             },
         });
     }
@@ -48,7 +48,7 @@ export class DirectDebitService {
     public static postApiDirectDebitCharge({
         requestBody,
     }: {
-        requestBody: ChargeAuthorizationRequest;
+        requestBody: ChargeAuthorizationRequest,
     }): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
