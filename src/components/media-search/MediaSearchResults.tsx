@@ -63,7 +63,7 @@ export const MediaSearchResults: React.FC<MediaSearchResultsProps> = ({
         try {
             await onLoadMore();
         } catch (error) {
-            console.error('Failed to load more results:', error);
+            console.debug('Failed to load more results:', error);
         } finally {
             setIsLoadingMore(false);
         }

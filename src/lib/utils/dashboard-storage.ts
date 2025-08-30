@@ -124,7 +124,7 @@ export class DashboardStorage {
                 JSON.stringify(preferences)
             );
         } catch (error) {
-            console.error('Failed to save dashboard preferences:', error);
+            console.debug('Failed to save dashboard preferences:', error);
         }
     }
 
@@ -275,7 +275,7 @@ export class DashboardStorage {
             this.saveLayout(layout);
             return true;
         } catch (error) {
-            console.error('Failed to import layout:', error);
+            console.debug('Failed to import layout:', error);
             return false;
         }
     }
@@ -286,7 +286,7 @@ export class DashboardStorage {
         try {
             localStorage.removeItem(STORAGE_KEYS.DASHBOARD_PREFERENCES);
         } catch (error) {
-            console.error('Failed to reset dashboard preferences:', error);
+            console.debug('Failed to reset dashboard preferences:', error);
         }
     }
 }

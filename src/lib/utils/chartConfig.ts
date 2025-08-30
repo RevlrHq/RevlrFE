@@ -296,7 +296,7 @@ export function getOptimalTickCount(
     return Math.max(5, Math.floor(containerWidth / 100));
 }
 
-export default {
+const chartConfig = {
     getChartColors,
     getBaseChartOptions,
     getResponsiveChartOptions,
@@ -310,3 +310,5 @@ export default {
     truncateLabel,
     getOptimalTickCount,
 };
+
+export default chartConfig;

@@ -157,7 +157,7 @@ export class MediaSearchServiceFactory {
                 }
             }
         } catch (error) {
-            console.error('Failed to initialize MediaProviderFactory:', error);
+            console.debug('Failed to initialize MediaProviderFactory:', error);
         }
 
         return service;

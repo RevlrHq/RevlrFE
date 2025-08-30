@@ -374,10 +374,10 @@ export class InitializationErrorHandler {
 
         switch (error.severity) {
             case InitializationErrorSeverity.CRITICAL:
-                console.error(logMessage);
+                console.debug(logMessage);
                 break;
             case InitializationErrorSeverity.HIGH:
-                console.error(logMessage);
+                console.debug(logMessage);
                 break;
             case InitializationErrorSeverity.MEDIUM:
                 console.warn(logMessage);

@@ -113,7 +113,7 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
             });
             setProviderHealth(healthData);
         } catch (error) {
-            console.error('Failed to refresh performance data:', error);
+            console.debug('Failed to refresh performance data:', error);
 
             // Set fallback data
             setPerformanceSummary({

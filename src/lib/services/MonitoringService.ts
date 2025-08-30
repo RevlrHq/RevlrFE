@@ -200,7 +200,7 @@ export class MonitoringService {
 
         // Log to console in development
         if (process.env.NODE_ENV === 'development') {
-            console.error('MonitoringService Error:', error);
+            console.debug('MonitoringService Error:', error);
         }
 
         // Keep only last 50 errors

@@ -73,7 +73,7 @@ export const useEventPerformanceAnalytics = (
                         ? err.message
                         : 'An error occurred while fetching top performing events';
                 setError(errorMessage);
-                console.error('Error fetching top performing events:', err);
+                console.debug('Error fetching top performing events:', err);
             } finally {
                 setLoading(false);
             }
@@ -109,7 +109,7 @@ export const useEventPerformanceAnalytics = (
                     ? err.message
                     : 'An error occurred while fetching event performance';
             setError(errorMessage);
-            console.error('Error fetching event performance:', err);
+            console.debug('Error fetching event performance:', err);
         } finally {
             setLoading(false);
         }

@@ -504,7 +504,7 @@ export class MediaSearchService {
                 break;
 
             case 'show_error':
-                console.error(
+                console.debug(
                     `Provider error for ${providerId}: ${recovery.message}`
                 );
                 break;

@@ -149,7 +149,7 @@ export class AuthService {
 
             return false;
         } catch (error) {
-            console.error('Token refresh failed:', error);
+            console.debug('Token refresh failed:', error);
             return false;
         }
     }
@@ -184,7 +184,120 @@ export class AuthService {
 
             return true;
         } catch (error) {
-            console.error('Error checking token expiration:', error);
+            console.debug('Error checking token expiration:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Get token expiration time
+     * Used by SignalR for token management
+     */
+    static getTokenExpiration(token?: string): Date | null {
+        const tokenToCheck = token || this.getCurrentToken();
+        if (!tokenToCheck) {
+            return null;
+        }
+
+        try {
+            const payload = this.decodeJWT(tokenToCheck);
+            if (payload && payload.exp) {
+                return new Date(payload.exp * 1000);
+            }
+            return null;
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * Check if token is expired
+     * Used by SignalR for token validation
+     */
+    static isTokenExpired(token?: string): boolean {
+        const tokenToCheck = token || this.getCurrentToken();
+        if (!tokenToCheck) {
+            return true;
+        }
+
+        try {
+            const expiration = this.getTokenExpiration(tokenToCheck);
+            if (!expiration) {
+                return true;
+            }
+            return expiration.getTime() <= Date.now();
+        } catch {
+            return true;
+        }
+    }
+
+    /**
+     * Check if token is near expiration (within threshold)
+     * Used by SignalR for proactive token refresh
+     */
+    static isTokenNearExpiration(
+        token?: string,
+        thresholdSeconds: number = 300
+    ): boolean {
+        const tokenToCheck = token || this.getCurrentToken();
+        if (!tokenToCheck) {
+            return true;
+        }
+
+        try {
+            const payload = this.decodeJWT(tokenToCheck);
+            if (!payload || !payload.exp) {
+                return true;
+            }
+
+            const currentTime = Math.floor(Date.now() / 1000);
+            const timeUntilExpiry = payload.exp - currentTime;
+
+            return timeUntilExpiry <= thresholdSeconds;
+        } catch {
+            return true;
+        }
+    }
+
+    /**
+     * Get user context for SignalR
+     * Returns user information needed for SignalR group management
+     */
+    static getUserContext(): {
+        userId: string | null;
+        role: string | null;
+        isAuthenticated: boolean;
+        email: string | null;
+    } {
+        const { user, isAuthenticated } = useAuthStore.getState();
+
+        return {
+            userId: isAuthenticated && user ? user.id : null,
+            role: isAuthenticated && user ? user.role || null : null,
+            isAuthenticated,
+            email: isAuthenticated && user ? user.email || null : null,
+        };
+    }
+
+    /**
+     * Validate token format and structure
+     * Used by SignalR for token validation
+     */
+    static validateTokenFormat(token?: string): boolean {
+        const tokenToCheck = token || this.getCurrentToken();
+        if (!tokenToCheck) {
+            return false;
+        }
+
+        try {
+            const parts = tokenToCheck.split('.');
+            if (parts.length !== 3) {
+                return false;
+            }
+
+            const payload = this.decodeJWT(tokenToCheck);
+            return !!(payload && payload.exp && payload.sub);
+        } catch {
             return false;
         }
     }
@@ -205,7 +318,7 @@ export class AuthService {
             });
             return true;
         } catch (error) {
-            console.error('Token revocation failed:', error);
+            console.debug('Token revocation failed:', error);
             return false;
         }
     }
@@ -225,7 +338,7 @@ export class AuthService {
     /**
      * Decode JWT token payload
      */
-    private static decodeJWT(token: string): any {
+    private static decodeJWT(token: string): unknown {
         try {
             const base64Url = token.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -241,7 +354,7 @@ export class AuthService {
             );
             return JSON.parse(jsonPayload);
         } catch (error) {
-            console.error('Error decoding JWT:', error);
+            console.debug('Error decoding JWT:', error);
             return null;
         }
     }

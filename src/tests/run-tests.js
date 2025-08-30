@@ -30,8 +30,8 @@ const options = args.slice(1);
 
 // Validate category
 if (!testCategories[category]) {
-    console.error(`Invalid test category: ${category}`);
-    console.error(
+    console.debug(`Invalid test category: ${category}`);
+    console.debug(
         `Available categories: ${Object.keys(testCategories).join(', ')}`
     );
     process.exit(1);
@@ -73,7 +73,7 @@ try {
 
     console.log(`\n✅ ${category} tests completed successfully!`);
 } catch (error) {
-    console.error(`\n❌ ${category} tests failed!`);
+    console.debug(`\n❌ ${category} tests failed!`);
     process.exit(1);
 }
 

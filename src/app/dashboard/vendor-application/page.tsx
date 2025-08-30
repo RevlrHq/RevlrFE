@@ -119,7 +119,7 @@ const VendorApplicationPage = () => {
             );
             router.push('/dashboard');
         } catch (error) {
-            console.error('Failed to submit vendor application:', error);
+            console.debug('Failed to submit vendor application:', error);
             alert('Failed to submit application. Please try again.');
         } finally {
             setIsSubmitting(false);

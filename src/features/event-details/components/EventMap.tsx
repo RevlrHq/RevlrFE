@@ -63,7 +63,7 @@ const EventMap = ({ event }: EventMapProps) => {
 
             return null;
         } catch (error) {
-            console.error('Geocoding error:', error);
+            console.debug('Geocoding error:', error);
             return null;
         }
     };

@@ -97,7 +97,7 @@ class LocalStorageMediaCollectionsService implements MediaCollectionsService {
             const stored = localStorage.getItem(this.storageKey);
             return stored ? JSON.parse(stored) : [];
         } catch (error) {
-            console.error('Failed to load collections from storage:', error);
+            console.debug('Failed to load collections from storage:', error);
             return [];
         }
     }
@@ -106,7 +106,7 @@ class LocalStorageMediaCollectionsService implements MediaCollectionsService {
         try {
             localStorage.setItem(this.storageKey, JSON.stringify(collections));
         } catch (error) {
-            console.error('Failed to save collections to storage:', error);
+            console.debug('Failed to save collections to storage:', error);
         }
     }
 
@@ -609,7 +609,7 @@ class LocalStorageMediaCollectionsService implements MediaCollectionsService {
             const stored = localStorage.getItem(this.shareTokensKey);
             return stored ? JSON.parse(stored) : {};
         } catch (error) {
-            console.error('Failed to load share tokens from storage:', error);
+            console.debug('Failed to load share tokens from storage:', error);
             return {};
         }
     }
@@ -618,7 +618,7 @@ class LocalStorageMediaCollectionsService implements MediaCollectionsService {
         try {
             localStorage.setItem(this.shareTokensKey, JSON.stringify(tokens));
         } catch (error) {
-            console.error('Failed to save share tokens to storage:', error);
+            console.debug('Failed to save share tokens to storage:', error);
         }
     }
 }

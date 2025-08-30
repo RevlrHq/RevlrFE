@@ -354,7 +354,7 @@ export class EventCreationService {
         error: any,
         defaultMessage: string
     ): EventCreationResponse {
-        console.error('EventCreationService Error:', error);
+        console.debug('EventCreationService Error:', error);
 
         let errorType: EventCreationError['type'] = 'server';
         let message = defaultMessage;

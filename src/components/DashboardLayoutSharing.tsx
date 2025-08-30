@@ -43,7 +43,7 @@ export const DashboardLayoutSharing: React.FC<DashboardLayoutSharingProps> = ({
             setCopySuccess(true);
             setTimeout(() => setCopySuccess(false), 2000);
         } catch (error) {
-            console.error('Failed to copy to clipboard:', error);
+            console.debug('Failed to copy to clipboard:', error);
         }
     };
 

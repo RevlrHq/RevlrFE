@@ -64,7 +64,7 @@ export const useDashboardCustomization =
                     const loadedPreferences = DashboardStorage.getPreferences();
                     setPreferences(loadedPreferences);
                 } catch (error) {
-                    console.error(
+                    console.debug(
                         'Failed to load dashboard preferences:',
                         error
                     );

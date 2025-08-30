@@ -131,7 +131,7 @@ export class PreloadingService {
 
             console.log('Media search preloading completed successfully');
         } catch (error) {
-            console.error('Error during preloading:', error);
+            console.debug('Error during preloading:', error);
         } finally {
             this.isPreloading = false;
         }

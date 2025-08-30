@@ -77,7 +77,7 @@ export const CustomReportGenerator: React.FC<CustomReportGeneratorProps> = ({
             await onGenerateReport(cleanRequest);
             setReportGenerated(true);
         } catch (error) {
-            console.error('Failed to generate report:', error);
+            console.debug('Failed to generate report:', error);
         } finally {
             setIsGenerating(false);
         }

@@ -444,7 +444,7 @@ const DevAutoPopulateButton = ({
             onPopulateEvent(sampleEventData);
             onPopulateTickets(sampleTickets);
         } catch (error) {
-            console.error('Error auto-populating form:', error);
+            console.debug('Error auto-populating form:', error);
         } finally {
             setIsPopulating(false);
         }

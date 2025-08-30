@@ -5,6 +5,7 @@ import { ThemeProvider } from '../lib/ThemeContext';
 import { VendorAuthProvider } from './VendorAuthProvider';
 import { MediaProviderInitializationProvider } from './MediaProviderInitializationProvider';
 import { AuthProvider } from './AuthProvider';
+import { NavigationServiceInitializer } from '../components/NavigationServiceInitializer';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     return (
@@ -13,7 +14,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                 <CSPostHogProvider>
                     <VendorAuthProvider>
                         <MediaProviderInitializationProvider>
-                            <SignalRProvider>{children}</SignalRProvider>
+                            <SignalRProvider>
+                                <NavigationServiceInitializer />
+                                {children}
+                            </SignalRProvider>
                         </MediaProviderInitializationProvider>
                     </VendorAuthProvider>
                 </CSPostHogProvider>

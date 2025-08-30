@@ -197,7 +197,7 @@ Development mode includes detailed logging:
 ```typescript
 if (process.env.NODE_ENV === 'development') {
     console.log('Token refresh successful');
-    console.error('Token refresh failed:', error);
+    console.debug('Token refresh failed:', error);
 }
 ```
 
@@ -207,7 +207,7 @@ Errors are captured and can be integrated with monitoring services:
 
 ```typescript
 catch (error) {
-    console.error('Token refresh failed:', error);
+    console.debug('Token refresh failed:', error);
     // Add your error tracking service here
     return false;
 }

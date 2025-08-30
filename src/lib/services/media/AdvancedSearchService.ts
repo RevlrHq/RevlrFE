@@ -96,7 +96,7 @@ export class AdvancedSearchService extends MediaSearchService {
         } catch (error) {
             // Track error if analytics enabled
             if (enableAnalytics) {
-                console.error('Advanced search failed:', error);
+                console.debug('Advanced search failed:', error);
             }
             throw error;
         }

@@ -2,9 +2,9 @@ import { MediaProviderConfig } from '@/types/media-search';
 
 // Environment variable validation
 const requiredEnvVars = {
-    UNSPLASH_ACCESS_KEY: process.env.UNSPLASH_ACCESS_KEY,
-    PEXELS_API_KEY: process.env.PEXELS_API_KEY,
-    PIXABAY_API_KEY: process.env.PIXABAY_API_KEY,
+    UNSPLASH_ACCESS_KEY: process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY,
+    PEXELS_API_KEY: process.env.NEXT_PUBLIC_PEXELS_API_KEY,
+    PIXABAY_API_KEY: process.env.NEXT_PUBLIC_PIXABAY_API_KEY,
 };
 
 // Validate environment variables
@@ -25,7 +25,7 @@ export const MEDIA_PROVIDER_CONFIGS: Record<string, MediaProviderConfig> = {
             'UNSPLASH_ACCESS_KEY',
             requiredEnvVars.UNSPLASH_ACCESS_KEY
         ),
-        secretKey: process.env.UNSPLASH_SECRET_KEY,
+        secretKey: process.env.NEXT_PUBLIC_UNSPLASH_SECRET_KEY,
         baseUrl: 'https://api.unsplash.com',
         rateLimit: {
             requests: 50, // 50 requests per hour for demo apps
@@ -63,20 +63,20 @@ export const MEDIA_PROVIDER_CONFIGS: Record<string, MediaProviderConfig> = {
 
 // Cache configuration
 export const CACHE_CONFIG = {
-    maxSize: parseInt(process.env.MEDIA_CACHE_SIZE || '1000'),
-    expiryMinutes: parseInt(process.env.MEDIA_CACHE_EXPIRY_MINUTES || '30'),
-    preloadPopularSearches: process.env.MEDIA_PRELOAD_POPULAR !== 'false',
+    maxSize: parseInt(process.env.NEXT_PUBLIC_MEDIA_CACHE_SIZE || '1000'),
+    expiryMinutes: parseInt(process.env.NEXT_PUBLIC_MEDIA_CACHE_EXPIRY_MINUTES || '30'),
+    preloadPopularSearches: process.env.NEXT_PUBLIC_MEDIA_PRELOAD_POPULAR !== 'false',
 };
 
 // Feature flags
 export const MEDIA_SEARCH_FEATURES = {
-    enableVideoSearch: process.env.ENABLE_VIDEO_SEARCH === 'true',
-    enableAdvancedFilters: process.env.ENABLE_ADVANCED_FILTERS !== 'false',
+    enableVideoSearch: process.env.NEXT_PUBLIC_ENABLE_VIDEO_SEARCH === 'true',
+    enableAdvancedFilters: process.env.NEXT_PUBLIC_ENABLE_ADVANCED_FILTERS !== 'false',
     enableAttributionTracking:
-        process.env.ENABLE_ATTRIBUTION_TRACKING !== 'false',
-    enableUsageAnalytics: process.env.ENABLE_USAGE_ANALYTICS !== 'false',
-    maxImagesPerSearch: parseInt(process.env.MAX_IMAGES_PER_SEARCH || '100'),
-    maxSelectedImages: parseInt(process.env.MAX_SELECTED_IMAGES || '10'),
+        process.env.NEXT_PUBLIC_ENABLE_ATTRIBUTION_TRACKING !== 'false',
+    enableUsageAnalytics: process.env.NEXT_PUBLIC_ENABLE_USAGE_ANALYTICS !== 'false',
+    maxImagesPerSearch: parseInt(process.env.NEXT_PUBLIC_MAX_IMAGES_PER_SEARCH || '100'),
+    maxSelectedImages: parseInt(process.env.NEXT_PUBLIC_MAX_SELECTED_IMAGES || '10'),
 };
 
 // Default search parameters
@@ -191,20 +191,20 @@ export function validateConfiguration(): {
     // Validate cache configuration
     if (CACHE_CONFIG.maxSize < 100) {
         warnings.push(
-            'Cache size is very small, consider increasing MEDIA_CACHE_SIZE'
+            'Cache size is very small, consider increasing NEXT_PUBLIC_MEDIA_CACHE_SIZE'
         );
     }
 
     if (CACHE_CONFIG.expiryMinutes < 5) {
         warnings.push(
-            'Cache expiry is very short, consider increasing MEDIA_CACHE_EXPIRY_MINUTES'
+            'Cache expiry is very short, consider increasing NEXT_PUBLIC_MEDIA_CACHE_EXPIRY_MINUTES'
         );
     }
 
     // Validate feature configuration
     if (MEDIA_SEARCH_FEATURES.maxSelectedImages > 20) {
         warnings.push(
-            'MAX_SELECTED_IMAGES is quite high, this may impact performance'
+            'NEXT_PUBLIC_MAX_SELECTED_IMAGES is quite high, this may impact performance'
         );
     }
 

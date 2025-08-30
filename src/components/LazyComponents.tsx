@@ -76,7 +76,7 @@ class LazyErrorBoundary extends React.Component<
     }
 
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-        console.error('Lazy component loading error:', error, errorInfo);
+        console.debug('Lazy component loading error:', error, errorInfo);
     }
 
     render() {

@@ -49,7 +49,7 @@ export const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
             );
             setComplianceResult(result);
         } catch (error) {
-            console.error('Failed to check compliance:', error);
+            console.debug('Failed to check compliance:', error);
         } finally {
             setIsLoading(false);
         }

@@ -85,7 +85,7 @@ export const useOrganizerAttendees = (
                         ? err.message
                         : 'An error occurred while fetching attendees';
                 setError(errorMessage);
-                console.error('Error fetching organizer attendees:', err);
+                console.debug('Error fetching organizer attendees:', err);
             } finally {
                 setLoading(false);
             }

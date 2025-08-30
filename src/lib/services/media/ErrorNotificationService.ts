@@ -355,7 +355,7 @@ export class ErrorNotificationService {
             try {
                 listener(notifications);
             } catch (error) {
-                console.error('Error in notification listener:', error);
+                console.debug('Error in notification listener:', error);
             }
         });
     }

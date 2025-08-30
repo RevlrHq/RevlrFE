@@ -169,7 +169,7 @@ export const useEvents = (
                         ? err.message
                         : 'An error occurred while fetching events';
                 setError(errorMessage);
-                console.error('Error fetching events:', err);
+                console.debug('Error fetching events:', err);
             } finally {
                 setLoading(false);
             }

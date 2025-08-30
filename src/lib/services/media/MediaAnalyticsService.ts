@@ -337,7 +337,7 @@ class MediaAnalyticsService {
             // Send to analytics endpoint
             await this.sendAnalyticsBatch(batch);
         } catch (error) {
-            console.error('Failed to send analytics batch:', error);
+            console.debug('Failed to send analytics batch:', error);
             // Re-queue failed events (with limit to prevent infinite growth)
             if (this.analyticsQueue.length < 100) {
                 this.analyticsQueue.unshift(...batch.slice(0, 50));

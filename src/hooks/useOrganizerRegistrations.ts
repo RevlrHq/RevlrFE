@@ -105,7 +105,7 @@ export const useOrganizerRegistrations = (
                         ? err.message
                         : 'An error occurred while fetching registrations';
                 setError(errorMessage);
-                console.error('Error fetching organizer registrations:', err);
+                console.debug('Error fetching organizer registrations:', err);
             } finally {
                 setLoading(false);
             }

@@ -66,7 +66,7 @@ class AccessibilityTestRunner {
             // Generate report
             await this.generateReport();
         } catch (error) {
-            console.error('❌ Accessibility test suite failed:', error);
+            console.debug('❌ Accessibility test suite failed:', error);
             process.exit(1);
         }
     }
@@ -587,7 +587,7 @@ class AccessibilityTestRunner {
 if (require.main === module) {
     const runner = new AccessibilityTestRunner();
     runner.runAllTests().catch((error) => {
-        console.error('Failed to run accessibility tests:', error);
+        console.debug('Failed to run accessibility tests:', error);
         process.exit(1);
     });
 }

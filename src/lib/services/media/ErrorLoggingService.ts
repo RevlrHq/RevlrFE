@@ -556,7 +556,7 @@ export class ErrorLoggingService {
             try {
                 callback(alert);
             } catch (error) {
-                console.error('Error in alert callback:', error);
+                console.debug('Error in alert callback:', error);
             }
         });
     }
@@ -566,7 +566,7 @@ export class ErrorLoggingService {
 
         switch (entry.level) {
             case 'error':
-                console.error(message, entry);
+                console.debug(message, entry);
                 break;
             case 'warn':
                 console.warn(message, entry);

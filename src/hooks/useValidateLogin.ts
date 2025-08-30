@@ -56,14 +56,14 @@ export const useValidateLogin = (): UseValidateLoginHookReturn => {
                 setIsLoading(false);
                 return response.data;
             } catch (err) {
-                console.error('API call error:', err);
+                console.debug('API call error:', err);
                 if (axios.isAxiosError(err)) {
-                    console.error('Response status:', err.response?.status);
-                    console.error(
+                    console.debug('Response status:', err.response?.status);
+                    console.debug(
                         'Response data:',
                         JSON.stringify(err.response?.data, null, 2)
                     );
-                    console.error(
+                    console.debug(
                         'Response headers:',
                         JSON.stringify(err.response?.headers, null, 2)
                     );

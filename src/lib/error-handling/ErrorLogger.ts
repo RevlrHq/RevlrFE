@@ -27,6 +27,7 @@ export class ErrorLogger {
     private logs: ErrorLogEntry[] = [];
     private maxLogs = 1000;
     private sessionId: string;
+    private isLogging = false; // Prevent recursive logging
 
     private constructor() {
         this.sessionId = this.generateSessionId();
@@ -48,46 +49,61 @@ export class ErrorLogger {
         context: ErrorContext = {},
         severity: 'low' | 'medium' | 'high' | 'critical' = 'medium'
     ): void {
-        const logEntry: ErrorLogEntry = {
-            id: this.generateLogId(),
-            error,
-            context: {
-                ...context,
-                sessionId: this.sessionId,
+        // Prevent recursive logging
+        if (this.isLogging) {
+            return;
+        }
+
+        try {
+            this.isLogging = true;
+
+            const logEntry: ErrorLogEntry = {
+                id: this.generateLogId(),
+                error,
+                context: {
+                    ...context,
+                    sessionId: this.sessionId,
+                    timestamp: Date.now(),
+                },
+                severity,
                 timestamp: Date.now(),
-            },
-            severity,
-            timestamp: Date.now(),
-            userAgent:
-                typeof navigator !== 'undefined'
-                    ? navigator.userAgent
-                    : undefined,
-            url:
-                typeof window !== 'undefined'
-                    ? window.location.href
-                    : undefined,
-        };
+                userAgent:
+                    typeof navigator !== 'undefined'
+                        ? navigator.userAgent
+                        : undefined,
+                url:
+                    typeof window !== 'undefined'
+                        ? window.location.href
+                        : undefined,
+            };
 
-        this.logs.push(logEntry);
+            this.logs.push(logEntry);
 
-        // Limit memory usage
-        if (this.logs.length > this.maxLogs) {
-            this.logs = this.logs.slice(-this.maxLogs);
+            // Limit memory usage
+            if (this.logs.length > this.maxLogs) {
+                this.logs = this.logs.slice(-this.maxLogs);
+            }
+
+            // Console logging for development
+            if (process.env.NODE_ENV === 'development') {
+                console.group(`🚨 Error [${severity.toUpperCase()}]`);
+                console.debug('Error:', error);
+                console.log('Context:', context);
+                console.log(
+                    'Timestamp:',
+                    new Date(logEntry.timestamp).toISOString()
+                );
+                console.groupEnd();
+            }
+
+            // Send to monitoring service in production
+        } catch (loggingError) {
+            // Fallback to basic console.debug to avoid infinite loops
+            console.debug('ErrorLogger failed:', loggingError);
+            console.debug('Original error:', error);
+        } finally {
+            this.isLogging = false;
         }
-
-        // Console logging for development
-        if (process.env.NODE_ENV === 'development') {
-            console.group(`🚨 Error [${severity.toUpperCase()}]`);
-            console.error('Error:', error);
-            console.log('Context:', context);
-            console.log(
-                'Timestamp:',
-                new Date(logEntry.timestamp).toISOString()
-            );
-            console.groupEnd();
-        }
-
-        // Send to monitoring service in production
         if (process.env.NODE_ENV === 'production') {
             this.sendToMonitoring(logEntry);
         }
@@ -191,32 +207,46 @@ export class ErrorLogger {
 
         // Handle unhandled promise rejections
         window.addEventListener('unhandledrejection', (event) => {
-            this.logError(
-                new Error(`Unhandled Promise Rejection: ${event.reason}`),
-                {
-                    component: 'Global',
-                    action: 'unhandledrejection',
-                    metadata: { reason: event.reason },
-                },
-                'high'
-            );
+            // Prevent logging errors from the error logger itself
+            if (this.isLogging) return;
+
+            try {
+                this.logError(
+                    new Error(`Unhandled Promise Rejection: ${event.reason}`),
+                    {
+                        component: 'Global',
+                        action: 'unhandledrejection',
+                        metadata: { reason: event.reason },
+                    },
+                    'high'
+                );
+            } catch (error) {
+                console.debug('Failed to log unhandled rejection:', error);
+            }
         });
 
         // Handle global errors
         window.addEventListener('error', (event) => {
-            this.logError(
-                event.error || new Error(event.message),
-                {
-                    component: 'Global',
-                    action: 'error',
-                    metadata: {
-                        filename: event.filename,
-                        lineno: event.lineno,
-                        colno: event.colno,
+            // Prevent logging errors from the error logger itself
+            if (this.isLogging) return;
+
+            try {
+                this.logError(
+                    event.error || new Error(event.message),
+                    {
+                        component: 'Global',
+                        action: 'error',
+                        metadata: {
+                            filename: event.filename,
+                            lineno: event.lineno,
+                            colno: event.colno,
+                        },
                     },
-                },
-                'high'
-            );
+                    'high'
+                );
+            } catch (error) {
+                console.debug('Failed to log global error:', error);
+            }
         });
     }
 

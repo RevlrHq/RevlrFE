@@ -116,7 +116,7 @@ result.success.forEach((image) => {
 });
 
 result.errors.forEach((error) => {
-    console.error('Failed:', error.item.title, error.error);
+    console.debug('Failed:', error.item.title, error.error);
 });
 ```
 
@@ -158,7 +158,7 @@ const validation = AttributionService.validateAttributionCompliance(
 );
 
 if (!validation.isValid) {
-    console.error('Attribution errors:', validation.errors);
+    console.debug('Attribution errors:', validation.errors);
 }
 
 if (validation.warnings.length > 0) {

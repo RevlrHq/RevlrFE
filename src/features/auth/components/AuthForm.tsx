@@ -39,10 +39,10 @@ const AuthForm: React.FC<AuthFormProps> = ({
                         onSuccess?.();
                     }
                     if (errorSignUp) {
-                        console.error('Error during sign up:', errorSignUp);
+                        console.debug('Error during sign up:', errorSignUp);
                     }
                 } catch (err) {
-                    console.error('Unexpected error during sign up:', err);
+                    console.debug('Unexpected error during sign up:', err);
                 }
             } else {
                 try {
@@ -51,14 +51,14 @@ const AuthForm: React.FC<AuthFormProps> = ({
                         onSuccess?.();
                     }
                     if (error) {
-                        console.error('Error during login:', error);
+                        console.debug('Error during login:', error);
                     }
                 } catch (err) {
-                    console.error('Unexpected error during login:', err);
+                    console.debug('Unexpected error during login:', err);
                 }
             }
         } else {
-            console.error('Invalid email format');
+            console.debug('Invalid email format');
         }
     };
 

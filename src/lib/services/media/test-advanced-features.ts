@@ -96,7 +96,7 @@ export function testSmartSuggestionsService() {
             console.log('✅ SmartSuggestionsService tests passed');
         })
         .catch((error) => {
-            console.error('❌ SmartSuggestionsService test failed:', error);
+            console.debug('❌ SmartSuggestionsService test failed:', error);
         });
 }
 
@@ -205,7 +205,7 @@ export function runAllTests() {
 
         console.log('🎉 All tests completed successfully!');
     } catch (error) {
-        console.error('❌ Test suite failed:', error);
+        console.debug('❌ Test suite failed:', error);
     }
 }
 

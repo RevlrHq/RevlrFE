@@ -115,7 +115,7 @@ export const MediaSearchWithGracefulDegradation: React.FC<
             try {
                 await actions.search(query);
             } catch (error) {
-                console.error(
+                console.debug(
                     'Search failed with graceful degradation:',
                     error
                 );

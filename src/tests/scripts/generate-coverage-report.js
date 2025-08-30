@@ -76,7 +76,7 @@ class CoverageReportGenerator {
             console.log('✅ Coverage report generated successfully!');
             console.log(`📄 Report saved to: ${this.outputPath}`);
         } catch (error) {
-            console.error(
+            console.debug(
                 '❌ Error generating coverage report:',
                 error.message
             );
@@ -708,7 +708,7 @@ To enable trend analysis:
 if (require.main === module) {
     const generator = new CoverageReportGenerator();
     generator.generateReport().catch((error) => {
-        console.error('Failed to generate coverage report:', error);
+        console.debug('Failed to generate coverage report:', error);
         process.exit(1);
     });
 }

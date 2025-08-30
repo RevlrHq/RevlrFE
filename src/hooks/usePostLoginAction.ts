@@ -51,7 +51,7 @@ export const usePostLoginAction = () => {
                             );
                     }
                 } catch (error) {
-                    console.error('Error parsing post-login action:', error);
+                    console.debug('Error parsing post-login action:', error);
                     localStorage.removeItem('postLoginAction');
                 }
             }

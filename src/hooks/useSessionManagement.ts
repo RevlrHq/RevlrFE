@@ -214,7 +214,7 @@ export const useSessionManagement = (
             console.log('Session extended');
             return true;
         } catch (error) {
-            console.error('Failed to extend session:', error);
+            console.debug('Failed to extend session:', error);
             return false;
         }
     }, [updateActivity]);

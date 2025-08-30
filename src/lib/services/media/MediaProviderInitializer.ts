@@ -285,7 +285,7 @@ export class MediaProviderInitializer {
                 accessKey:
                     getEnvVar('NEXT_PUBLIC_UNSPLASH_ACCESS_KEY') ||
                     getEnvVar('UNSPLASH_ACCESS_KEY'),
-                secretKey: getEnvVar('UNSPLASH_SECRET_KEY'),
+                secretKey: getEnvVar('NEXT_PUBLIC_UNSPLASH_SECRET_KEY'),
                 redirectUri:
                     getEnvVar('NEXT_PUBLIC_UNSPLASH_REDIRECT_URI') ||
                     `${getEnvVar('NEXT_PUBLIC_API_URL') || 'http://localhost:3000'}/api/auth/unsplash/callback`,
@@ -313,17 +313,17 @@ export class MediaProviderInitializer {
                 ),
             },
             cache: {
-                size: parseIntEnv('MEDIA_CACHE_SIZE', 1000),
-                expiryMinutes: parseIntEnv('MEDIA_CACHE_EXPIRY_MINUTES', 30),
+                size: parseIntEnv('NEXT_PUBLIC_MEDIA_CACHE_SIZE', 1000),
+                expiryMinutes: parseIntEnv('NEXT_PUBLIC_MEDIA_CACHE_EXPIRY_MINUTES', 30),
             },
             features: {
-                preloadPopular: parseBooleanEnv('MEDIA_PRELOAD_POPULAR', true),
+                preloadPopular: parseBooleanEnv('NEXT_PUBLIC_MEDIA_PRELOAD_POPULAR', true),
                 enableVideoSearch: parseBooleanEnv(
-                    'ENABLE_VIDEO_SEARCH',
+                    'NEXT_PUBLIC_ENABLE_VIDEO_SEARCH',
                     false
                 ),
                 enableAdvancedFilters: parseBooleanEnv(
-                    'ENABLE_ADVANCED_FILTERS',
+                    'NEXT_PUBLIC_ENABLE_ADVANCED_FILTERS',
                     true
                 ),
             },
@@ -376,13 +376,13 @@ export class MediaProviderInitializer {
         // Validate cache configuration
         if (config.cache.size < 100) {
             warnings.push(
-                'Cache size is very small (< 100). Consider increasing MEDIA_CACHE_SIZE for better performance.'
+                'Cache size is very small (< 100). Consider increasing NEXT_PUBLIC_MEDIA_CACHE_SIZE for better performance.'
             );
         }
 
         if (config.cache.expiryMinutes < 5) {
             warnings.push(
-                'Cache expiry is very short (< 5 minutes). Consider increasing MEDIA_CACHE_EXPIRY_MINUTES.'
+                'Cache expiry is very short (< 5 minutes). Consider increasing NEXT_PUBLIC_MEDIA_CACHE_EXPIRY_MINUTES.'
             );
         }
 

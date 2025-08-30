@@ -12,8 +12,8 @@ jest.mock('@/lib/services/media/MediaProviderFactory');
 const mockEnv = {
     NEXT_PUBLIC_UNSPLASH_ACCESS_KEY: 'test-unsplash-key',
     NEXT_PUBLIC_PEXELS_API_KEY: 'test-pexels-key',
-    MEDIA_CACHE_SIZE: '500',
-    MEDIA_CACHE_EXPIRY_MINUTES: '15',
+    NEXT_PUBLIC_MEDIA_CACHE_SIZE: '500',
+    NEXT_PUBLIC_MEDIA_CACHE_EXPIRY_MINUTES: '15',
 };
 
 // Mock process.env
@@ -56,8 +56,8 @@ describe('MediaProviderInitializer', () => {
         delete cleanEnv.PEXELS_API_KEY;
         delete cleanEnv.NEXT_PUBLIC_PIXABAY_API_KEY;
         delete cleanEnv.PIXABAY_API_KEY;
-        delete cleanEnv.MEDIA_CACHE_SIZE;
-        delete cleanEnv.MEDIA_CACHE_EXPIRY_MINUTES;
+        delete cleanEnv.NEXT_PUBLIC_MEDIA_CACHE_SIZE;
+        delete cleanEnv.NEXT_PUBLIC_MEDIA_CACHE_EXPIRY_MINUTES;
 
         // Set test environment
         process.env = { ...cleanEnv, ...mockEnv };
@@ -252,10 +252,10 @@ describe('MediaProviderInitializer', () => {
 
             expect(validation.isValid).toBe(true);
             expect(validation.warnings).toContain(
-                'Cache size is very small (< 100). Consider increasing MEDIA_CACHE_SIZE for better performance.'
+                'Cache size is very small (< 100). Consider increasing NEXT_PUBLIC_MEDIA_CACHE_SIZE for better performance.'
             );
             expect(validation.warnings).toContain(
-                'Cache expiry is very short (< 5 minutes). Consider increasing MEDIA_CACHE_EXPIRY_MINUTES.'
+                'Cache expiry is very short (< 5 minutes). Consider increasing NEXT_PUBLIC_MEDIA_CACHE_EXPIRY_MINUTES.'
             );
         });
     });
@@ -521,8 +521,8 @@ describe('MediaProviderInitializer', () => {
             process.env = {
                 ...originalEnv,
                 NEXT_PUBLIC_UNSPLASH_ACCESS_KEY: 'test-key',
-                MEDIA_CACHE_SIZE: '50', // Too small
-                MEDIA_CACHE_EXPIRY_MINUTES: '2', // Too short
+                NEXT_PUBLIC_MEDIA_CACHE_SIZE: '50', // Too small
+                NEXT_PUBLIC_MEDIA_CACHE_EXPIRY_MINUTES: '2', // Too short
             };
 
             // Reset singleton instance for this test
@@ -550,10 +550,10 @@ describe('MediaProviderInitializer', () => {
 
             expect(result.success).toBe(true);
             expect(result.warnings).toContain(
-                'Cache size is very small (< 100). Consider increasing MEDIA_CACHE_SIZE for better performance.'
+                'Cache size is very small (< 100). Consider increasing NEXT_PUBLIC_MEDIA_CACHE_SIZE for better performance.'
             );
             expect(result.warnings).toContain(
-                'Cache expiry is very short (< 5 minutes). Consider increasing MEDIA_CACHE_EXPIRY_MINUTES.'
+                'Cache expiry is very short (< 5 minutes). Consider increasing NEXT_PUBLIC_MEDIA_CACHE_EXPIRY_MINUTES.'
             );
         });
     });
@@ -816,9 +816,9 @@ describe('MediaProviderInitializer', () => {
             process.env = {
                 ...originalEnv,
                 NEXT_PUBLIC_UNSPLASH_ACCESS_KEY: 'test-key',
-                MEDIA_PRELOAD_POPULAR: 'false',
-                ENABLE_VIDEO_SEARCH: '1',
-                ENABLE_ADVANCED_FILTERS: 'TRUE',
+                NEXT_PUBLIC_MEDIA_PRELOAD_POPULAR: 'false',
+                NEXT_PUBLIC_ENABLE_VIDEO_SEARCH: '1',
+                NEXT_PUBLIC_ENABLE_ADVANCED_FILTERS: 'TRUE',
             };
 
             // Reset singleton instance for this test
@@ -842,8 +842,8 @@ describe('MediaProviderInitializer', () => {
             process.env = {
                 ...originalEnv,
                 NEXT_PUBLIC_UNSPLASH_ACCESS_KEY: 'test-key',
-                MEDIA_CACHE_SIZE: 'invalid-number',
-                MEDIA_CACHE_EXPIRY_MINUTES: 'also-invalid',
+                NEXT_PUBLIC_MEDIA_CACHE_SIZE: 'invalid-number',
+                NEXT_PUBLIC_MEDIA_CACHE_EXPIRY_MINUTES: 'also-invalid',
             };
 
             // Reset singleton instance for this test

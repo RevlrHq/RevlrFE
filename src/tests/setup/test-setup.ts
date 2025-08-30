@@ -345,11 +345,11 @@ global.Image = class MockImage {
 
 // Suppress console warnings in tests unless explicitly needed
 const originalConsoleWarn = console.warn;
-const originalConsoleError = console.error;
+const originalConsoleError = console.debug;
 
 beforeEach(() => {
     console.warn = jest.fn();
-    console.error = jest.fn();
+    console.debug = jest.fn();
 
     // Ensure clean timer state
     jest.clearAllTimers();
@@ -362,7 +362,7 @@ beforeEach(() => {
 
 afterEach(() => {
     console.warn = originalConsoleWarn;
-    console.error = originalConsoleError;
+    console.debug = originalConsoleError;
 });
 
 // Global test utilities
@@ -544,7 +544,7 @@ afterEach(() => {
 
 // Global error handler for unhandled promise rejections in tests
 process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    console.debug('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 // Test setup configuration object

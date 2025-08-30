@@ -54,7 +54,7 @@ export const SessionWarningModal = ({
                 onLogout();
             }
         } catch (error) {
-            console.error('Error extending session:', error);
+            console.debug('Error extending session:', error);
             alert('Failed to extend session. Please log in again.');
             onLogout();
         } finally {

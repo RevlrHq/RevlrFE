@@ -257,7 +257,7 @@ const CreateEvent = () => {
                 setShowPublishModal(false);
             }
         } catch (error) {
-            console.error('Failed to publish event:', error);
+            console.debug('Failed to publish event:', error);
             setShowPublishModal(false);
         }
     };

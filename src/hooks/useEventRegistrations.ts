@@ -94,7 +94,7 @@ export const useEventRegistrations = (
                         ? err.message
                         : 'An error occurred while fetching event registrations';
                 setError(errorMessage);
-                console.error('Error fetching event registrations:', err);
+                console.debug('Error fetching event registrations:', err);
             } finally {
                 setLoading(false);
             }

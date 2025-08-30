@@ -165,7 +165,7 @@ export const EnhancedMediaSearchModal: React.FC<
             onSelectMedia(processedImages);
             onClose();
         } catch (error) {
-            console.error('Failed to process selected media:', error);
+            console.debug('Failed to process selected media:', error);
         } finally {
             setIsProcessing(false);
             setProcessingProgress(0);

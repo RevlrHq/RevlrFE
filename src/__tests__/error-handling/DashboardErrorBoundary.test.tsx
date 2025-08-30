@@ -37,7 +37,7 @@ const ThrowError: React.FC<{ shouldThrow?: boolean }> = ({
 describe('DashboardErrorBoundary', () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        // Suppress console.error for these tests
+        // Suppress console.debug for these tests
         jest.spyOn(console, 'error').mockImplementation(() => {});
     });
 

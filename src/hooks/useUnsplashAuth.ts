@@ -52,7 +52,7 @@ export function useUnsplashAuth(): UnsplashAuthHookReturn {
                 );
                 return unsplashProvider || null;
             } catch (error) {
-                console.error('Failed to get Unsplash provider:', error);
+                console.debug('Failed to get Unsplash provider:', error);
                 return null;
             }
         }, []);
@@ -294,7 +294,7 @@ export function useUnsplashOAuthAvailable(): boolean {
                     setIsAvailable(!!oauthService);
                 }
             } catch (error) {
-                console.error(
+                console.debug(
                     'Failed to check Unsplash OAuth availability:',
                     error
                 );

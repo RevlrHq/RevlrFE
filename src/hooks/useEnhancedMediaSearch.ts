@@ -306,7 +306,7 @@ export function useEnhancedMediaSearch(
                     clearInterval(healthCheckInterval);
                 };
             } catch (error) {
-                console.error(
+                console.debug(
                     'Failed to initialize enhanced media search service:',
                     error
                 );
@@ -496,7 +496,7 @@ export function useEnhancedMediaSearch(
                     break;
             }
         } catch (error) {
-            console.error('Retry operation failed:', error);
+            console.debug('Retry operation failed:', error);
         }
     }, [search, loadMore]);
 

@@ -35,7 +35,7 @@ export const ComplianceExample: React.FC<ComplianceExampleProps> = ({
 
             onUpdateEventData(updatedEventData);
         } catch (error) {
-            console.error('Failed to fix attribution:', error);
+            console.debug('Failed to fix attribution:', error);
         } finally {
             setIsFixingAttribution(false);
         }

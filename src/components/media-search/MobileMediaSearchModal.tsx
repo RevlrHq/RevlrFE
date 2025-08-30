@@ -294,7 +294,7 @@ export const MobileMediaSearchModal: React.FC<MobileMediaSearchModalProps> = ({
             onSelectMedia(processedImages);
             onClose();
         } catch (error) {
-            console.error('Failed to process selected media:', error);
+            console.debug('Failed to process selected media:', error);
             accessibility.announce(
                 'Failed to process selected images. Please try again.',
                 'assertive'

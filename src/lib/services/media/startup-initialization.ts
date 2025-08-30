@@ -110,7 +110,7 @@ class StartupInitializationManager {
                     );
                 }
             } else {
-                console.error(
+                console.debug(
                     '❌ [Server] Media provider initialization failed:',
                     {
                         failedProviders: result.failedProviders,
@@ -121,7 +121,7 @@ class StartupInitializationManager {
                 // Log developer-friendly error summary
                 const errorSummary =
                     errorHandler.generateDeveloperErrorSummary();
-                console.error('📊 [Server] Error Summary:', errorSummary);
+                console.debug('📊 [Server] Error Summary:', errorSummary);
 
                 // Log whether application should continue
                 if (errorAnalysis.shouldContinue) {
@@ -129,7 +129,7 @@ class StartupInitializationManager {
                         '⚠️ [Server] Application will continue with limited functionality'
                     );
                 } else {
-                    console.error(
+                    console.debug(
                         '🚫 [Server] Application cannot continue - critical errors detected'
                     );
                 }
@@ -152,7 +152,7 @@ class StartupInitializationManager {
 
             return result;
         } catch (error) {
-            console.error(
+            console.debug(
                 '💥 [Server] Critical error during media provider initialization:',
                 error
             );

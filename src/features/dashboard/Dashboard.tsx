@@ -353,7 +353,7 @@ const Dashboard = () => {
                             eventStatistics={dashboardData?.statistics}
                             revenueStatistics={dashboardData?.revenue}
                             loading={loading}
-                            error={error}
+                            error={error?.message || null}
                         />
                         <EventPerformanceAnalytics
                             {...commonProps}
@@ -466,7 +466,7 @@ const Dashboard = () => {
                     eventStatistics={dashboardData?.statistics}
                     revenueStatistics={dashboardData?.revenue}
                     loading={loading}
-                    error={error}
+                    error={error?.message || null}
                 />
             ),
         },

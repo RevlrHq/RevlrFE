@@ -313,9 +313,9 @@ const ENV_CONFIG_MAPPING = {
     NEXT_PUBLIC_UNSPLASH_REDIRECT_URI: 'unsplash.redirectUri',
     NEXT_PUBLIC_PEXELS_API_KEY: 'pexels.apiKey',
     NEXT_PUBLIC_PIXABAY_API_KEY: 'pixabay.apiKey',
-    MEDIA_CACHE_SIZE: 'cache.size',
-    MEDIA_CACHE_EXPIRY_MINUTES: 'cache.expiryMinutes',
-    MEDIA_PRELOAD_POPULAR: 'features.preloadPopular',
+    NEXT_PUBLIC_MEDIA_CACHE_SIZE: 'cache.size',
+    NEXT_PUBLIC_MEDIA_CACHE_EXPIRY_MINUTES: 'cache.expiryMinutes',
+    NEXT_PUBLIC_MEDIA_PRELOAD_POPULAR: 'features.preloadPopular',
 };
 ```
 

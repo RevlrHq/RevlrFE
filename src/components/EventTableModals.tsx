@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTheme } from '../lib/ThemeContext';
 import { EventDuplicationRequest } from '../lib/api';
 import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
@@ -85,6 +86,7 @@ const EventTableModals: React.FC<EventTableModalsProps> = ({
     onDuplicateEvent,
     loading,
 }) => {
+    const { theme } = useTheme();
     return (
         <>
             {/* Filters Modal */}
@@ -565,6 +567,7 @@ const DuplicateEventForm: React.FC<DuplicateEventFormProps> = ({
     onCancel,
     loading,
 }) => {
+    const { theme } = useTheme();
     const [formData, setFormData] = useState<EventDuplicationRequest>({
         newTitle: '',
         newStartDate: '',

@@ -75,7 +75,7 @@ export const OrganizerDetails: React.FC<OrganizerDetailsProps> = ({
             const imageUrl = URL.createObjectURL(file);
             onOrganizerChange('organizerLogo', imageUrl);
         } catch (error) {
-            console.error('Failed to upload logo:', error);
+            console.debug('Failed to upload logo:', error);
             alert('Failed to upload logo. Please try again.');
         } finally {
             setIsUploadingLogo(false);

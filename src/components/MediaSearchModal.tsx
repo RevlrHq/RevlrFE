@@ -245,7 +245,7 @@ export const MediaSearchModal: React.FC<MediaSearchModalProps> = ({
             onSelectMedia(processedImages);
             onClose();
         } catch (error) {
-            console.error('Failed to process selected media:', error);
+            console.debug('Failed to process selected media:', error);
 
             // Track error
             analytics.trackInteraction('media_download', 'download_error', {

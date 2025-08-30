@@ -365,7 +365,7 @@ const EventContent = ({ event }: EventContentProps) => {
                                 // Reset status after 2 seconds
                                 setTimeout(() => setShareStatus('idle'), 2000);
                             } catch (error) {
-                                console.error('Share failed:', error);
+                                console.debug('Share failed:', error);
                                 setShareStatus('error');
                                 setTimeout(() => setShareStatus('idle'), 2000);
                             }
@@ -507,7 +507,7 @@ const EventContent = ({ event }: EventContentProps) => {
                                             1000
                                         );
                                     } catch (error) {
-                                        console.error(
+                                        console.debug(
                                             'Calendar failed:',
                                             error
                                         );
@@ -630,7 +630,7 @@ const EventContent = ({ event }: EventContentProps) => {
                                         document.body.removeChild(link);
                                         URL.revokeObjectURL(url);
                                     } catch (error) {
-                                        console.error(
+                                        console.debug(
                                             'ICS download failed:',
                                             error
                                         );

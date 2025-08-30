@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
             timestamp: Date.now(),
         });
     } catch (error) {
-        console.error('Analytics API Error:', error);
+        console.debug('Analytics API Error:', error);
 
         return NextResponse.json(
             {

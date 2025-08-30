@@ -166,7 +166,7 @@ const LazyWrapper: React.FC<LazyWrapperProps> = ({
             )
         }
         onError={(error, errorInfo) => {
-            console.error(`Error in ${componentName}:`, error, errorInfo);
+            console.debug(`Error in ${componentName}:`, error, errorInfo);
         }}
     >
         <Suspense fallback={fallback || <ChartSkeleton />}>{children}</Suspense>

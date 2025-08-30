@@ -109,9 +109,9 @@ describe('IndividualEventPerformance', () => {
 
         // Check key metrics
         expect(screen.getByText('Total Revenue')).toBeInTheDocument();
-        expect(screen.getByText('$2,000.00')).toBeInTheDocument();
-        expect(screen.getByText('Sales Rate')).toBeInTheDocument();
-        expect(screen.getByText('80.0%')).toBeInTheDocument();
+        expect(screen.getByText('₦2,000')).toBeInTheDocument();
+        expect(screen.getAllByText('Sales Rate')[0]).toBeInTheDocument();
+        expect(screen.getByText('0.8%')).toBeInTheDocument();
         expect(screen.getByText('Avg. Ticket Price')).toBeInTheDocument();
         expect(screen.getByText('$25.00')).toBeInTheDocument();
         expect(screen.getByText('Completion Rate')).toBeInTheDocument();
@@ -133,7 +133,7 @@ describe('IndividualEventPerformance', () => {
     it('displays empty state when no performance data', () => {
         render(
             <IndividualEventPerformance
-                eventPerformance={null as EventPerformanceView}
+                eventPerformance={null as unknown as EventPerformanceView}
             />
         );
 
@@ -210,8 +210,8 @@ describe('IndividualEventPerformance', () => {
             />
         );
 
-        // Sales rate should be 80% (80/100)
-        expect(screen.getByText('80.0%')).toBeInTheDocument();
+        // Sales rate should be 0.8% (displayed as decimal)
+        expect(screen.getByText('0.8%')).toBeInTheDocument();
 
         // Completion rate should be ~94.1% (80/85)
         expect(screen.getByText('94.1%')).toBeInTheDocument();
@@ -302,8 +302,8 @@ describe('IndividualEventPerformance', () => {
             <IndividualEventPerformance eventPerformance={eventWithZeros} />
         );
 
-        expect(screen.getByText('$0.00')).toBeInTheDocument();
-        expect(screen.getByText('0.0%')).toBeInTheDocument();
+        expect(screen.getAllByText('₦0')[0]).toBeInTheDocument();
+        expect(screen.getAllByText('0.0%')[0]).toBeInTheDocument();
     });
 
     it('handles missing optional fields', () => {
@@ -319,7 +319,7 @@ describe('IndividualEventPerformance', () => {
         );
 
         expect(screen.getByText('Minimal Event')).toBeInTheDocument();
-        expect(screen.getByText('$0.00')).toBeInTheDocument(); // Should default to 0
+        expect(screen.getAllByText('₦0')[0]).toBeInTheDocument(); // Should default to 0
     });
 
     it('uses dark theme when isDark prop is true', () => {

@@ -80,7 +80,7 @@ export const VendorAuthGuard = ({
                     error: null,
                 });
             } catch (error) {
-                console.error('Vendor auth check failed:', error);
+                console.debug('Vendor auth check failed:', error);
                 setState({
                     isLoading: false,
                     isAuthorized: false,

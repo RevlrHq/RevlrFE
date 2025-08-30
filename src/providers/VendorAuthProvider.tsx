@@ -79,7 +79,7 @@ export const VendorAuthProvider = ({ children }: VendorAuthProviderProps) => {
             }
             return success;
         } catch (error) {
-            console.error('Failed to extend session:', error);
+            console.debug('Failed to extend session:', error);
             return false;
         }
     };

@@ -46,13 +46,13 @@ const Auth = () => {
                     setSeconds(30);
                 }
                 if (error) {
-                    console.error('Error during login:', error);
+                    console.debug('Error during login:', error);
                 }
             } catch (err) {
-                console.error('Unexpected error during login:', err);
+                console.debug('Unexpected error during login:', err);
             }
         } else {
-            console.error('Invalid email format');
+            console.debug('Invalid email format');
         }
     };
 

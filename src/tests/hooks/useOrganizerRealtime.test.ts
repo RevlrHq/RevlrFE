@@ -1,6 +1,8 @@
 import { renderHook, act } from '@testing-library/react';
 import { useOrganizerRealtime } from '@/hooks/useOrganizerRealtime';
-import { useSignalRStore } from '@/lib/signalR';
+import { useSignalRContext } from '@/providers/SignalRProvider';
+import { useNotificationGroups } from '@/hooks/useNotificationGroups';
+import { useTypedNotificationHandler } from '@/hooks/useTypedNotificationHandler';
 import { useToast } from '@/hooks/use-toast';
 import type {
     DashboardMetricUpdate,
@@ -10,12 +12,21 @@ import type {
 } from '@/hooks/useOrganizerRealtime';
 
 // Mock dependencies
-jest.mock('@/lib/signalR');
+jest.mock('@/providers/SignalRProvider');
+jest.mock('@/hooks/useNotificationGroups');
+jest.mock('@/hooks/useTypedNotificationHandler');
 jest.mock('@/hooks/use-toast');
 
-const mockUseSignalRStore = useSignalRStore as jest.MockedFunction<
-    typeof useSignalRStore
+const mockUseSignalRContext = useSignalRContext as jest.MockedFunction<
+    typeof useSignalRContext
 >;
+const mockUseNotificationGroups = useNotificationGroups as jest.MockedFunction<
+    typeof useNotificationGroups
+>;
+const mockUseTypedNotificationHandler =
+    useTypedNotificationHandler as jest.MockedFunction<
+        typeof useTypedNotificationHandler
+    >;
 const mockUseToast = useToast as jest.MockedFunction<typeof useToast>;
 
 describe('useOrganizerRealtime', () => {
@@ -39,12 +50,57 @@ describe('useOrganizerRealtime', () => {
 
         mockToast = jest.fn();
 
-        mockUseSignalRStore.mockReturnValue({
+        // Mock new SignalR context
+        mockUseSignalRContext.mockReturnValue({
             connection: mockConnection,
             isConnected: true,
+            isConnecting: false,
+            isReconnecting: false,
+            isDisconnected: false,
             connect: jest.fn().mockResolvedValue(undefined),
             disconnect: jest.fn().mockResolvedValue(undefined),
-            sendMessage: jest.fn().mockResolvedValue(undefined),
+            reconnect: jest.fn().mockResolvedValue(undefined),
+            error: null,
+            connectionState: {
+                state: 'Connected' as HubConnectionState,
+                reconnectAttempts: 0,
+                isHealthy: true,
+            },
+            checkHealth: jest.fn().mockResolvedValue(true),
+            measureLatency: jest.fn().mockResolvedValue(50),
+            on: jest.fn(),
+            off: jest.fn(),
+            invoke: jest.fn().mockResolvedValue(undefined),
+            send: jest.fn().mockResolvedValue(undefined),
+            isReady: true,
+            lastError: null,
+            clearError: jest.fn(),
+        });
+
+        // Mock notification groups
+        mockUseNotificationGroups.mockReturnValue({
+            groups: [],
+            isJoining: false,
+            joinError: null,
+            joinGroup: jest
+                .fn()
+                .mockResolvedValue({ success: true, groupId: 'test-group' }),
+            leaveGroup: jest.fn().mockResolvedValue(undefined),
+            leaveAllGroups: jest.fn().mockResolvedValue(undefined),
+            rejoinGroups: jest.fn().mockResolvedValue(undefined),
+        });
+
+        // Mock typed notification handler
+        mockUseTypedNotificationHandler.mockReturnValue({
+            notifications: [],
+            unreadCount: 0,
+            isProcessing: false,
+            processingError: null,
+            markAsRead: jest.fn(),
+            markAllAsRead: jest.fn(),
+            dismissNotification: jest.fn(),
+            clearAllNotifications: jest.fn(),
+            clearProcessingError: jest.fn(),
         });
 
         mockUseToast.mockReturnValue({
@@ -507,13 +563,31 @@ describe('useOrganizerRealtime', () => {
         });
 
         it('should provide reconnect function', async () => {
-            const mockConnect = jest.fn().mockResolvedValue(undefined);
-            mockUseSignalRStore.mockReturnValue({
+            const mockReconnect = jest.fn().mockResolvedValue(undefined);
+            mockUseSignalRContext.mockReturnValue({
                 connection: mockConnection,
                 isConnected: false,
-                connect: mockConnect,
-                disconnect: jest.fn(),
-                sendMessage: jest.fn(),
+                isConnecting: false,
+                isReconnecting: false,
+                isDisconnected: true,
+                connect: jest.fn().mockResolvedValue(undefined),
+                disconnect: jest.fn().mockResolvedValue(undefined),
+                reconnect: mockReconnect,
+                error: null,
+                connectionState: {
+                    state: 'Disconnected' as HubConnectionState,
+                    reconnectAttempts: 0,
+                    isHealthy: false,
+                },
+                checkHealth: jest.fn().mockResolvedValue(false),
+                measureLatency: jest.fn().mockResolvedValue(0),
+                on: jest.fn(),
+                off: jest.fn(),
+                invoke: jest.fn().mockResolvedValue(undefined),
+                send: jest.fn().mockResolvedValue(undefined),
+                isReady: false,
+                lastError: null,
+                clearError: jest.fn(),
             });
 
             const { result } = renderHook(() => useOrganizerRealtime());
@@ -522,7 +596,7 @@ describe('useOrganizerRealtime', () => {
                 await result.current.reconnect();
             });
 
-            expect(mockConnect).toHaveBeenCalled();
+            expect(mockReconnect).toHaveBeenCalled();
         });
     });
 

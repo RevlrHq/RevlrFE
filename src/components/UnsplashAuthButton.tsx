@@ -41,7 +41,7 @@ function ScopesDisplay({
                 const availableScopes = await getAvailableScopes();
                 setScopes(availableScopes);
             } catch (error) {
-                console.error('Failed to load scopes:', error);
+                console.debug('Failed to load scopes:', error);
                 setScopes([]);
             }
         };
@@ -90,7 +90,7 @@ function AuthStatusDisplay({
                 setCanLikePhotos(likesScope);
                 setCanAccessCollections(collectionsScope);
             } catch (error) {
-                console.error('Failed to check scopes:', error);
+                console.debug('Failed to check scopes:', error);
                 setCanLikePhotos(false);
                 setCanAccessCollections(false);
             }

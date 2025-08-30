@@ -52,7 +52,7 @@ export const AttributionPreview: React.FC<AttributionPreviewProps> = ({
             setCopiedFormat(format);
             setTimeout(() => setCopiedFormat(null), 2000);
         } catch (err) {
-            console.error('Failed to copy attribution:', err);
+            console.debug('Failed to copy attribution:', err);
         }
     };
 

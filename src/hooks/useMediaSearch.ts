@@ -201,7 +201,7 @@ export function useMediaSearch(
                         .map((status) => status.id),
                 }));
             } catch (error) {
-                console.error(
+                console.debug(
                     'Failed to initialize media search service:',
                     error
                 );
@@ -573,7 +573,7 @@ export function useMediaSearch(
                 showSuggestions: suggestions.length > 0,
             }));
         } catch (error) {
-            console.error('Failed to get suggestions:', error);
+            console.debug('Failed to get suggestions:', error);
         }
     }, []);
 
@@ -650,7 +650,7 @@ export function useMediaSearch(
                         }));
                         return { ...item, blob };
                     } catch (error) {
-                        console.error(
+                        console.debug(
                             `Failed to download item ${item.id}:`,
                             error
                         );

@@ -54,7 +54,7 @@ export class MediaSearchFixes {
             console.log('✅ Simplified service created successfully');
             return service;
         } catch (error) {
-            console.error('❌ Failed to create simplified service:', error);
+            console.debug('❌ Failed to create simplified service:', error);
             throw error;
         }
     }
@@ -222,7 +222,7 @@ export class MediaSearchFixes {
             console.log('✅ Working media search service created successfully');
             return service;
         } catch (error) {
-            console.error('❌ Failed to create working service:', error);
+            console.debug('❌ Failed to create working service:', error);
             throw error;
         }
     }
@@ -358,7 +358,7 @@ export class MediaSearchFixes {
             );
             return service;
         } catch (error) {
-            console.error('❌ Emergency service creation failed:', error);
+            console.debug('❌ Emergency service creation failed:', error);
             throw error;
         }
     }

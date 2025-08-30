@@ -693,7 +693,7 @@ class MediaImageProcessor {
 
                 processedImages.push(eventImage);
             } catch (error) {
-                console.error(`Failed to process image ${item.title}:`, error);
+                console.debug(`Failed to process image ${item.title}:`, error);
                 // Continue with other images
             }
         }

@@ -47,7 +47,7 @@ export interface AdvancedMediaSearchState {
     // UI state
     viewMode: 'search' | 'favorites' | 'collections' | 'templates';
     selectionMode: 'single' | 'multiple';
-    sortBy: 'relevance' | 'date' | 'size' | 'provider' | 'title';
+    sortBy: 'date' | 'size' | 'provider' | 'title';
     sortOrder: 'asc' | 'desc';
     showAdvancedFilters: boolean;
 }
@@ -181,7 +181,7 @@ export function useAdvancedMediaSearch(
     const [selectionMode, setSelectionMode] =
         useState<AdvancedMediaSearchState['selectionMode']>('single');
     const [sortBy, setSortBy] =
-        useState<AdvancedMediaSearchState['sortBy']>('relevance');
+        useState<AdvancedMediaSearchState['sortBy']>('date');
     const [sortOrder, setSortOrder] =
         useState<AdvancedMediaSearchState['sortOrder']>('desc');
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -220,7 +220,7 @@ export function useAdvancedMediaSearch(
             const favs = await mediaFavoritesService.getFavorites();
             setFavorites(favs);
         } catch (error) {
-            console.error('Failed to load favorites:', error);
+            console.debug('Failed to load favorites:', error);
         } finally {
             setFavoritesLoading(false);
         }
@@ -250,7 +250,7 @@ export function useAdvancedMediaSearch(
 
                 await loadFavorites();
             } catch (error) {
-                console.error('Failed to toggle favorite:', error);
+                console.debug('Failed to toggle favorite:', error);
             }
         },
         [enableFavorites, baseOptions.eventCategory, loadFavorites]
@@ -264,7 +264,7 @@ export function useAdvancedMediaSearch(
                 await mediaFavoritesService.addMultipleToFavorites(items, tags);
                 await loadFavorites();
             } catch (error) {
-                console.error('Failed to add to favorites:', error);
+                console.debug('Failed to add to favorites:', error);
             }
         },
         [enableFavorites, loadFavorites]
@@ -284,7 +284,7 @@ export function useAdvancedMediaSearch(
                 );
                 await loadFavorites();
             } catch (error) {
-                console.error('Failed to remove from favorites:', error);
+                console.debug('Failed to remove from favorites:', error);
             }
         },
         [enableFavorites, loadFavorites]
@@ -299,7 +299,7 @@ export function useAdvancedMediaSearch(
                     await mediaFavoritesService.searchFavorites(query);
                 setFavorites(results);
             } catch (error) {
-                console.error('Failed to search favorites:', error);
+                console.debug('Failed to search favorites:', error);
             }
         },
         [enableFavorites]
@@ -314,7 +314,7 @@ export function useAdvancedMediaSearch(
             const colls = await mediaCollectionsService.getAllCollections();
             setCollections(colls);
         } catch (error) {
-            console.error('Failed to load collections:', error);
+            console.debug('Failed to load collections:', error);
         } finally {
             setCollectionsLoading(false);
         }
@@ -360,7 +360,7 @@ export function useAdvancedMediaSearch(
                 );
                 await loadCollections();
             } catch (error) {
-                console.error('Failed to add to collection:', error);
+                console.debug('Failed to add to collection:', error);
             }
         },
         [enableCollections, createCollection, loadCollections]
@@ -381,7 +381,7 @@ export function useAdvancedMediaSearch(
                 );
                 await loadCollections();
             } catch (error) {
-                console.error('Failed to remove from collection:', error);
+                console.debug('Failed to remove from collection:', error);
             }
         },
         [enableCollections, loadCollections]
@@ -425,7 +425,7 @@ export function useAdvancedMediaSearch(
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
             } catch (error) {
-                console.error('Failed to export collection:', error);
+                console.debug('Failed to export collection:', error);
             }
         },
         [enableCollections]
@@ -614,7 +614,7 @@ export function useAdvancedMediaSearch(
             const templates = await eventTemplateMediaService.getAllTemplates();
             setAvailableTemplates(templates);
         } catch (error) {
-            console.error('Failed to load templates:', error);
+            console.debug('Failed to load templates:', error);
         } finally {
             setTemplatesLoading(false);
         }
@@ -632,7 +632,7 @@ export function useAdvancedMediaSearch(
                 );
             setTemplateRecommendations(recommendations);
         } catch (error) {
-            console.error('Failed to load template recommendations:', error);
+            console.debug('Failed to load template recommendations:', error);
         }
     }, [
         enableTemplates,
@@ -652,7 +652,7 @@ export function useAdvancedMediaSearch(
                 );
             setTemplateSuggestions(suggestions);
         } catch (error) {
-            console.error('Failed to load template suggestions:', error);
+            console.debug('Failed to load template suggestions:', error);
         }
     }, [enableTemplates, baseOptions.eventCategory]);
 
@@ -672,7 +672,7 @@ export function useAdvancedMediaSearch(
                     baseMediaSearch.actions.selectItem(item);
                 });
             } catch (error) {
-                console.error('Failed to apply template:', error);
+                console.debug('Failed to apply template:', error);
             }
         },
         [enableTemplates, baseMediaSearch.actions]

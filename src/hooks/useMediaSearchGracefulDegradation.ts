@@ -219,7 +219,7 @@ export function useMediaSearchGracefulDegradation(
                     try {
                         await mediaSearch.actions.search(query);
                     } catch (degradedError) {
-                        console.error(
+                        console.debug(
                             'Search failed even with degraded providers:',
                             degradedError
                         );
@@ -276,7 +276,7 @@ export function useMediaSearchGracefulDegradation(
             try {
                 await mediaSearch.actions.retryInitialization();
             } catch (error) {
-                console.error(
+                console.debug(
                     'Failed to retry provider initialization:',
                     error
                 );

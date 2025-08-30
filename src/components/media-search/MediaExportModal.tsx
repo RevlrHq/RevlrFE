@@ -231,7 +231,7 @@ export const MediaExportModal: React.FC<MediaExportModalProps> = ({
                     break;
             }
         } catch (error) {
-            console.error('Export failed:', error);
+            console.debug('Export failed:', error);
         } finally {
             setIsExporting(false);
             setExportProgress(0);
@@ -266,7 +266,7 @@ export const MediaExportModal: React.FC<MediaExportModalProps> = ({
             setCopySuccess(true);
             setTimeout(() => setCopySuccess(false), 2000);
         } catch (error) {
-            console.error('Failed to copy URL:', error);
+            console.debug('Failed to copy URL:', error);
         }
     }, [shareUrl]);
 

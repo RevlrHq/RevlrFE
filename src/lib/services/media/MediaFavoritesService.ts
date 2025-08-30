@@ -51,7 +51,7 @@ class LocalStorageMediaFavoritesService implements MediaFavoritesService {
             const stored = localStorage.getItem(this.storageKey);
             return stored ? JSON.parse(stored) : [];
         } catch (error) {
-            console.error('Failed to load favorites from storage:', error);
+            console.debug('Failed to load favorites from storage:', error);
             return [];
         }
     }
@@ -60,7 +60,7 @@ class LocalStorageMediaFavoritesService implements MediaFavoritesService {
         try {
             localStorage.setItem(this.storageKey, JSON.stringify(favorites));
         } catch (error) {
-            console.error('Failed to save favorites to storage:', error);
+            console.debug('Failed to save favorites to storage:', error);
         }
     }
 
@@ -69,7 +69,7 @@ class LocalStorageMediaFavoritesService implements MediaFavoritesService {
             const stored = localStorage.getItem(this.tagsKey);
             return stored ? JSON.parse(stored) : [];
         } catch (error) {
-            console.error('Failed to load tags from storage:', error);
+            console.debug('Failed to load tags from storage:', error);
             return [];
         }
     }
@@ -78,7 +78,7 @@ class LocalStorageMediaFavoritesService implements MediaFavoritesService {
         try {
             localStorage.setItem(this.tagsKey, JSON.stringify(tags));
         } catch (error) {
-            console.error('Failed to save tags to storage:', error);
+            console.debug('Failed to save tags to storage:', error);
         }
     }
 

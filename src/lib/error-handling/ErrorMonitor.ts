@@ -162,7 +162,7 @@ class ErrorMonitor {
 
         // Log to console in development
         if (process.env.NODE_ENV === 'development') {
-            console.error('Error captured:', error);
+            console.debug('Error captured:', error);
         }
 
         // Trigger alerts for critical errors

@@ -382,7 +382,7 @@ export const useVendorEvents = (
                         ? err.message
                         : 'An error occurred while fetching events';
                 setError(errorMessage);
-                console.error('Error fetching vendor events:', err);
+                console.debug('Error fetching vendor events:', err);
             } finally {
                 setLoading(false);
             }

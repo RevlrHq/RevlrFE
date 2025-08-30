@@ -350,7 +350,7 @@ export class MediaSearchDebugger {
 
             console.log('\n🔧 Provider Status:', result.providerStatus);
         } catch (error) {
-            console.error('❌ Quick test failed:', error);
+            console.debug('❌ Quick test failed:', error);
         }
     }
 }

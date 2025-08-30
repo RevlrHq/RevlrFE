@@ -98,7 +98,7 @@ export const ExportExample: React.FC = () => {
                     break;
             }
         } catch (error) {
-            console.error('Export failed:', error);
+            console.debug('Export failed:', error);
         }
     };
 

@@ -36,7 +36,7 @@ export const useAttendeeAnalytics = (): UseAttendeeAnalyticsResult => {
                     ? err.message
                     : 'An error occurred while fetching attendee analytics';
             setError(errorMessage);
-            console.error('Error fetching attendee analytics:', err);
+            console.debug('Error fetching attendee analytics:', err);
         } finally {
             setLoading(false);
         }

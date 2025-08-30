@@ -6,6 +6,7 @@ import React, {
     useEffect,
     useState,
     useCallback,
+    useRef,
 } from 'react';
 import {
     MediaProviderInitializer,
@@ -76,10 +77,14 @@ export function MediaProviderInitializationProvider({
     );
     const [shouldContinue, setShouldContinue] = useState(true);
     const [recommendations, setRecommendations] = useState<string[]>([]);
+    
+    // Use ref to track initialization state to avoid dependency issues
+    const isInitializingRef = useRef(false);
 
     const initializeProviders = useCallback(async () => {
-        if (isInitializing) return;
+        if (isInitializingRef.current) return;
 
+        isInitializingRef.current = true;
         setIsInitializing(true);
 
         try {
@@ -134,7 +139,7 @@ export function MediaProviderInitializationProvider({
                     console.log('✅ Provider health monitoring started');
                 }
             } else {
-                console.error('❌ Media provider initialization failed:', {
+                console.debug('❌ Media provider initialization failed:', {
                     failedProviders: result.failedProviders,
                     warnings: result.warnings,
                 });
@@ -142,7 +147,7 @@ export function MediaProviderInitializationProvider({
                 // Log developer-friendly error summary
                 const errorSummary =
                     errorHandler.generateDeveloperErrorSummary();
-                console.error('📊 Error Summary:', errorSummary);
+                console.debug('📊 Error Summary:', errorSummary);
 
                 // Log whether application should continue
                 if (errorAnalysis.shouldContinue) {
@@ -150,7 +155,7 @@ export function MediaProviderInitializationProvider({
                         '⚠️ Application will continue with limited functionality'
                     );
                 } else {
-                    console.error(
+                    console.debug(
                         '🚫 Application cannot continue - critical errors detected'
                     );
                 }
@@ -171,7 +176,7 @@ export function MediaProviderInitializationProvider({
                 );
             }
         } catch (error) {
-            console.error(
+            console.debug(
                 '💥 Critical error during media provider initialization:',
                 error
             );
@@ -216,9 +221,10 @@ export function MediaProviderInitializationProvider({
                 configurationValid: false,
             });
         } finally {
+            isInitializingRef.current = false;
             setIsInitializing(false);
         }
-    }, [errorHandler, isInitializing]);
+    }, [errorHandler]);
 
     const reinitialize = async () => {
         console.log('🔄 Reinitializing media providers...');
@@ -229,7 +235,8 @@ export function MediaProviderInitializationProvider({
             setHealthMonitor(null);
         }
 
-        // Reset state
+        // Reset state and ref
+        isInitializingRef.current = false;
         setInitializationResult(null);
         setDetailedErrors([]);
         setShouldContinue(true);
@@ -251,15 +258,17 @@ export function MediaProviderInitializationProvider({
     // Initialize providers on mount
     useEffect(() => {
         initializeProviders();
+    }, []); // Empty dependency array - only run on mount
 
-        // Cleanup function to stop health monitoring
+    // Separate cleanup effect for health monitor
+    useEffect(() => {
         return () => {
             if (healthMonitor) {
                 console.log('🛑 Stopping provider health monitoring...');
                 healthMonitor.stopMonitoring();
             }
         };
-    }, [healthMonitor, initializeProviders]);
+    }, [healthMonitor]);
 
     const contextValue: MediaProviderInitializationContextType = {
         initializationStatus,

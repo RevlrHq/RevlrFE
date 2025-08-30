@@ -48,7 +48,7 @@ const CheckoutPage = () => {
                 const parsedGuestInfo = JSON.parse(guestInfoParam);
                 setGuestInfo(parsedGuestInfo);
             } catch (error) {
-                console.error('Error parsing guest info:', error);
+                console.debug('Error parsing guest info:', error);
             }
         }
 
@@ -57,7 +57,7 @@ const CheckoutPage = () => {
                 const parsedTickets = JSON.parse(ticketsParam);
                 setTickets(parsedTickets);
             } catch (error) {
-                console.error('Error parsing tickets:', error);
+                console.debug('Error parsing tickets:', error);
             }
         }
 
@@ -141,7 +141,7 @@ const CheckoutPage = () => {
                 setShowFailureModal(true);
             }
         } catch (error) {
-            console.error('Registration failed:', error);
+            console.debug('Registration failed:', error);
             const errorMessage =
                 error instanceof Error
                     ? error.message

@@ -147,7 +147,7 @@ export const useEventRegistration = () => {
         } catch (error: unknown) {
             const errorMessage =
                 error instanceof Error ? error.message : 'Registration failed';
-            console.error('Registration error:', error);
+            console.debug('Registration error:', error);
             toast({
                 title: 'Registration Failed',
                 description:
@@ -211,7 +211,7 @@ export const useEventRegistration = () => {
                                 );
                                 resolve(verificationResult);
                             } catch (error) {
-                                console.error(
+                                console.debug(
                                     'Payment verification error:',
                                     error
                                 );
@@ -223,7 +223,7 @@ export const useEventRegistration = () => {
                             reject(new Error('Payment was cancelled by user'));
                         },
                         onError: (error: { message?: string }) => {
-                            console.error('Paystack error:', error);
+                            console.debug('Paystack error:', error);
                             reject(
                                 new Error(error.message || 'Payment failed')
                             );
@@ -231,7 +231,7 @@ export const useEventRegistration = () => {
                     });
                 }
             } catch (error) {
-                console.error('Payment initialization error:', error);
+                console.debug('Payment initialization error:', error);
                 reject(error);
             }
         });
@@ -282,7 +282,7 @@ export const useEventRegistration = () => {
                 error instanceof Error
                     ? error.message
                     : 'Payment verification failed';
-            console.error('Payment verification error:', error);
+            console.debug('Payment verification error:', error);
 
             // Display exact error message from API
             toast({

@@ -52,7 +52,7 @@ const Login = () => {
                     router.push('/dashboard');
                 }
             } catch (err) {
-                console.error('Error verifying token:', err);
+                console.debug('Error verifying token:', err);
                 setVerificationError(
                     err instanceof Error
                         ? err.message

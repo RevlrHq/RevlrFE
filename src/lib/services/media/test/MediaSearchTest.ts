@@ -412,7 +412,7 @@ export class MediaSearchTest {
 
             console.log('\n🔧 Detailed Results:', result.results);
         } catch (error) {
-            console.error('❌ Quick test failed:', error);
+            console.debug('❌ Quick test failed:', error);
         }
     }
 }

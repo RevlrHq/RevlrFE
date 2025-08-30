@@ -83,7 +83,7 @@ export const AdvancedMediaSearchModal: React.FC<
                 const favs = await mediaFavoritesService.getFavorites();
                 setFavorites(favs);
             } catch (error) {
-                console.error('Failed to load favorites:', error);
+                console.debug('Failed to load favorites:', error);
             }
         };
 
@@ -92,7 +92,7 @@ export const AdvancedMediaSearchModal: React.FC<
                 const colls = await mediaCollectionsService.getAllCollections();
                 setCollections(colls);
             } catch (error) {
-                console.error('Failed to load collections:', error);
+                console.debug('Failed to load collections:', error);
             }
         };
 
@@ -112,7 +112,7 @@ export const AdvancedMediaSearchModal: React.FC<
                 }))
             );
         } catch (error) {
-            console.error('Failed to load favorites:', error);
+            console.debug('Failed to load favorites:', error);
         }
     }, []);
 
@@ -121,7 +121,7 @@ export const AdvancedMediaSearchModal: React.FC<
             const colls = await mediaCollectionsService.getAllCollections();
             setCollections(colls);
         } catch (error) {
-            console.error('Failed to load collections:', error);
+            console.debug('Failed to load collections:', error);
         }
     }, []);
 
@@ -149,7 +149,7 @@ export const AdvancedMediaSearchModal: React.FC<
                 );
                 await loadCollections();
             } catch (error) {
-                console.error('Failed to add to collection:', error);
+                console.debug('Failed to add to collection:', error);
             }
         },
         [eventTitle, eventCategory, loadCollections]
@@ -195,7 +195,7 @@ export const AdvancedMediaSearchModal: React.FC<
             await loadFavorites();
             clearBulkSelection();
         } catch (error) {
-            console.error('Failed to add bulk favorites:', error);
+            console.debug('Failed to add bulk favorites:', error);
         }
     }, [
         eventCategory,
@@ -220,7 +220,7 @@ export const AdvancedMediaSearchModal: React.FC<
             await mediaBulkOperationsService.downloadMultiple(selectedItems);
             clearBulkSelection();
         } catch (error) {
-            console.error('Failed to bulk download:', error);
+            console.debug('Failed to bulk download:', error);
         }
     }, [clearBulkSelection, getBulkSelectedItems]);
 

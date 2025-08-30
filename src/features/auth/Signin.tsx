@@ -48,13 +48,13 @@ const Signin = () => {
                     router.push('/dashboard');
                 }
                 if (error) {
-                    console.error('Error during login:', error);
+                    console.debug('Error during login:', error);
                 }
             } catch (err) {
-                console.error('Unexpected error during login:', err);
+                console.debug('Unexpected error during login:', err);
             }
         } else {
-            console.error('Email or token is missing');
+            console.debug('Email or token is missing');
         }
     };
 

@@ -88,7 +88,7 @@ export function MediaSearchTestComponent() {
             {/* Error Display */}
             {state.error && (
                 <div className='mb-4 rounded border border-red-400 bg-red-100 p-3 text-red-700'>
-                    Error: {state.error}
+                    Error: {typeof state.error === 'string' ? state.error : 'An error occurred'}
                 </div>
             )}
 

@@ -83,7 +83,7 @@ export class MediaSearchTestRunner {
             this.printSummary();
             return this.results;
         } catch (error) {
-            console.error('❌ Test suite failed:', error);
+            console.debug('❌ Test suite failed:', error);
             throw error;
         }
     }
@@ -129,7 +129,7 @@ export class MediaSearchTestRunner {
 
             console.log(`❌ Unit Tests failed (${Math.round(duration)}ms)\n`);
             if (this.options.verbose) {
-                console.error(error);
+                console.debug(error);
             }
         }
     }
@@ -176,7 +176,7 @@ export class MediaSearchTestRunner {
                 `❌ Integration Tests failed (${Math.round(duration)}ms)\n`
             );
             if (this.options.verbose) {
-                console.error(error);
+                console.debug(error);
             }
         }
     }
@@ -225,7 +225,7 @@ export class MediaSearchTestRunner {
                 `❌ Component Tests failed (${Math.round(duration)}ms)\n`
             );
             if (this.options.verbose) {
-                console.error(error);
+                console.debug(error);
             }
         }
     }
@@ -270,7 +270,7 @@ export class MediaSearchTestRunner {
                 `❌ End-to-End Tests failed (${Math.round(duration)}ms)\n`
             );
             if (this.options.verbose) {
-                console.error(error);
+                console.debug(error);
             }
         }
     }
@@ -314,7 +314,7 @@ export class MediaSearchTestRunner {
                 `❌ Performance Tests failed (${Math.round(duration)}ms)\n`
             );
             if (this.options.verbose) {
-                console.error(error);
+                console.debug(error);
             }
         }
     }
@@ -358,7 +358,7 @@ export class MediaSearchTestRunner {
                 `❌ Accessibility Tests failed (${Math.round(duration)}ms)\n`
             );
             if (this.options.verbose) {
-                console.error(error);
+                console.debug(error);
             }
         }
     }
@@ -499,7 +499,7 @@ if (require.main === module) {
             process.exit(failedTests.length > 0 ? 1 : 0);
         })
         .catch((error) => {
-            console.error('Test runner failed:', error);
+            console.debug('Test runner failed:', error);
             process.exit(1);
         });
 }

@@ -323,7 +323,7 @@ export function useSimpleMediaSearch(
                 showSuggestions: suggestions.length > 0,
             }));
         } catch (error) {
-            console.error('Failed to get suggestions:', error);
+            console.debug('Failed to get suggestions:', error);
         }
     }, []);
 

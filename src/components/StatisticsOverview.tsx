@@ -34,6 +34,7 @@ interface StatisticCardProps {
     formatValue?: (value: number) => string;
     loading?: boolean;
     ariaLabel?: string;
+    isMobile?: boolean;
 }
 
 interface AnimatedCounterProps {
@@ -159,6 +160,7 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
     formatValue = (val) => val.toLocaleString(),
     loading = false,
     ariaLabel,
+    isMobile = false,
 }) => {
     const { theme } = useTheme();
 
@@ -251,7 +253,7 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({
     className = '',
 }) => {
     const { theme } = useTheme();
-    const { getResponsiveValue } = useMobileOptimizations();
+    const { isMobile, getResponsiveValue } = useMobileOptimizations();
 
     // Format currency values
     const formatCurrency = (amount: number) => {
@@ -317,6 +319,7 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({
                     color='text-revlr-primary-blue bg-revlr-primary-blue'
                     loading={loading}
                     ariaLabel='Total number of events created'
+                    isMobile={isMobile}
                 />
 
                 {/* Published Events */}
@@ -333,6 +336,7 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({
                     color='text-revlr-accent-green bg-revlr-accent-green'
                     loading={loading}
                     ariaLabel='Number of published events'
+                    isMobile={isMobile}
                 />
 
                 {/* Total Revenue */}
@@ -345,6 +349,7 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({
                     formatValue={formatCurrency}
                     loading={loading}
                     ariaLabel='Total revenue generated from events'
+                    isMobile={isMobile}
                 />
 
                 {/* Total Attendees */}
@@ -355,6 +360,7 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({
                     color='text-revlr-accent-orange bg-revlr-accent-orange'
                     loading={loading}
                     ariaLabel='Total number of event attendees'
+                    isMobile={isMobile}
                 />
             </div>
 
@@ -376,6 +382,7 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({
                     color='text-yellow-500 bg-yellow-500'
                     loading={loading}
                     ariaLabel='Number of draft events'
+                    isMobile={isMobile}
                 />
 
                 {/* This Month Revenue */}
@@ -388,6 +395,7 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({
                     formatValue={formatCurrency}
                     loading={loading}
                     ariaLabel='Revenue generated this month'
+                    isMobile={isMobile}
                 />
 
                 {/* Total Registrations */}
@@ -398,6 +406,7 @@ export const StatisticsOverview: React.FC<StatisticsOverviewProps> = ({
                     color='text-blue-500 bg-blue-500'
                     loading={loading}
                     ariaLabel='Total number of event registrations'
+                    isMobile={isMobile}
                 />
             </div>
         </div>

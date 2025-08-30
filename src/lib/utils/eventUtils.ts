@@ -28,7 +28,7 @@ export const formatEventDate = (
 
         return formattedDate;
     } catch (error) {
-        console.error('Error formatting date:', error);
+        console.debug('Error formatting date:', error);
         return 'Date TBD';
     }
 };

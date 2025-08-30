@@ -32,10 +32,10 @@ const VerifyForm: React.FC<VerifyFormProps> = ({ email, token, onSuccess }) => {
                     onSuccess?.(response);
                 }
             } catch (err) {
-                console.error('Unexpected error during verification:', err);
+                console.debug('Unexpected error during verification:', err);
             }
         } else {
-            console.error('Missing required fields');
+            console.debug('Missing required fields');
         }
     };
 
