@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { settingsCache, CacheKeys, CacheTTL } from './caching';
+import { jsonStorage } from '@/lib/utils/storage';
 
 export interface OfflineQueueItem {
     id: string;
@@ -91,7 +92,7 @@ export class OfflineQueue {
                 : null;
 
         return {
-            size: this.queue.size,
+            size: this.queue.length,
             oldestItem: oldestTimestamp ? new Date(oldestTimestamp) : null,
             syncInProgress: this.syncInProgress,
         };
@@ -174,9 +175,9 @@ export class OfflineQueue {
 
     private loadQueue(): void {
         try {
-            const stored = localStorage.getItem(this.storageKey);
+            const stored = jsonStorage.getItem<OfflineQueueItem[]>(this.storageKey);
             if (stored) {
-                this.queue = JSON.parse(stored);
+                this.queue = stored;
             }
         } catch (error) {
             console.warn('Failed to load offline queue:', error);
@@ -185,11 +186,7 @@ export class OfflineQueue {
     }
 
     private saveQueue(): void {
-        try {
-            localStorage.setItem(this.storageKey, JSON.stringify(this.queue));
-        } catch (error) {
-            console.warn('Failed to save offline queue:', error);
-        }
+        jsonStorage.setItem(this.storageKey, this.queue);
     }
 
     private enforceQueueLimit(): void {

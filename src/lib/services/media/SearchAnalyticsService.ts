@@ -5,6 +5,7 @@ import {
     PersonalizationData,
     MediaFilters,
 } from '@/types/media-search';
+import { jsonStorage } from '@/lib/utils/storage';
 
 export class SearchAnalyticsService {
     private events: SearchAnalyticsEvent[] = [];
@@ -475,18 +476,11 @@ export class SearchAnalyticsService {
      * Save analytics data to localStorage
      */
     private saveToStorage(): void {
-        try {
-            const data = {
-                events: this.events.slice(-1000), // Keep last 1000 events
-                userPatterns: Array.from(this.userPatterns.entries()),
-            };
-            localStorage.setItem(
-                'media-search-analytics',
-                JSON.stringify(data)
-            );
-        } catch (error) {
-            console.warn('Failed to save analytics to storage:', error);
-        }
+        const data = {
+            events: this.events.slice(-1000), // Keep last 1000 events
+            userPatterns: Array.from(this.userPatterns.entries()),
+        };
+        jsonStorage.setItem('media-search-analytics', data);
     }
 
     /**
@@ -494,9 +488,12 @@ export class SearchAnalyticsService {
      */
     private loadFromStorage(): void {
         try {
-            const stored = localStorage.getItem('media-search-analytics');
-            if (stored) {
-                const data = JSON.parse(stored);
+            const data = jsonStorage.getItem<{
+                events: SearchAnalyticsEvent[];
+                userPatterns: Array<[string, UserBehaviorPattern]>;
+            }>('media-search-analytics');
+            
+            if (data) {
                 this.events = data.events || [];
                 this.userPatterns = new Map(data.userPatterns || []);
             }
@@ -511,7 +508,7 @@ export class SearchAnalyticsService {
     clearData(): void {
         this.events = [];
         this.userPatterns.clear();
-        localStorage.removeItem('media-search-analytics');
+        jsonStorage.removeItem('media-search-analytics');
     }
 
     /**

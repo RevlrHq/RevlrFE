@@ -1,4 +1,5 @@
 import type { NotificationPreferences } from '../types';
+import { safeLocalStorage, jsonStorage, isBrowser } from '@/lib/utils/storage';
 
 /**
  * Utilities for synchronizing notification preferences across devices
@@ -45,13 +46,13 @@ export class NotificationSyncManager {
      * Generate a unique device identifier
      */
     private generateDeviceId(): string {
-        const stored = localStorage.getItem('notification-device-id');
+        const stored = safeLocalStorage.getItem('notification-device-id');
         if (stored) {
             return stored;
         }
 
         const deviceId = `device-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        localStorage.setItem('notification-device-id', deviceId);
+        safeLocalStorage.setItem('notification-device-id', deviceId);
         return deviceId;
     }
 
@@ -109,19 +110,12 @@ export class NotificationSyncManager {
     private storePreferencesLocally(
         preferences: NotificationPreferences
     ): void {
-        try {
-            const data = {
-                preferences,
-                timestamp: Date.now(),
-                deviceId: this.deviceId,
-            };
-            localStorage.setItem(
-                'notification-preferences-cache',
-                JSON.stringify(data)
-            );
-        } catch (error) {
-            console.error('Failed to store preferences locally:', error);
-        }
+        const data = {
+            preferences,
+            timestamp: Date.now(),
+            deviceId: this.deviceId,
+        };
+        jsonStorage.setItem('notification-preferences-cache', data);
     }
 
     /**
@@ -129,19 +123,15 @@ export class NotificationSyncManager {
      */
     getCachedPreferences(): NotificationPreferences | null {
         try {
-            const cached = localStorage.getItem(
-                'notification-preferences-cache'
-            );
-            if (!cached) {
+            const data = jsonStorage.getItem('notification-preferences-cache');
+            if (!data) {
                 return null;
             }
-
-            const data = JSON.parse(cached);
 
             // Check if cache is not too old (24 hours)
             const maxAge = 24 * 60 * 60 * 1000;
             if (Date.now() - data.timestamp > maxAge) {
-                localStorage.removeItem('notification-preferences-cache');
+                jsonStorage.removeItem('notification-preferences-cache');
                 return null;
             }
 
@@ -170,7 +160,7 @@ export class NotificationSyncManager {
     isSupported(): boolean {
         return (
             typeof BroadcastChannel !== 'undefined' &&
-            typeof localStorage !== 'undefined'
+            isBrowser()
         );
     }
 

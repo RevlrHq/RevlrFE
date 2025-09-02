@@ -6,6 +6,7 @@ import {
     PreloadingStrategy,
 } from '@/types/media-search';
 import { SearchAnalyticsService } from './SearchAnalyticsService';
+import { jsonStorage } from '@/lib/utils/storage';
 
 export class PersonalizationService {
     private analyticsService: SearchAnalyticsService;
@@ -543,9 +544,12 @@ export class PersonalizationService {
      */
     private loadUserProfiles(): void {
         try {
-            const stored = localStorage.getItem('media-search-personalization');
-            if (stored) {
-                const data = JSON.parse(stored);
+            const data = jsonStorage.getItem<{
+                userProfiles: Array<[string, PersonalizationData]>;
+                preloadingStrategies: Array<[string, PreloadingStrategy]>;
+            }>('media-search-personalization');
+            
+            if (data) {
                 this.userProfiles = new Map(data.userProfiles || []);
                 this.preloadingStrategies = new Map(
                     data.preloadingStrategies || []
@@ -560,20 +564,13 @@ export class PersonalizationService {
      * Save user profiles to storage
      */
     private saveUserProfiles(): void {
-        try {
-            const data = {
-                userProfiles: Array.from(this.userProfiles.entries()),
-                preloadingStrategies: Array.from(
-                    this.preloadingStrategies.entries()
-                ),
-            };
-            localStorage.setItem(
-                'media-search-personalization',
-                JSON.stringify(data)
-            );
-        } catch (error) {
-            console.warn('Failed to save personalization data:', error);
-        }
+        const data = {
+            userProfiles: Array.from(this.userProfiles.entries()),
+            preloadingStrategies: Array.from(
+                this.preloadingStrategies.entries()
+            ),
+        };
+        jsonStorage.setItem('media-search-personalization', data);
     }
 
     /**

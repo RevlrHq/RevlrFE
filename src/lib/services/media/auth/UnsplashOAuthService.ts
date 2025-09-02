@@ -2,6 +2,7 @@ import {
     MediaProviderError,
     MediaProviderErrorType,
 } from '@/types/media-search';
+import { jsonStorage } from '@/lib/utils/storage';
 
 export interface UnsplashOAuthConfig {
     clientId: string;
@@ -268,13 +269,9 @@ export class UnsplashOAuthService {
      */
     private loadAuthState(): void {
         try {
-            const stored = localStorage.getItem(this.storageKey);
-            if (stored) {
-                const parsedState = JSON.parse(stored);
-                // Validate the stored state
-                if (parsedState.accessToken && parsedState.isAuthenticated) {
-                    this.authState = parsedState;
-                }
+            const parsedState = jsonStorage.getItem<UnsplashAuthState>(this.storageKey);
+            if (parsedState && parsedState.accessToken && parsedState.isAuthenticated) {
+                this.authState = parsedState;
             }
         } catch (error) {
             console.warn('Failed to load auth state from storage:', error);
@@ -286,14 +283,7 @@ export class UnsplashOAuthService {
      * Save auth state to storage
      */
     private saveAuthState(): void {
-        try {
-            localStorage.setItem(
-                this.storageKey,
-                JSON.stringify(this.authState)
-            );
-        } catch (error) {
-            console.warn('Failed to save auth state to storage:', error);
-        }
+        jsonStorage.setItem(this.storageKey, this.authState);
     }
 
     /**
@@ -301,11 +291,7 @@ export class UnsplashOAuthService {
      */
     private clearAuthState(): void {
         this.authState = { isAuthenticated: false };
-        try {
-            localStorage.removeItem(this.storageKey);
-        } catch (error) {
-            console.warn('Failed to clear auth state from storage:', error);
-        }
+        jsonStorage.removeItem(this.storageKey);
     }
 
     /**
