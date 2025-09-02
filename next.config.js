@@ -25,14 +25,15 @@ const nextConfig = {
             'chart.js',
             'react-chartjs-2',
         ],
-        turbo: {
-            rules: {
-                '*.svg': {
-                    loaders: ['@svgr/webpack'],
-                    as: '*.js',
-                },
-            },
-        },
+        // Temporarily disable turbo rules to fix font loading
+        // turbo: {
+        //     rules: {
+        //         '*.svg': {
+        //             loaders: ['@svgr/webpack'],
+        //             as: '*.js',
+        //         },
+        //     },
+        // },
     },
     // Bundle analyzer and optimization
     webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {

@@ -66,7 +66,7 @@ const AnalyticsPage = () => {
                     theme === 'dark'
                         ? 'border-revlr-dark-border bg-revlr-dark-card'
                         : 'border-gray-200 bg-white'
-                } border-b px-6 py-6`}
+                } border-b p-6`}
             >
                 <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-4'>

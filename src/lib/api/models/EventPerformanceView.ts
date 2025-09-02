@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
+ 
 import type { DailyRegistrationStats } from './DailyRegistrationStats';
 import type { TicketPerformance } from './TicketPerformance';
 export type EventPerformanceView = {

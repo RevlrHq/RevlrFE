@@ -14,6 +14,7 @@ module.exports = {
             fontFamily: {
                 inter: ['var(--font-inter)'],
                 montserrat: ['var(--font-montserrat)'],
+                poppins: ['var(--font-poppins)'],
             },
             keyframes: {
                 'caret-blink': {

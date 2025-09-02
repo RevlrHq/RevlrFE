@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
+ 
 import type { EventCreationRequest } from '../models/EventCreationRequest';
 import type { EventDraftRequest } from '../models/EventDraftRequest';
 import type { EventRegistrationRequest } from '../models/EventRegistrationRequest';

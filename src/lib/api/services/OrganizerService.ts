@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
+ 
 import type { BulkEventActionRequest } from '../models/BulkEventActionRequest';
 import type { EventDuplicationRequest } from '../models/EventDuplicationRequest';
 import type { OrganizerRevenueReportRequest } from '../models/OrganizerRevenueReportRequest';

@@ -97,6 +97,12 @@ export class ErrorLogger {
             }
 
             // Send to monitoring service in production
+            if (process.env.NODE_ENV === 'production') {
+                this.sendToMonitoring(logEntry);
+            }
+
+            // Store locally for offline scenarios
+            this.storeLocally(logEntry);
         } catch (loggingError) {
             // Fallback to basic console.debug to avoid infinite loops
             console.debug('ErrorLogger failed:', loggingError);
@@ -104,12 +110,6 @@ export class ErrorLogger {
         } finally {
             this.isLogging = false;
         }
-        if (process.env.NODE_ENV === 'production') {
-            this.sendToMonitoring(logEntry);
-        }
-
-        // Store locally for offline scenarios
-        this.storeLocally(logEntry);
     }
 
     /**

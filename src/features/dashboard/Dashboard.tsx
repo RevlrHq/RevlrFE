@@ -24,6 +24,7 @@ import {
     Table,
     CreditCard,
     Sliders,
+    Settings,
 } from 'lucide-react';
 import { Skeleton, CardSkeleton } from '../../components/LoadingStates';
 import {
@@ -831,6 +832,21 @@ const Dashboard = () => {
                                 <Sliders className='size-4' />
                             </button>
                         )}
+
+                        <Link
+                            href='/dashboard/settings'
+                            className={`rounded-lg border p-2 transition-colors ${
+                                theme === 'dark'
+                                    ? 'border-revlr-dark-border bg-revlr-dark-card hover:bg-revlr-dark-border'
+                                    : 'border-gray-300 bg-white hover:bg-gray-50'
+                            }`}
+                            title='Settings'
+                            onClick={() => {
+                                trackUserAction('settings_navigation_click');
+                            }}
+                        >
+                            <Settings className='size-4' />
+                        </Link>
                     </div>
                 </div>
 

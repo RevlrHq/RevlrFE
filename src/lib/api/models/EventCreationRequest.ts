@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
+ 
 import type { DateRange } from './DateRange';
 import type { EventSocialLinks2 } from './EventSocialLinks2';
 import type { LocationDetails } from './LocationDetails';
